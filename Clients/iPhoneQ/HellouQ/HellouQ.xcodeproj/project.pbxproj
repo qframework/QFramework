@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CB01A99714DEB8550015C5A0 /* fontsys.png in Resources */ = {isa = PBXBuildFile; fileRef = CB01A99514DEB8550015C5A0 /* fontsys.png */; };
+		CB01A99814DEB8550015C5A0 /* whitesys.png in Resources */ = {isa = PBXBuildFile; fileRef = CB01A99614DEB8550015C5A0 /* whitesys.png */; };
 		CB02085714CC0CD000ECA3EA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB02085614CC0CD000ECA3EA /* UIKit.framework */; };
 		CB02085914CC0CD000ECA3EA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB02085814CC0CD000ECA3EA /* Foundation.framework */; };
 		CB02085B14CC0CD000ECA3EA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB02085A14CC0CD000ECA3EA /* CoreGraphics.framework */; };
@@ -80,13 +82,13 @@
 		CB02094614D04A2B00ECA3EA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB02094514D04A2900ECA3EA /* QuartzCore.framework */; };
 		CB40561C14D2FEBE005587CB /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = CB40560114D2FEBE005587CB /* main.js */; };
 		CB40563614D304CA005587CB /* ViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = CB40563414D304CA005587CB /* ViewController_iPhone.xib */; };
-		CB77D24714D73E85000C190D /* whitesys.png in Resources */ = {isa = PBXBuildFile; fileRef = CB77D24614D73E85000C190D /* whitesys.png */; };
-		CB77D24914D73E8F000C190D /* fontsys.png in Resources */ = {isa = PBXBuildFile; fileRef = CB77D24814D73E8F000C190D /* fontsys.png */; };
 		CB77D25114D9E690000C190D /* qback.png in Resources */ = {isa = PBXBuildFile; fileRef = CB77D24F14D9E690000C190D /* qback.png */; };
 		CB77D25214D9E690000C190D /* qtext.png in Resources */ = {isa = PBXBuildFile; fileRef = CB77D25014D9E690000C190D /* qtext.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CB01A99514DEB8550015C5A0 /* fontsys.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fontsys.png; sourceTree = "<group>"; };
+		CB01A99614DEB8550015C5A0 /* whitesys.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whitesys.png; sourceTree = "<group>"; };
 		CB02085214CC0CD000ECA3EA /* HellouQ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HellouQ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CB02085614CC0CD000ECA3EA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		CB02085814CC0CD000ECA3EA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -222,8 +224,6 @@
 		CB02094514D04A2900ECA3EA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CB40560114D2FEBE005587CB /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		CB40563514D304CA005587CB /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPhone.xib; sourceTree = "<group>"; };
-		CB77D24614D73E85000C190D /* whitesys.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = whitesys.png; path = ../../../../../../Clients/iPhoneQ/Q/QScripts/whitesys.png; sourceTree = "<group>"; };
-		CB77D24814D73E8F000C190D /* fontsys.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = fontsys.png; path = ../../../../../../Clients/iPhoneQ/Q/QScripts/fontsys.png; sourceTree = "<group>"; };
 		CB77D24F14D9E690000C190D /* qback.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qback.png; sourceTree = "<group>"; };
 		CB77D25014D9E690000C190D /* qtext.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qtext.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -404,8 +404,8 @@
 		CB0208CD14CC0D3A00ECA3EA /* QScripts */ = {
 			isa = PBXGroup;
 			children = (
-				CB77D24814D73E8F000C190D /* fontsys.png */,
-				CB77D24614D73E85000C190D /* whitesys.png */,
+				CB01A99514DEB8550015C5A0 /* fontsys.png */,
+				CB01A99614DEB8550015C5A0 /* whitesys.png */,
 				CB0208CE14CC0D3A00ECA3EA /* colors.js */,
 				CB0208CF14CC0D3A00ECA3EA /* layout.js */,
 				CB0208D014CC0D3A00ECA3EA /* qframework.js */,
@@ -557,10 +557,10 @@
 				CB02086114CC0CD000ECA3EA /* InfoPlist.strings in Resources */,
 				CB02087014CC0CD000ECA3EA /* ViewController_iPad.xib in Resources */,
 				CB40563614D304CA005587CB /* ViewController_iPhone.xib in Resources */,
-				CB77D24714D73E85000C190D /* whitesys.png in Resources */,
-				CB77D24914D73E8F000C190D /* fontsys.png in Resources */,
 				CB77D25114D9E690000C190D /* qback.png in Resources */,
 				CB77D25214D9E690000C190D /* qtext.png in Resources */,
+				CB01A99714DEB8550015C5A0 /* fontsys.png in Resources */,
+				CB01A99814DEB8550015C5A0 /* whitesys.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -80,7 +80,7 @@
     //float height = mBounds[1];
     int fieldind = 0;        
     LayoutField* field= nil;
-    float rotzadd = 0;
+    //float rotzadd = 0;
     
     for (int a=0; a< mSize ; a++)
     {

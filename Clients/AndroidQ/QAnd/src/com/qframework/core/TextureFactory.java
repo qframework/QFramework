@@ -121,14 +121,14 @@ public class TextureFactory {
 		mContext = context;
 		mTextCounter  = 1;
 		mTextures.clear();
-		mTextureDefault = loadTextureFromFile( gl, "white.png" , mContext , true);
+		mTextureDefault = loadTextureFromFile( gl, "whitesys.png" , mContext , true);
 		if (mApp.cs().getCanvasW() < 500)
 		{
-			mTextureFont = loadTextureFromFile( gl, "font.png" , mContext , true);
+			mTextureFont = loadTextureFromFile( gl, "fontsys.png" , mContext , true);
 		}
 		else
 		{
-			mTextureFont = loadTextureFromFile( gl, "fonts.png" , mContext, true);
+			mTextureFont = loadTextureFromFile( gl, "fontsys.png" , mContext, true);
 		}
 		for (int a=0; a< mInfos.size(); a++)
 		{

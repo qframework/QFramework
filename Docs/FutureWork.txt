@@ -1,0 +1,66 @@
+Here is list of features that will be developed in future:
+
+Server:
+
+1. Upgrade server python interface
+
+2. Server connection with SQL Database (Postgres).
+
+3. Auto conf for linux make file.
+
+4. Visual Studio 2010 project file.
+
+5. Design server develop examples.
+
+6. Support for zipped requests.
+
+7. Secure transport on server and client.
+
+QFramework:
+
+1. Try / Catch / Final clauses, for q framework commands.
+
+2. Framework protocol error reporting to client.
+
+3. More Area types, scrolling lists, selectors, radio buttons.
+
+4. Improved animations and its definition.
+
+5. Billboards support
+
+6. Sprite support
+
+7. Improved batch rendering for objects.
+
+8. 3d Model file format importing 
+
+9. 3d Object animations (frame and skeleton).
+
+10. Particle effects.
+
+11. Syntax  upgrade.
+
+12. Protocol improvement for speed and size.
+
+13. Camera animation, exposing projection camera parameters.
+
+14. Box2D integration.
+
+3dSystem
+
+1. Vertex buffers support
+
+2. Shader support
+
+3. Lights
+
+4. Moving all platforms to shaders, or support in parallel opengl es 1.0
+
+5. More speed optimizations for rendering and transformations.
+
+
+Prototype:
+
+1. Application manager for q scripts.
+
+2. Remote fetching of resources.

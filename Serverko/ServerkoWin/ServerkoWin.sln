@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerkoWin", "ServerkoWin.vcxproj", "{729DC84F-98B3-4BD4-8FEF-958A4BCC1ED1}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Srvk", "..\Srvk\Srvk\Srvk.vcxproj", "{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ServerkoDll", "..\ServerkoDll\ServerkoDll.vcxproj", "{DF0012E3-A9DB-4993-BE4B-38AE4A9547CD}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{729DC84F-98B3-4BD4-8FEF-958A4BCC1ED1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{729DC84F-98B3-4BD4-8FEF-958A4BCC1ED1}.Debug|Win32.Build.0 = Debug|Win32
+		{729DC84F-98B3-4BD4-8FEF-958A4BCC1ED1}.Release|Win32.ActiveCfg = Release|Win32
+		{729DC84F-98B3-4BD4-8FEF-958A4BCC1ED1}.Release|Win32.Build.0 = Release|Win32
+		{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}.Debug|Win32.ActiveCfg = Debug|Win32
+		{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}.Debug|Win32.Build.0 = Debug|Win32
+		{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}.Release|Win32.ActiveCfg = Release|Win32
+		{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}.Release|Win32.Build.0 = Release|Win32
+		{DF0012E3-A9DB-4993-BE4B-38AE4A9547CD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DF0012E3-A9DB-4993-BE4B-38AE4A9547CD}.Debug|Win32.Build.0 = Debug|Win32
+		{DF0012E3-A9DB-4993-BE4B-38AE4A9547CD}.Release|Win32.ActiveCfg = Release|Win32
+		{DF0012E3-A9DB-4993-BE4B-38AE4A9547CD}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

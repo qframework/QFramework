@@ -1,0 +1,175 @@
+pregame events
+
+	// sending event
+	server.eventPre( event_id , event_timeout );
+
+	// server will call JS function
+	game_onPreEvent( event_id )
+	
+	
+	// event state / list
+	// - 0 - event deal - start dealing cards
+	// - 1 - event zovi - somebody is calling for adut
+	// - 2 - event zovnuto -somebody called adut - game comencing
+	// - 3 - event zvanja  - zvanja  
+	
+game events
+
+	// sending event
+	server.eventGame( event_id , event_timeout );
+	
+	// server will call JS function
+	game_onGameEvent( event_id)
+
+	// event state / list
+	// - 0 - event game starts - cards dealed - game starts
+	// - 1 - event played card - player throwed card
+	// - 2 - event end turn. 4 cards played. new turn will start
+
+postgamevents
+
+	// sending event
+	server.eventPost( event_id , event_timeout );
+	
+
+arraydata
+	// TODO array data client sending - not just broadcasting
+	// array data sending
+
+	// start data session
+	server.startData();
+	
+	// append array data to session
+	server.appendString(array_id, num_ofentries, cards);
+	
+	// order server to send data to all clients
+	server.sendData();
+
+	// array data IDS
+	// - 0 - player 0 cards - 8 fields
+	// - 1 - player 1 cards - 8 fields
+	// - 2 - player 2 cards - 8 fields
+	// - 3 - player 3 cards - 8 fields
+	
+	// - 9 - player 0 card hints - 8 fields
+	// -10 - player 1 card hints - 8 fields
+	// -11 - player 2 card hints - 8 fields
+	// -12 - player 3 card hints - 8 fields
+	
+	// - 4 - cards on table - 4 fields
+	
+	// 
+	// - 5 - player 0 zvanja - 8
+	// - 6 - player 1 zvanja - 8
+	// - 7 - player 2 zvanja - 8
+	// - 8 - player 3 zvanja - 8
+	
+	
+	// - 13 - scoreboard tim 0 - 
+	// - 14 - scoreboard tim 0 - 
+	
+	// - 15 - tko je zvao - 0 - player - 1 boja
+	
+message sending
+	
+	// start seerver data sesssion
+	server.startData();
+	
+	server.appendMessage(message_id ,  message_iddata , message_string, message_delay);
+	
+	// send data to all clients
+	server.sendData();		
+	
+	// message strings
+	// 	id 			data 		str example						delay
+	//  1 			1			ZOVE DALJE						0
+	//  10-14		colorid		JE ZOVNUO BOJU					0
+	//  20  		score		TIM 0 JE PROSAO					0
+	//  21  		score		TIM 1 JE PROSAO					0
+	//  22  		score		TIM 0 JE PAO					0
+	//  23  		score		TIM 1 JE PAO					0	
+	
+	//  30  		NA			igrac 0 nosi stih				0
+	//  31  		NA			igrac 1 nosi stih				0
+	//  32  		NA			igrac 2 nosi stih				0
+	//  33  		NA			igrac 3 nosi stih				0	
+		
+	// 40           NA          zvanja igrac 1
+	// 41           NA          zvanja igrac 2
+	// 42           NA          zvanja igrac 3
+	// 43           NA          zvanja igrac 4
+	
+pre events sending
+
+server.appendEvent( gameevent_id, gameevent_data, gameevent_string);
+	
+	// id 		data			string
+	
+	
+	// 0        - 1             - 1                - karte podijeljenje
+	// 1        player          				   - zove dalje
+	// 2        player          boja				   - pozvao
+	// 3 		player			zvanje_data       - ima zvanja - slijedi data
+	
+
+
+
+	// id 		data			string
+	
+	// 10        -               - 									- igra pocinje
+	// 11        igrac           - karta                             - neko bacio
+	// 12        tkonosi         - karte koje su na stolu            - neko nosi
+	// 13 		tim			    - score_tim:score_tim2				- tim prosao
+	// 14 		tim			    - score_tim:score_tim2				- tim pao
+
+	
+// server commands
+
+// $list				 - lists current active games
+// $add bela.js		 - adds new game 
+// $start <no>			 - starts game with ID - id is returned by add
+// $stop  <no>			 - stops game with ID
+// $pause <no>		     - pauses game with ID (stops events executing)
+//
+	
+	// TODO
+	
+	// user register/login
+	// multiple game rooms - client list
+	// game room info
+	// game room login
+	// server commands for game creation/ closing/ info/ restarting
+	// server /client commands emulation for game rooms commands
+	
+	// client
+	// ispis aduta
+	// ispis imena
+	// refresh prvog hinta
+	// 
+	
+	// js - debug /trace na client strani
+	//  ispis karata po imenima/ bojama
+	
+	// debug - zadane pozicije u skriptu
+	
+	
+	
+	// javascript/php
+	// na apache serveru - php (ili javascript) mora poslati zahtjev 
+	
+	// igre za sada
+	// 1 - bela
+	// 2 - covjece ne ljuti se
+	// 3 - poker
+	// 4 - poker automat
+	// 5 - neka multiplayer dugotrajna strategija - riziko?
+	// 
+	
+	
+// PHP - apache - web server
+// php se mora spojiti na TCP - ili http - od moga servera
+// server - dodati newconnect - koji vraca id sessiona
+// na taj session se sve mora referencirati
+// HTTP tuneliranje - HTTP connect - sve kroz tunel - podatke j2me primjer
+// php - parametri
+// istestirati na java clientu

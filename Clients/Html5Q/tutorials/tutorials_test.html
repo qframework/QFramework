@@ -1,0 +1,124 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Q Unit Test WebGL </title>
+
+<script type="text/javascript" src="common/socket.io.js"></script>
+<script type="text/javascript" src="common/webgl-utils.js" > </script>
+<script type="text/javascript" src="common/J3DI.js" > </script>
+<script type="text/javascript" src="common/J3DIMath.js" > </script>
+<script type="text/javascript" src="common/utils.js" > </script>
+<script type="text/javascript" src="qframework/GameonWorld.js" > </script>
+<script type="text/javascript" src="qframework/GameonModelRef.js" > </script>
+<script type="text/javascript" src="qframework/TextRender.js" > </script>
+<script type="text/javascript" src="qframework/TextItem.js" > </script>
+<script type="text/javascript" src="qframework/AnimData.js" > </script>
+<script type="text/javascript" src="qframework/AnimFactory.js" > </script>
+<script type="text/javascript" src="qframework/AreaIndexPair.js" > </script>
+<script type="text/javascript" src="qframework/GLColor.js" > </script>
+<script type="text/javascript" src="qframework/GLVertex.js" > </script>
+<script type="text/javascript" src="qframework/GLShape.js" > </script>
+<script type="text/javascript" src="qframework/GLFace.js" > </script>
+<script type="text/javascript" src="qframework/GLModel.js" > </script>
+<script type="text/javascript" src="qframework/TextureFactory.js" > </script>
+<script type="text/javascript" src="qframework/ColorFactory.js" > </script>
+<script type="text/javascript" src="qframework/SoundFactory.js" > </script>
+<script type="text/javascript" src="qframework/GameonModelData.js" > </script>
+<script type="text/javascript" src="qframework/ItemFactory.js" > </script>
+<script type="text/javascript" src="qframework/ObjectsFactory.js" > </script>
+<script type="text/javascript" src="qframework/LayoutField.js" > </script>
+<script type="text/javascript" src="qframework/LayoutItem.js" > </script>
+<script type="text/javascript" src="qframework/LayoutArea.js" > </script>
+<script type="text/javascript" src="qframework/LayoutAreaCards.js" > </script>
+<script type="text/javascript" src="qframework/LayoutAreaLayout.js" > </script>
+<script type="text/javascript" src="qframework/LayoutAreaTable.js" > </script>
+<script type="text/javascript" src="qframework/LayoutAreaText.js" > </script>
+<script type="text/javascript" src="qframework/GMath.js" > </script>
+<script type="text/javascript" src="qframework/GameonCS.js" > </script>
+<script type="text/javascript" src="qframework/GameonModel.js" > </script>
+<script type="text/javascript" src="qframework/GameonWorldView.js" > </script>
+<script type="text/javascript" src="qframework/LayoutGrid.js" > </script>
+<script type="text/javascript" src="qframework/ServerkoParse.js" > </script>
+<script type="text/javascript" src="qframework/Settings.js" > </script>
+<script type="text/javascript" src="qframework/GameonApp.js" > </script>
+<script type="text/javascript" src="qres/colors.js" > </script>
+<script type="text/javascript" src="qres/room.js" > </script>
+<script type="text/javascript" src="qres/layout.js" > </script>
+<script type="text/javascript" src="qres/serverkobridge.js" > </script>
+<script type="text/javascript" src="qres/qframework.js" > </script>
+<script type="text/javascript" src="qstarter.js" > </script>
+<script id="vshader" type="x-shader/x-vertex">
+    uniform mat4 u_modelProjMatrix;
+	uniform mat4 u_modelViewMatrix;
+    //uniform mat4 u_normalMatrix;
+    //uniform vec3 lightDir;
+
+	attribute vec4 vColor;
+    attribute vec2 vTexCoord;
+    attribute vec3 vPosition;
+    
+
+    varying vec2 v_texCoord;
+	varying lowp vec4 v_Color;
+    void main()
+    {
+        gl_Position = u_modelProjMatrix * u_modelViewMatrix * vec4(vPosition, 1.0);
+        v_texCoord = vTexCoord;
+		v_Color = vColor;
+    }
+</script>
+
+<script id="fshader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    uniform sampler2D sampler2d;
+	uniform vec2 texOffset;
+	uniform vec2 texOffsetF;
+	uniform vec4 ambientL;
+	
+    varying vec2 v_texCoord;
+	varying vec4 v_Color;
+	
+	
+    void main()
+    {
+		vec3 ct,cf;
+		vec2 texCoord;
+		vec4 textColor;
+		float af,at;
+		
+		if (v_texCoord.s > 1.0)
+		{
+			texCoord = vec2(v_texCoord.s + texOffsetF.s-1.0, v_texCoord.t + texOffsetF.t-1.0);
+		}else
+		{
+			texCoord = vec2(v_texCoord.s + texOffset.s, v_texCoord.t + texOffset.t);
+		}
+		textColor = texture2D(sampler2d, texCoord);
+		cf = ambientL.rgb ;
+		af = 1.0;
+		ct = textColor.rgb 	* v_Color.rgb;
+		//ct = vec3(1.0,1.0,1.0) * v_Color.rgb;
+
+		if (textColor.a <= 0.02)
+		{
+			//gl_FragColor = vec4(ct*cf, 0); 		
+			discard;
+		}else
+		{
+			at = textColor.a * v_Color.a;
+			gl_FragColor = vec4(ct*cf, at*af); 				
+		}
+    }
+</script>
+
+</head>
+
+<body onload="qstart()">
+<canvas id="qappcanvas" style="border: 0px solid #000000; background-color: #000000FF;" width="800" height="600">
+    If you're seeing this your web browser doesn't support the &lt;canvas>&gt; element. Ouch!
+</canvas>
+<div id="framerate"></div>
+</body>
+
+</html>

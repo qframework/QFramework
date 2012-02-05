@@ -1,0 +1,3 @@
+<set>
+<sqll_req>CREATE TABLE Entity ( Name varchar(30), Type int(3) )</sqll_req>
+</set>

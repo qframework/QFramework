@@ -1,0 +1,11 @@
+LIBRARY ServerkoDll
+
+EXPORTS
+			
+	server_onPushCommand
+	
+	server_onPullCommandRes
+	
+	server_start
+	
+	server_stop

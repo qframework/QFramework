@@ -1,0 +1,4 @@
+<sql><req>sql</req><data>card.db</data></sql>
+<tc><req>add</req><data>main_chat/main_chat.js</data></tc>
+<tc><req>add</req><data>bela/bela.js</data></tc> 
+<tc><req>add</req><data>sorry/sorry.js</data></tc> 

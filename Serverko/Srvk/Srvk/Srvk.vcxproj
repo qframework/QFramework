@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}</ProjectGuid>
+    <RootNamespace>Srvk</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files %28x86%29\boost\boost_1_47;C:\Python27\include;G:\v8new\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Python27\libs;C:\Program Files %28x86%29\boost\boost_1_47\lib;G:\v8;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">G:\v8new\include;C:\Program Files %28x86%29\boost\boost_1_47;C:\Python27\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files %28x86%29\boost\boost_1_47\lib;C:\Python27\libs;G:\v8new;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions> -D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_WIN32_WINNT=0x0501;_ATL_SECURE_NO_DEPRECATE;WIN32_LEAN_AND_MEAN;BOOST_PYTHON_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4503;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE; ATL_SECURE_NO_DEPRECATE;_WIN32_WINNT=0x0501;WIN32_LEAN_AND_MEAN;BOOST_PYTHON_STATIC_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="servermanager\serverclient.cpp" />
+    <ClCompile Include="servermanager\servermanager.cpp" />
+    <ClCompile Include="scriptmanager\jsscript.cpp" />
+    <ClCompile Include="scriptmanager\pyscript.cpp" />
+    <ClCompile Include="scriptmanager\script.cpp" />
+    <ClCompile Include="scriptmanager\scriptclient.cpp" />
+    <ClCompile Include="scriptmanager\scriptclients.cpp" />
+    <ClCompile Include="scriptmanager\scripteventbase.cpp" />
+    <ClCompile Include="scriptmanager\scriptevents.cpp" />
+    <ClCompile Include="scriptmanager\scriptlanguage.cpp" />
+    <ClCompile Include="scriptmanager\scriptmanager.cpp" />
+    <ClCompile Include="scriptmanager\scriptrequest.cpp" />
+    <ClCompile Include="scriptmanager\scriptscore.cpp" />
+    <ClCompile Include="scriptmanager\scriptsession.cpp" />
+    <ClCompile Include="scriptmanager\scriptsessionevent.cpp" />
+    <ClCompile Include="scriptmanager\scriptsplayer.cpp" />
+    <ClCompile Include="threadmanager\threadmanager.cpp" />
+    <ClCompile Include="threadmanager\timerservice.cpp" />
+    <ClCompile Include="serverapi\serverko.cpp" />
+    <ClCompile Include="httpserv\dataselector.cpp" />
+    <ClCompile Include="httpserv\httpconnection.cpp" />
+    <ClCompile Include="httpserv\httpreply.cpp" />
+    <ClCompile Include="httpserv\httprequesthandler.cpp" />
+    <ClCompile Include="httpserv\httprequestparser.cpp" />
+    <ClCompile Include="httpserv\httpserver.cpp" />
+    <ClCompile Include="httpserv\httpuser.cpp" />
+    <ClCompile Include="httpserv\localdataselector.cpp" />
+    <ClCompile Include="tools\base64.cpp" />
+    <ClCompile Include="tools\io_service_pool.cpp" />
+    <ClCompile Include="tools\sha1.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="servermanager\serverclient.h" />
+    <ClInclude Include="servermanager\servermanager.h" />
+    <ClInclude Include="scriptmanager\jsscript.h" />
+    <ClInclude Include="scriptmanager\pyscript.h" />
+    <ClInclude Include="scriptmanager\script.h" />
+    <ClInclude Include="scriptmanager\scriptclient.h" />
+    <ClInclude Include="scriptmanager\scriptclients.h" />
+    <ClInclude Include="scriptmanager\scripteventbase.h" />
+    <ClInclude Include="scriptmanager\scriptevents.h" />
+    <ClInclude Include="scriptmanager\scriptlanguage.h" />
+    <ClInclude Include="scriptmanager\scriptmanager.h" />
+    <ClInclude Include="scriptmanager\scriptrequest.h" />
+    <ClInclude Include="scriptmanager\scriptscore.h" />
+    <ClInclude Include="scriptmanager\scriptsession.h" />
+    <ClInclude Include="scriptmanager\scriptsessionevent.h" />
+    <ClInclude Include="scriptmanager\scriptsplayer.h" />
+    <ClInclude Include="threadmanager\threadmanager.h" />
+    <ClInclude Include="threadmanager\timerservice.h" />
+    <ClInclude Include="serverapi\serverko.h" />
+    <ClInclude Include="httpserv\dataselector.h" />
+    <ClInclude Include="httpserv\httpconnection.h" />
+    <ClInclude Include="httpserv\httpheader.h" />
+    <ClInclude Include="httpserv\httpreply.h" />
+    <ClInclude Include="httpserv\httprequest.h" />
+    <ClInclude Include="httpserv\httprequesthandler.h" />
+    <ClInclude Include="httpserv\httprequestparser.h" />
+    <ClInclude Include="httpserv\httpserver.h" />
+    <ClInclude Include="httpserv\httpuser.h" />
+    <ClInclude Include="httpserv\localdataselector.h" />
+    <ClInclude Include="tools\base64.h" />
+    <ClInclude Include="tools\io_service_pool.hpp" />
+    <ClInclude Include="tools\md5.h" />
+    <ClInclude Include="tools\sha1.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

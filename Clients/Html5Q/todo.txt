@@ -1,0 +1,2 @@
+1. remove dependecies that are not needed, prog initialization? fix qstarter.js
+2. unit tests

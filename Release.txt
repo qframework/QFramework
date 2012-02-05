@@ -1,0 +1,3 @@
+Release 0.1:
+- Supported platforms IOS, Android, Java, HTML5 
+- Initial release.

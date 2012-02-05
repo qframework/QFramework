@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="servermanager">
+      <UniqueIdentifier>{1c5f40e1-efbf-481f-afb7-7c043149cd44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scriptmanager">
+      <UniqueIdentifier>{b1caca01-b7d0-465b-9570-9fc6531cc8ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="threadmanager">
+      <UniqueIdentifier>{b2c5bad6-cbfc-49f6-b999-98a655ff76d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="serverapi">
+      <UniqueIdentifier>{90187009-ed40-40fe-8630-f3be044c9894}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="httpserv">
+      <UniqueIdentifier>{6289839d-338f-4c11-aba7-e7de86d8dc8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tools">
+      <UniqueIdentifier>{4912cce6-c492-4d20-a4da-9fd818f06d0e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="servermanager\serverclient.cpp">
+      <Filter>servermanager</Filter>
+    </ClCompile>
+    <ClCompile Include="servermanager\servermanager.cpp">
+      <Filter>servermanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\jsscript.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\pyscript.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\script.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptclient.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptclients.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scripteventbase.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptevents.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptlanguage.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptmanager.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptrequest.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptscore.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptsession.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptsessionevent.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="scriptmanager\scriptsplayer.cpp">
+      <Filter>scriptmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="threadmanager\threadmanager.cpp">
+      <Filter>threadmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="threadmanager\timerservice.cpp">
+      <Filter>threadmanager</Filter>
+    </ClCompile>
+    <ClCompile Include="serverapi\serverko.cpp">
+      <Filter>serverapi</Filter>
+    </ClCompile>
+    <ClCompile Include="httpserv\dataselector.cpp">
+      <Filter>httpserv</Filter>
+    </ClCompile>
+    <ClCompile Include="httpserv\httpconnection.cpp">
+      <Filter>httpserv</Filter>
+    </ClCompile>
+    <ClCompile Include="httpserv\httpreply.cpp">
+      <Filter>httpserv</Filter>
+    </ClCompile>
+    <ClCompile Include="httpserv\httprequesthandler.cpp">
+      <Filter>httpserv</Filter>
+    </ClCompile>
+    <ClCompile Include="httpserv\httprequestparser.cpp">
+      <Filter>httpserv</Filter>
+    </ClCompile>
+    <ClCompile Include="httpserv\httpserver.cpp">
+      <Filter>httpserv</Filter>
+    </ClCompile>
+    <ClCompile Include="httpserv\httpuser.cpp">
+      <Filter>httpserv</Filter>
+    </ClCompile>
+    <ClCompile Include="httpserv\localdataselector.cpp">
+      <Filter>httpserv</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\base64.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\io_service_pool.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
+    <ClCompile Include="tools\sha1.cpp">
+      <Filter>tools</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="servermanager\serverclient.h">
+      <Filter>servermanager</Filter>
+    </ClInclude>
+    <ClInclude Include="servermanager\servermanager.h">
+      <Filter>servermanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\jsscript.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\pyscript.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\script.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptclient.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptclients.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scripteventbase.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptevents.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptlanguage.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptmanager.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptrequest.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptscore.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptsession.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptsessionevent.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="scriptmanager\scriptsplayer.h">
+      <Filter>scriptmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="threadmanager\threadmanager.h">
+      <Filter>threadmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="threadmanager\timerservice.h">
+      <Filter>threadmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="serverapi\serverko.h">
+      <Filter>serverapi</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\dataselector.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\httpconnection.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\httpheader.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\httpreply.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\httprequest.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\httprequesthandler.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\httprequestparser.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\httpserver.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\httpuser.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="httpserv\localdataselector.h">
+      <Filter>httpserv</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\base64.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\io_service_pool.hpp">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\md5.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+    <ClInclude Include="tools\sha1.h">
+      <Filter>tools</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>

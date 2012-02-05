@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Srvk", "Srvk\Srvk.vcproj", "{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EC8B7909-62AF-470D-A75D-E1D89C837142} = {EC8B7909-62AF-470D-A75D-E1D89C837142}
+		{7EC1CD32-B495-4D35-BF62-7BE77491D5FA} = {7EC1CD32-B495-4D35-BF62-7BE77491D5FA}
+		{8C54FABA-2523-4EF7-8ABD-1AE0B60688F8} = {8C54FABA-2523-4EF7-8ABD-1AE0B60688F8}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "expat", "expat\expat.vcproj", "{7EC1CD32-B495-4D35-BF62-7BE77491D5FA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sqlitelib", "sqlitelib\sqlitelib.vcproj", "{8C54FABA-2523-4EF7-8ABD-1AE0B60688F8}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "v8_base", "v8\tools\visual_studio\v8_base.vcproj", "{EC8B7909-62AF-470D-A75D-E1D89C837142}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}.Debug|Win32.ActiveCfg = Debug|Win32
+		{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}.Debug|Win32.Build.0 = Debug|Win32
+		{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}.Release|Win32.ActiveCfg = Release|Win32
+		{136A527B-44EC-45A5-B8C2-FE2DF39A4E09}.Release|Win32.Build.0 = Release|Win32
+		{7EC1CD32-B495-4D35-BF62-7BE77491D5FA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7EC1CD32-B495-4D35-BF62-7BE77491D5FA}.Debug|Win32.Build.0 = Debug|Win32
+		{7EC1CD32-B495-4D35-BF62-7BE77491D5FA}.Release|Win32.ActiveCfg = Release|Win32
+		{7EC1CD32-B495-4D35-BF62-7BE77491D5FA}.Release|Win32.Build.0 = Release|Win32
+		{8C54FABA-2523-4EF7-8ABD-1AE0B60688F8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8C54FABA-2523-4EF7-8ABD-1AE0B60688F8}.Debug|Win32.Build.0 = Debug|Win32
+		{8C54FABA-2523-4EF7-8ABD-1AE0B60688F8}.Release|Win32.ActiveCfg = Release|Win32
+		{8C54FABA-2523-4EF7-8ABD-1AE0B60688F8}.Release|Win32.Build.0 = Release|Win32
+		{EC8B7909-62AF-470D-A75D-E1D89C837142}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EC8B7909-62AF-470D-A75D-E1D89C837142}.Debug|Win32.Build.0 = Debug|Win32
+		{EC8B7909-62AF-470D-A75D-E1D89C837142}.Release|Win32.ActiveCfg = Release|Win32
+		{EC8B7909-62AF-470D-A75D-E1D89C837142}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

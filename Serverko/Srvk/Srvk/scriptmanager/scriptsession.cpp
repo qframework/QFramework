@@ -563,7 +563,7 @@ namespace qserver
       return;
     }
 
-    pClient->sendData();
+    //pClient->sendData();
   }
 
 
@@ -765,7 +765,8 @@ namespace qserver
       break;
     case ScriptRequest::SCRIPT_SEND_DATA:
       {
-        sendData();
+        //sendData(req->mStrData);
+          broadcastMessage( req->mStrData.c_str() );
       }
       break;
     case ScriptRequest::SCRIPT_CLIENT_START_DATA:
@@ -780,7 +781,13 @@ namespace qserver
       break;
     case ScriptRequest::SCRIPT_CLIENT_SEND_DATA:
       {
-        clientSendData(req->mStrUser.c_str());
+        //clientSendData(req->mStrUser.c_str());
+        ScriptClient* pClient = findSessionClient(req->mStrUser.c_str());
+        if (pClient == NULL)
+        {
+        return;
+        }
+        pClient->sendData(req->mStrData.c_str());
       }
       break;
     case ScriptRequest::SCRIPT_EVENT:
@@ -957,5 +964,13 @@ namespace qserver
     }
   }
 
+  Script::Type ScriptSession::getType()
+  {
+      if (mScript)
+      {
+          return mScript->getType();
+      }
+      return Script::NONE;
+  }
 } //namespace qserver
 

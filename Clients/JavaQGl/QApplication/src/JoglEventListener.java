@@ -105,7 +105,7 @@ public class JoglEventListener implements GLEventListener, KeyListener, MouseLis
 		//System.out.println("  mouseDragged " + e.getX() + " " + e.getY());
 		if (mClicked)
 		{
-			mApp.mouseDragged(e.getX(), e.getY());
+			mApp.mouseDragged(e.getX(), e.getY() , false);
 		}
 	}
 

@@ -82,6 +82,7 @@ protected:
   std::vector<ScriptSession*>       mScripts;      // TODO - vector of games
   std::string               mServerID;
   unsigned int              mInfoEvent;
+  int                       mJSScriptsCount;
   
 };
 

@@ -134,6 +134,10 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\scriptpool\scripts\examples\cards.js" />
+    <None Include="..\scriptpool\scripts\examples\cards.py" />
+    <None Include="..\scriptpool\scripts\framework\qframework.py" />
+    <None Include="..\scriptpool\scripts\framework\serverkobridge.py" />
     <None Include="res\ServerkoWin.ico" />
     <None Include="res\ServerkoWin.rc2" />
     <None Include="..\scriptpool\scripts\boot.py" />
@@ -141,12 +145,10 @@
     <None Include="..\scriptpool\scripts\framework\colors.py" />
     <None Include="..\scriptpool\scripts\framework\layout.js" />
     <None Include="..\scriptpool\scripts\framework\layout.py" />
-    <None Include="..\scriptpool\scripts\framework\members.js" />
     <None Include="..\scriptpool\scripts\framework\qframework.js" />
     <None Include="..\scriptpool\scripts\framework\room.js" />
     <None Include="..\scriptpool\scripts\framework\room.py" />
     <None Include="..\scriptpool\scripts\framework\serverkobridge.js" />
-    <None Include="..\scriptpool\scripts\framework\session.js" />
     <None Include="..\scriptpool\scripts\serverb\serverb.js" />
     <None Include="ReadMe.txt" />
   </ItemGroup>

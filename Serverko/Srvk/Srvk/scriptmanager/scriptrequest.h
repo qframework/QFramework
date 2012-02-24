@@ -92,7 +92,8 @@ public:
   std::string       mStrData2;
   std::string       mStrData3;
   std::string       mStrData4;
-  
+  std::string       mStrData5;
+  std::string       mStrData6;  
 
   int               mIntData;
   int               mIntData2;

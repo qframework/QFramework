@@ -70,7 +70,7 @@ public class LayoutItem {
 		}
 		
 	    float height = 1.0f;//
-			mModelRef.setPosition(x, y , z+0.01f);
+		mModelRef.setPosition(x, y , z+0.01f);
 		mModelRef.setScale(w, h , height);
 		mModelRef.setRotate( 0, 0, 0);
 		mModelRef.apply();
@@ -161,7 +161,7 @@ public class LayoutItem {
 		{
 			mModelRef.setAreaPosition(area.mLocation);
 			mModelRef.setAreaRotate(area.mRotation);
-			//mModelRef.setAreaScale(area.mBounds);
+			mModelRef.mulScale(area.mBounds);
 			mModelRef.set();
 		}
 		

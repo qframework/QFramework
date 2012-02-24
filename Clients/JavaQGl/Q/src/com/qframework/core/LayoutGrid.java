@@ -84,16 +84,18 @@ public class LayoutGrid {
 
     private LayoutArea processAreaData2(JSONObject areaData) {
     	String items = null;
+    	String fields = null;
+    	
     	try {
 			String type = areaData.getString("type");
 			String id = areaData.getString("id");
 			LayoutArea areaold = this.getArea(id);
 			if (areaold != null)
 			{
-				System.out.println("removing area " + areaold.mID);
+				//System.out.println("removing area " + areaold.mID);
 				removeArea(areaold);
 			}
-			System.out.println("create area " + id);
+			//System.out.println("create area " + id);
 	        LayoutArea area = createArea(type);
 	        if (area == null) {
 		            return null;
@@ -106,7 +108,7 @@ public class LayoutGrid {
 	        while(iter.hasNext())
 	        {
 	        	String obj = (String)iter.next();
-	        	System.out.println( areaData.getString(obj) );
+	        	//System.out.println( areaData.getString(obj) );
 	        	
 		        if (obj.equals("size"))
 		        {	        
@@ -155,17 +157,25 @@ public class LayoutGrid {
 		        	area.updateBorder(areaData.getString(obj));
 		        }else if (obj.equals("fields"))
 		        {	        	        
-		            area.createFields(areaData.getString(obj));
+		            fields = areaData.getString(obj);
 		        }else if (obj.equals("items"))
 		        {	        	        
 		            items = areaData.getString(obj);
 		        }else if (obj.equals("rotation"))
 		        {	        	        
 		            area.setRotation(areaData.getString(obj));
+		        }else if (obj.equals("scrollers"))
+		        {	        	        
+		            area.setScrollers(areaData.getString(obj));
 		        }	        		        
 	        	
 	        }
 	        
+	        
+	        if (fields != null)
+	        {
+	        	area.createFields(fields);
+	        }
 	        area.initLayout();
 	        if (items != null)
 	        {
@@ -268,6 +278,7 @@ public class LayoutGrid {
             area.updateLocation(strData);
         }
     }
+
     public void setAreaRotation(String areaid, String strData) {
         LayoutArea area = getArea(areaid);
         if (area != null) {
@@ -275,6 +286,15 @@ public class LayoutGrid {
             area.setRotation(strData);
         }
     }    
+    
+    public void areaSetScrollers(String areaid, String strData) {
+        LayoutArea area = getArea(areaid);
+        if (area != null) {
+        	//area.clear();
+            area.setScrollers(strData);
+        }
+    }    
+    
     
     public void setAreaScale(String areaid, String strData) {
         LayoutArea area = getArea(areaid);
@@ -459,8 +479,29 @@ public class LayoutGrid {
     {
         try {
 			String respid = response.getString("id");
-			String respdata = response.getString("data");
+			String respdata = null;
+			String respdata2 = null;
+			String respdata3 = null;
+			String respdata4 = null;
 			String resptype = response.getString("type");
+			if (response.has("data"))
+			{
+				respdata = response.getString("data");
+			}
+			
+			if (response.has("data2"))
+			{
+				respdata2 = response.getString("data2");
+			}
+			if (response.has("data3"))
+			{
+				respdata3 = response.getString("data3");
+			}
+			if (response.has("data4"))
+			{
+				respdata4 = response.getString("data4");
+			}						
+			
 			int eventid = Integer.parseInt( respid);
 		  switch (eventid) {
 
@@ -496,15 +537,16 @@ public class LayoutGrid {
 		    onCameraSet(resptype , respdata);
 		    break;            
 		  case 2502:
-		    onCameraProj(resptype , respdata);
+		    onCameraProj(resptype , respdata, respdata2);
 		    break;				    
 		  case 2510:
 		    onCameraFitHud(resptype , respdata);
 		    break;
 		  case 2511:
 		    onCameraSetHud(resptype , respdata);
+		    break;
 		  case 2512:
-		    onCameraProjHud(resptype , respdata);				    
+		    onCameraProjHud(resptype , respdata , respdata2);				    
 		    break;
 			    
 		case 3001:
@@ -598,6 +640,12 @@ public class LayoutGrid {
 		case 3120:
 			areaUpdateTextColor(resptype, respdata);
 			break;			
+		case 3400:
+			areaSetScrollers(resptype, respdata);
+			break;
+		case 3210:
+			areaAnim(resptype, respdata  , respdata2 , respdata3);
+			break;				
 		  }		  
 
         } catch (JSONException e) {
@@ -606,6 +654,15 @@ public class LayoutGrid {
 	}
 	
 
+    private void areaAnim(String areaid, String type, String delay, String data)
+    {
+    	
+        LayoutArea area = getArea(areaid);
+        if (area != null) {
+        	area.anim(type, delay , data);
+        }
+    	
+    }
 	private void onAreaClear(String type, String strData, boolean items) {
         LayoutArea area = getArea(type);
         if (area != null) {
@@ -731,7 +788,7 @@ public class LayoutGrid {
     	//System.out.println(  "moveFigureA " + areaFrom + " " + indexFrom + " "+ areaTo + " " + indexTo);
     	if (indexFrom < 0 || indexTo < 0)
     	{
-    		System.out.println(  "moveFigureA " + areaFrom + " " + indexFrom + " "+ areaTo + " " + indexTo);
+    		//System.out.println(  "moveFigureA " + areaFrom + " " + indexFrom + " "+ areaTo + " " + indexTo);
     		return;
     	}
         // TODO move animation
@@ -797,15 +854,22 @@ public class LayoutGrid {
     	for (int a=mVisibleAreas.size()-1; a>=0 ; a--)
         {
         	LayoutArea ahud = mVisibleAreas.get(a);
+        	if (ahud.mActiveItems == 0)
+        	{
+        		continue;
+        	}
         	if (click)
         	{
         		if ( ahud.mOnclick == null || ahud.mOnclick.length() == 0 )
         			continue;
         	}else
         	{
-        		if ( (ahud.mOnFocusGain== null || ahud.mOnFocusGain.length() == 0) &&  
+        		if (!ahud.mHasScrollV && !ahud.mHasScrollH)
+        		{
+        			if ( (ahud.mOnFocusGain== null || ahud.mOnFocusGain.length() == 0) &&  
         			(ahud.mOnFocusLost== null || ahud.mOnFocusLost.length() == 0))
-        			continue;
+        				continue;
+        		}
         	}
         	
         	if (ahud.mDisplay != GameonWorld.Display.HUD )
@@ -828,15 +892,24 @@ public class LayoutGrid {
         for (int a=mVisibleAreas.size()-1; a>=0 ; a--)
         {
         	LayoutArea ahud = mVisibleAreas.get(a);
+        	if (ahud.mActiveItems == 0)
+        	{
+        		continue;
+        	}
+        	
         	if (click)
         	{
         		if ( ahud.mOnclick == null || ahud.mOnclick.length() == 0 )
         			continue;
         	}else
         	{
-        		if ( (ahud.mOnFocusGain== null || ahud.mOnFocusGain.length() == 0) &&  
-        			(ahud.mOnFocusLost== null || ahud.mOnFocusLost.length() == 0))
-        			continue;
+        		if (!ahud.mHasScrollV && !ahud.mHasScrollH)
+        		{
+        		
+	        		if ( (ahud.mOnFocusGain== null || ahud.mOnFocusGain.length() == 0) &&  
+	        			(ahud.mOnFocusLost== null || ahud.mOnFocusLost.length() == 0))
+	        			continue;
+        		}
         	}
         	if (ahud.mDisplay == GameonWorld.Display.HUD)
         	{
@@ -943,30 +1016,31 @@ public class LayoutGrid {
     	
     }
 
-    void onCameraProjHud(String fov , String  farnear)
+    void onCameraProjHud(String fov , String  far, String near)
     {
     	float fovf = Float.parseFloat(fov);
     	
-    	StringTokenizer tok =  new StringTokenizer(farnear, ",");
     	float farf = 0;
     	float nearf = 0;
-    	if (tok.hasMoreTokens()) nearf = Float.parseFloat( tok.nextToken());
-    	if (tok.hasMoreTokens()) farf = Float.parseFloat( tok.nextToken());
+    	nearf = Float.parseFloat( far);
+    	farf = Float.parseFloat( near);
 
     	mApp.view().setFovHud(fovf, nearf, farf);
+    	mApp.setScreenBounds();
+    	
     }
     
-    void onCameraProj(String fov , String  farnear)
+    void onCameraProj(String fov , String  far, String near)
     {
     	float fovf = Float.parseFloat(fov);
     	
-    	StringTokenizer tok =  new StringTokenizer(farnear, ",");
     	float farf = 0;
     	float nearf = 0;
-    	if (tok.hasMoreTokens()) nearf = Float.parseFloat( tok.nextToken());
-    	if (tok.hasMoreTokens()) farf = Float.parseFloat( tok.nextToken());
+    	nearf = Float.parseFloat( far);
+    	farf = Float.parseFloat( near);
 
     	mApp.view().setFov(fovf, nearf, farf);
+    	mApp.setScreenBounds();
     }
 
     
@@ -1005,6 +1079,10 @@ public class LayoutGrid {
         if (areas == null)
         {
             areas = new Areas();
+            if (pageid.equals("*"))
+            {
+            	areas.mVisible = true;
+            }
             mPageIds.put( pageid , areas);
         }
         area.mPageId = pageid;

@@ -76,10 +76,14 @@ public:
   void putScriptRequest(ScriptRequest::ScriptRequestType type, const char* pUser, int roomid, 
                             int data, const char* pVal1, const char* pVal2, const char* pVal3);
   void putScriptRequest(ScriptRequest::ScriptRequestType type, const char* pUser, int roomid, 
+                            int data, const char* pVal1, const char** pVal2);
+
+  void putScriptRequest(ScriptRequest::ScriptRequestType type, const char* pUser, int roomid, 
                             int data, int data2, const char* pVal1);
 
   void putScriptRequest(ScriptRequest::ScriptRequestType type, const char* pUser, int roomid, 
                             const char* pVal1, const char* pVal2, const char* pVal3, const char* pVal4);
+
 
 private:
 

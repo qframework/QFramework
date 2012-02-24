@@ -59,7 +59,7 @@ public:
    * @param fnama a referenct to script name
    * @return true on success
    */
-  virtual bool loadGameScript(const std::string& fname);
+  virtual bool loadScript(const std::string& fname);
 
   /** 
    * Executes script game init function
@@ -114,13 +114,21 @@ public:
    */
   virtual bool execOnClientData(const char* pId, const char* pData);
 
+  void loadFramework();
+  
+  bool loadGameScript(const std::string& fname);
+
+  bool execScript(const std::string& sourcescript);
+
 protected:
 
   /** 
-   * Loads new JS module in namespace
+   * Loads new module in namespace
    * @param pModule a pointer to module name
    */
   virtual void loadModule(const char* pModule);
+
+  virtual void loadModule2(const char* pModule);
 
   /** 
    * traces current script error

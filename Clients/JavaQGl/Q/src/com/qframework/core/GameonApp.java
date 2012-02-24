@@ -87,6 +87,12 @@ public class GameonApp {
 	private GLU mGlu;
     private boolean			  mRendering  = false;
 
+    private float mLastDrag[] = new float[3];
+    private float mLastDist = 0;
+    private long mLastDragTime = 0;
+    private long mLastClickTime = 0;
+    protected boolean mSupportOld = false;
+    
     public GameonApp(Applet context, String appname/*, EAGLViewInterface view*/)
     {
 
@@ -111,6 +117,8 @@ public class GameonApp {
         mItems = new ItemFactory(this);
         mCS = new GameonCS();    	
         mSettings.init(mScript, appname);
+        
+        mLastDrag[0] = 1e07f;
     }
         
     public GameonApp(JFrame context, String appname) {
@@ -188,6 +196,7 @@ public class GameonApp {
     public void onClick(float[] vec, float[] vecHud) {
 		if (!mTouchEnabled)
 			return;    
+		long delay = System.currentTimeMillis() - mLastClickTime;
     	
     	AreaIndexPair field = mDataGrid.onClickNearest(vec, vecHud);
 
@@ -203,7 +212,10 @@ public class GameonApp {
     			}else
     			{
     				String cmd  = datastr.substring(3);
-    				cmd += "('" + field.mArea + "',"+ field.mIndex + ");" ;
+    				cmd += "('" + field.mArea + "',"+ field.mIndex;
+    				cmd += "," + delay + ",[" + field.mLoc[0] + "," + field.mLoc[1] + "," + field.mLoc[2] + "]";
+    				cmd += ","+mLastDist;
+    				cmd += ");" ;
     				mScript.execScript(cmd);
     			}
     		}else
@@ -217,6 +229,7 @@ public class GameonApp {
     		onFocusLost(mFocused);
     		mFocused = null;
     	}    	
+    	mLastDist = 0;
 	}
 
 	public void init()
@@ -278,7 +291,7 @@ public class GameonApp {
                         null, null);
                 if (option == JOptionPane.YES_OPTION)
                 {
-                	String truncated = area.getText().replaceAll("[^A-Za-z0-9 ]", ""); 
+                	String truncated = area.getText().replaceAll("[^A-Za-z0-9:. ]", ""); 
                 	String script = respdata + "('" + truncated + "' , 1);";
                 	mScript.execScript(script);
                 }else
@@ -324,6 +337,7 @@ public class GameonApp {
     {
 	 	mCS.init((float)width, (float)height, 1);
     	mGlu  = glu;
+    	mCS.setGlu(glu);
         mView.onSurfaceChanged(gl, width, height);
         mView.onSurfaceCreated(gl, glu);
     }
@@ -430,10 +444,20 @@ public class GameonApp {
 	    mScript.send(data);
 	}
 
-	public void mouseDragged(int x, int y) {
+	public void mouseDragged(int x, int y, boolean notimecheck) {
 		// 
 		if (!mTouchEnabled)
 			return;
+		
+		if (this.mFrameDeltaTime == 0)
+			mLastDragTime += 100;
+		else
+			mLastDragTime += this.mFrameDeltaTime;
+		if (!notimecheck && mLastDragTime < 100)
+		{
+			return;
+		}
+		mLastDragTime = 0;
 		
 		float rayVec[] = new float[3];
 		float rayVecHud[] = new float[3];
@@ -442,19 +466,49 @@ public class GameonApp {
     	AreaIndexPair field = mDataGrid.onDragNearest(rayVec , rayVecHud);
     	if (field != null && mFocused != null)
     	{
+    		if (field.mArea.equals( mFocused.mArea) )
+    		{
+    			if (mLastDrag[0] == 1e07f)
+    			{
+    				mLastDrag[0] = field.mLoc[0];
+    				mLastDrag[1] = field.mLoc[1];
+    				mLastDrag[2] = field.mLoc[2];
+    				return;
+    			}else
+    			{
+    				float delta0 = field.mLoc[0]-mLastDrag[0];
+    				float delta1 = field.mLoc[1]-mLastDrag[1];
+    				float delta2 = field.mLoc[2]-mLastDrag[2];
+    				mLastDist = (float)Math.sqrt( (delta0*delta0)+(delta1*delta1)+(delta2*delta2) );
+    				
+    				LayoutArea area = mDataGrid.getArea(field.mArea);
+    				if (area != null)
+    				{
+    					area.onDragg(field.mLoc[0] -mLastDrag[0],
+    									field.mLoc[1] -mLastDrag[1],
+    									field.mLoc[2] -mLastDrag[2]);
+    				}
+    			}
+    			
+				mLastDrag[0] = field.mLoc[0];
+				mLastDrag[1] = field.mLoc[1];
+				mLastDrag[2] = field.mLoc[2];
+    		}
     		if (field.mArea.equals( mFocused.mArea) && 
     			field.mIndex == mFocused.mIndex)
     		{
+    			// moving around focused item
     			return;
     		}else
     		{
     			onFocusLost(mFocused);
     			mFocused = null;
+    			mLastDrag[0] = 1e07f;
     		}
     	}else if (mFocused != null)
     	{
     		onFocusLost(mFocused);
-			mFocused = null;        		
+			mFocused = null;   
     	}
     	mFocused = field;
     	if (field != null)
@@ -462,7 +516,7 @@ public class GameonApp {
     		onFocusGain(field);
     	}
   
-		
+    	mLastDrag[0] = 1e07f;		
 	}
 	
 	
@@ -521,7 +575,8 @@ public class GameonApp {
 	
 	public void onFocusProbe(int x, int y)
 	{
-		this.mouseDragged(x, y);
+		mLastClickTime = System.currentTimeMillis();
+		this.mouseDragged(x, y , true);
 	}
 	
 	public void setSplash(String splash, long delay)
@@ -611,10 +666,14 @@ public class GameonApp {
 		mAnims.process(gl, mFrameDeltaTime);
 		execResponses(gl);
 		mWorld.addModels();
+
+		// flush textures 
+		mTextures.flushTextures(gl);
 	}
 	
 	public boolean hasData()
 	{
+		
 		//System.out.println("to skip " + mResponsesQueue.size() + " " + mAnims.getCount());
 		if (mDrawSPlash)
 		{
@@ -712,6 +771,9 @@ public class GameonApp {
 				case 4000:
 					mTextures.newTexture(gl ,resptype  , respdata, true);
 					break;
+				case 4001:
+					mTextures.deleteTexture(gl ,resptype );
+					break;					
 				case 4100:
 					mObjectsFact.create(resptype , respdata);
 					break;
@@ -729,7 +791,10 @@ public class GameonApp {
 					break;
 				case 4150:
 					mObjectsFact.remove(resptype , respdata);
-					break;			
+					break;
+				case 4160:
+					mObjectsFact.rotate(resptype , respdata);
+					break;							
 				case 4200:
 					mAnims.move(resptype , respdata , respdata2,respdata3);
 					break;			
@@ -870,5 +935,10 @@ public class GameonApp {
 		{
 			mAppWDir += "/";
 		}
+	}
+	
+	public void supportOld(boolean support)
+	{
+		mSupportOld = support;		
 	}
 }

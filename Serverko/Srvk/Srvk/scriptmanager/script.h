@@ -35,7 +35,6 @@ typedef struct _StringString
   std::string mValue;
 } StringString;
 
-
 class ScriptSession;
 
 /** 
@@ -45,6 +44,15 @@ class ScriptSession;
 class Script
 {
 public:
+
+    typedef enum _Type
+    {
+        NONE,
+        JAVASCRIPT,
+        PYTHON
+
+    } Type;
+
 
   /** 
    * Constructor
@@ -131,6 +139,8 @@ public:
    */
   static Script* get(const char* pScript);
 
+  Type getType();
+
 public:
 
   /** 
@@ -138,98 +148,18 @@ public:
    */
   void onRoomInfo(const char* pInfo);
 
-  /** 
-   * Starts data buffer for all clients
-   */
-  void startData();
-
-  /** 
-   * Appends event to data buffer 
-   * @param id an id of event
-   * @param pType a type tag of event data
-   * @param pData a data tag of event data
-   */
-  void appendEvent(int id1, const char* pType, const char* pData );
-
-  /** 
+   /** 
    * Send data buffer to all clients
    */
-  void sendData();
+  void sendData(const char* pData);
 
-  /** 
-   * Store layout to layout map
-   */
-  void storeLayout(const char* pName);
-
-  /** 
-   * Starts client data buffer 
-   * @param pUserID a pointer to user
-   */
-  void clientStartData(const char *pUserID);
-
-  /** 
-   * Appends protocol tag data to client data buffer 
-   * @param pUserID a pointer to user
-   * @param pTag a pointer to tag name
-   * @param pValue a pointer to data of tag
-   */
-  void clientAppendTag(const char *pUserID, const char* pTag, const char* pValue );
-
-  /** 
-   * Appends protocol start tag to client data buffer 
-   * @param pUserID a pointer to user
-   * @param pTag a pointer to tag name
-   */
-  void clientStartTag(const char *pUserID, const char* pTag);
-  void clientStartTags(const char *pUserID, const char* pTag);
-
-  /** 
-   * Ends tag to client data buffer 
-   * @param pUserID a pointer to user
-   * @param pTag a pointer to tag name
-   */
-  void clientEndTag(const char *pUserID, const char* pTag);
-  void clientEndTags(const char *pUserID, const char* pTag);
-  void clientAppendSeparator(const char *pUserID);
-
-  /** 
-   * Appends protocol tag data to data buffer 
-   * @param pTag a pointer to tag name
-   * @param pValue a pointer to data of tag
-   */
-  void appendTag(const char* pTag, const char* pValue );
-
-  /** 
-   * Appends protocol start tag to data buffer 
-   * @param pTag a pointer to tag name
-   */
-  void startTag(const char* pTag);
-  void startTags(const char* pTag);
-
-  /** 
-   * Ends tag to data buffer 
-   * @param pTag a pointer to tag name
-   */
-  void endTag(const char* pTag);
-  void endTags(const char* pTag);
-  void appendSeparator();
-
-
-  /** 
-   * Appends event data to client data buffer 
-   * @param pUserID a pointer to user
-   * @param id1 an event id
-   * @param pType a pointer to event type 
-   * @param pData a pointer to event data
-   */
-  void clientAppendEvent(const char *pUserID, int id1, const char* pType, const char* pData );
 
 
   /** 
    * Sends data to client
    * @param pUserID a pointer to user
    */
-  void clientSendData(const char *pUserID);
+  void clientSendData(const char *pUserID , const char* pData);
 
   void disconnectClient(const char *pUserID);
 
@@ -303,6 +233,9 @@ public:
 
   std::string             mWDir;
 
+  std::vector<std::string> mLoadedScripts;
+
+  Type              mScriptType;
 };
 
 }  //namespace qserver

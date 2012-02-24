@@ -1,13 +1,22 @@
 #start
-serverko.trace('INFO: boot statup ')
+console.log('boot statup ')
 
-#start server also as listener
-serverko.startHttp('8085')
+#start server as http listener at port
+serverkob.startHttp('8080')
 
-#add script to listen to room stats
-#serverko.scriptAdd('serverb' , 'serverb.js' , 'sb'); 
+#add script to listen to room stats , must be started as first!
+# for now it is hardcoded that this script will recieve info about other rooms
+serverkob.scriptAdd('serverb' , 'serverb.js' , 'sb'); 
 
-#serverko.scriptAdd('bela' , 'main.js', '0. ');
+#add other scripts ' syntah, working folder relative to scripts - startup script , its name
+
+testnames = [ "JS Cards example", "PY Cards example"];
 
 
-serverko.trace('JS:DONE ')
+testscripts = ["cards.js", "cards.py"]
+
+for a in range(0, len(testscripts)):
+    Q.scriptAdd('examples' , testscripts[a], testnames[a])
+
+console.log('DONE ')
+

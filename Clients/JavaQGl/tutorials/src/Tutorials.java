@@ -24,6 +24,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.media.opengl.GL2;
 import javax.media.opengl.awt.GLCanvas;
 import javax.swing.Timer;
 

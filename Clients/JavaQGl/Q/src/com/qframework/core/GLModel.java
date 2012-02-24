@@ -167,8 +167,18 @@ public class GLModel {
 	{
 		if (mTextureID != mLastText || mApp.textures().isUpdated())
 		{
-			gl.glBindTexture(GL2.GL_TEXTURE_2D, mTextureID);
-			mLastText = mTextureID;
+			if (gl.glIsTexture(mTextureID))
+			{
+				gl.glBindTexture(GL2.GL_TEXTURE_2D, mTextureID);
+				mLastText = mTextureID;
+				
+			}else
+			{
+				gl.glBindTexture(GL2.GL_TEXTURE_2D, 1);
+				mLastText = 1;
+				
+			}
+			
 			mApp.textures().resetUpdated();
 		}
 	}

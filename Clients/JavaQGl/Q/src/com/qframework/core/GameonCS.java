@@ -42,7 +42,10 @@ public class GameonCS {
 	 private  GLU glu;
 	 private float[] mHudBBox = new float[8];
 	 private float[] mWorldBBox = new float[8];
-	
+	 private float mUpZ[] = new float[3];
+	 private float mUpZHud[] = new float[3];
+	 
+	 
 	 public GameonCS()
 	 {
 		 mCameraEye[0] = 0;
@@ -51,7 +54,15 @@ public class GameonCS {
 		 
 		 mCameraEyeHud[0] = 0;
 		 mCameraEyeHud[1] = 0;
-		 mCameraEyeHud[2] = 5;		 
+		 mCameraEyeHud[2] = 5;
+		 
+		 mUpZ[0] = 0;
+		 mUpZ[1] = 1;
+		 mUpZ[2] = 0;
+		 
+		 mUpZHud[0] = 0;
+		 mUpZHud[1] = 1;
+		 mUpZHud[2] = 0;		 
 	 }
      public void setGlu(GLU g)
     {
@@ -66,15 +77,16 @@ public class GameonCS {
     	}
     }
     
-     void saveProjection( GL2 gl,float left, float right, float top, float bottom, float near, float far )
+     void saveProjection( float left, float right, float top, float bottom, float near, float far )
     {
-        gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, mProjection, 0);
-        gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, mProjectionHud, 0);
+    	 GMath.frustrum(left,right,top,bottom,near,far, mProjection);
+        //gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, mProjection, 0);
     }
 
-     void saveProjectionHud( GL2 gl,float left, float right, float top, float bottom, float near, float far )
+     void saveProjectionHud( float left, float right, float top, float bottom, float near, float far )
     {
-        gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, mProjectionHud, 0);
+    	 GMath.frustrum(left,right,top,bottom,near,far, mProjectionHud);
+        //gl.glGetFloatv(GL2.GL_PROJECTION_MATRIX, mProjectionHud, 0);
     }
     
 
@@ -176,7 +188,7 @@ public class GameonCS {
 		float c[] = new float[3];
 		y = mViewport[3] - y;
 		glu.gluUnProject(x,y, 1.0f,mLookAtHud, 0 ,
-				mProjection, 0 ,
+				mProjectionHud, 0 ,
 				mViewport, 0 ,
 				c , 0);
 		vec[0] = c[0] - this.mCameraEyeHud[0];
@@ -190,11 +202,11 @@ public class GameonCS {
 		y = mViewport[3] - y;
 
 		glu.gluUnProject(x,y, 1.0f,mLookAtHud, 0 ,
-				mProjection, 0 ,
+				mProjectionHud, 0 ,
 				mViewport, 0 ,
 				f , 0);
 		glu.gluUnProject(x,y, 0.0f,mLookAtHud, 0 ,
-				mProjection, 0 ,
+				mProjectionHud, 0 ,
 				mViewport, 0 ,
 				c , 0);    		
 		
@@ -260,8 +272,7 @@ public class GameonCS {
 	        	mCameraEye[0] = 0;
 	        	mCameraEye[1] = 0;
 	        	mCameraEye[2] = ez;
-	            float upz[] = {0,1,0};
-	            saveLookAt(mCameraEye , mCameraLookAt , upz);         	        	
+	            saveLookAt(mCameraEye , mCameraLookAt , mUpZ);         	        	
 	            return ez;
 	        }
 	         
@@ -289,15 +300,14 @@ public class GameonCS {
 	        GMath.lookAtf(lookAt,eye2,center,up);
 	        if (glu.gluProject(cordx, cordy, 0.0f, 
 	                    lookAt, 0,
-	                     mProjection,0,
+	                    mProjectionHud,0,
 	                     mViewport,0,
 	                     win,0)  &&  win[0]> 0 && win[0] < mViewport[2] )
 	        {
 	        	mCameraEyeHud[0] = 0;
 	        	mCameraEyeHud[1] = 0;	        	
 	        	mCameraEyeHud[2] = ez;
-	            float upz[] = {0,1,0};
-	            saveLookAtHud(mCameraEyeHud , mCameraLookAtHud , upz);         	        	
+	            saveLookAtHud(mCameraEyeHud , mCameraLookAtHud , mUpZHud);         	        	
 
 	            return ez;
 	        }
@@ -317,8 +327,7 @@ public class GameonCS {
 	    mCameraLookAt[1] = lookat[1];
 	    mCameraLookAt[2] = lookat[2];    
 	    
-	    float up[] = {0,1,0};
-	    saveLookAt(mCameraEye , mCameraLookAt , up);
+	    saveLookAt(mCameraEye , mCameraLookAt , mUpZ);
 	    
 	}
 
@@ -327,8 +336,7 @@ public class GameonCS {
 	    if (!mSpaceInit)
 	    {
 	        mSpaceInit = true;
-	        float up[] = {0,1,0};
-	        saveLookAt(mCameraEye ,  mCameraLookAt , up);
+	        saveLookAt(mCameraEye ,  mCameraLookAt , mUpZ);
 	        
 	    }
 
@@ -346,8 +354,7 @@ public class GameonCS {
 	    mCameraLookAtHud[1] = lookat[1];
 	    mCameraLookAtHud[2] = lookat[2];    
 
-	    float up[] = {0,1,0};
-	    saveLookAtHud(mCameraEyeHud , mCameraLookAtHud , up);
+	    saveLookAtHud(mCameraEyeHud , mCameraLookAtHud , mUpZHud);
 	    
 	    
 	    
@@ -359,8 +366,7 @@ public class GameonCS {
 	    if (!mHudInit)
 	    {
 	        mHudInit = true;
-	        float up[] = {0,1,0};
-	        saveLookAtHud(mCameraEyeHud  , mCameraLookAtHud , up);
+	        saveLookAtHud(mCameraEyeHud  , mCameraLookAtHud , mUpZHud);
 	        
 	    }
 	    gl.glMultMatrixf(mLookAtHud,0);

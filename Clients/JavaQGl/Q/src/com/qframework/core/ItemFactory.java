@@ -105,6 +105,8 @@ public class ItemFactory {
 			
 		}else if (strData.equals("cube"))
 		{
+			//GameonModel model = new GameonModel(strData , mApp);
+			//model.createObject(8,8);
 			GameonModel model = createFromType(GameonModelData.Type.CUBE, mApp.colors().white, mApp.textures().mTextureDefault);
 	        model.mModelTemplate = GameonModelData.Type.CUBE;
 	        model.mIsModel = true;

@@ -165,6 +165,9 @@ public:
   void onExecScript( ScriptSessionEvent* pEvent);
   bool started() { return mStarted; }
   void setName(const char* name) { mName = name;}
+
+  Script::Type getType();
+
 protected:
   void onClientConnected(ScriptSessionEvent* pEvent);
   void onClientReConnected(ScriptSessionEvent* pEvent);

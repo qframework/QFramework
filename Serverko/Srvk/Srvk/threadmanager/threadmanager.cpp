@@ -192,6 +192,34 @@ void ThreadManager::putScriptRequest(ScriptRequest::ScriptRequestType type,
 
 }
 
+
+
+void ThreadManager::putScriptRequest(ScriptRequest::ScriptRequestType type, 
+                                     const char* pUser, int roomid, int intdata, 
+                                     const char* pVal1, const char** pVal)
+{
+  //scoped_lock lk(mutex_req);
+
+  ScriptRequest* pReq = new ScriptRequest();
+  if (pUser)pReq->mStrUser = std::string(pUser);
+  
+  if (pVal1)pReq->mStrData = std::string(pVal1);
+  if (pVal[0])pReq->mStrData2 = std::string(pVal[0]);
+  if (pVal[1])pReq->mStrData3 = std::string(pVal[1]);
+  if (pVal[2])pReq->mStrData4 = std::string(pVal[2]);
+  if (pVal[3])pReq->mStrData5 = std::string(pVal[3]);
+  if (pVal[4])pReq->mStrData6 = std::string(pVal[4]);
+  
+
+  pReq->mType = type;
+
+  pReq->mIntData = intdata;
+  pReq->mScriptRoute = roomid;
+  mScriptManager.put(pReq);
+
+}
+
+
 void ThreadManager::putScriptRequest(ScriptRequest::ScriptRequestType type, 
                                      const char* pUser, int roomid, 
                                      const char* pVal1, const char* pVal2, const char* pVal3, const char* pVal4)

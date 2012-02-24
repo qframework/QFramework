@@ -19,6 +19,8 @@
 
 package com.qframework.core;
 
+import java.sql.Ref;
+
 import javax.media.opengl.GL2;
 
 
@@ -384,8 +386,9 @@ public class TextItem {
 		mZ = z;
 		mW = w;
 		mH = h;
+		
 		//System.out.println(" set pos " + mText + " " + mX + " " + mY+  " " + mZ + " " + mW + " " + mH);
-		set(true);
+		setRef();
 	}
 	
 	public void setRef()
@@ -428,4 +431,17 @@ public class TextItem {
 	{
 		return mRef;
 	}
+
+	public void setParentLoc(LayoutArea area) {
+		if (mRef != null)
+		{
+			mRef.setAreaPosition(area.mLocation);
+			mRef.setAreaRotate(area.mRotation);
+			mRef.mulScale(area.mBounds);
+			mRef.setAddScale(area.mScale);			
+			mRef.set();
+		}
+		
+	}
+
 }

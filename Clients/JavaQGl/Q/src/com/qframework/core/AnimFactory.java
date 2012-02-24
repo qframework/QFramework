@@ -144,7 +144,7 @@ public class AnimFactory {
 	public AnimFactory(GameonApp app)
 	{
 		mApp = app;
-		mAnimPool = new AnimData[4];
+		mAnimPool = new AnimData[16];
 		// we are using this only for ambient light, anim - will be removed
 		for (int a=0; a< mAnimPool.length; a++ ) {
 			mAnimPool[a] = new AnimData(a, mApp);
@@ -271,8 +271,6 @@ public class AnimFactory {
     	if (count == 2)
     		repeat = intdata[1];
     	buildObjectAdata(ref, atype, delay, repeat , data , callback);
-    	  
-    	// ref - is animated! - has AnimData, once allocated
     }
     
     
@@ -334,5 +332,52 @@ public class AnimFactory {
 		return mCount;
 	}
 
+
+	public AnimData getScollerAnim(LayoutArea owner)
+	{
+		AnimData adata = null;
+		for (int a=0; a< mAnimPool.length; a++) 
+		{
+			AnimData data = mAnimPool[a]; 
+			if (data.isActive() == false) 
+			{
+				if (data.mAreaOwner != null && data.mAreaOwner == owner)
+				{
+					adata = data;
+					break;
+				}
+				if (adata == null)
+				{
+					adata = data;
+				}
+			}
+		}
+		return adata;
+	}
 	
+	 public void animModelRef(String animid,GameonModelRef ref, String delaydata , String data)
+	    {
+	    	// find AnimType
+	    	if (mAnimations.containsKey(animid) == false)
+	    	{
+	    		return;
+	    	}
+	    	
+	    	int[] intdata = new int[2];
+	    	int count = ServerkoParse.parseIntArray(intdata, delaydata);
+	    	
+	    	AnimType atype = mAnimations.get(animid);
+	    	
+	    	// find ref
+
+	    	// generate AnimData from AnimType
+	    	// configure AnimData with ref!
+	    	int repeat = atype.repeat;
+	    	int delay = atype.delay;
+	    	if (count >= 1)
+	    		delay = intdata[0];    	
+	    	if (count == 2)
+	    		repeat = intdata[1];
+	    	buildObjectAdata(ref, atype, delay, repeat , data , null);
+	    }	
 }

@@ -49,21 +49,6 @@ class JS_Server
 	 */
     static v8::Handle<v8::Value> onRoomInfo(const v8::Arguments& args);
 
-
-	/** 
-	 * Start server data v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> startData(const v8::Arguments& args);
-
-
-	/** 
-	 * Appends event data v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> appendEvent(const v8::Arguments& args);
 	/** 
 	 * Sends data to all clients v8 extending function
 	 * @param args an function arguments
@@ -136,68 +121,6 @@ class JS_Server
 	 * @return result of function operation
 	 */
     static v8::Handle<v8::Value> restartScript(const v8::Arguments& args);
-
-	/** 
-	 * Starts client data buffer v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> clientStartData(const v8::Arguments& args);
-
-	/** 
-	 * Appends protocol tag event data v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> clientAppendTag(const v8::Arguments& args);
-    static v8::Handle<v8::Value> clientAppendSeparator(const v8::Arguments& args);
-
-	/** 
-	 * Starts new protocol tag v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> clientStartTag(const v8::Arguments& args);
-    static v8::Handle<v8::Value> clientStartTags(const v8::Arguments& args);
-
-	/** 
-	 * Ends tag v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> clientEndTag(const v8::Arguments& args);
-    static v8::Handle<v8::Value> clientEndTags(const v8::Arguments& args);
-
-	/** 
-	 * Appends protocol tag event data v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> appendTag(const v8::Arguments& args);
-    static v8::Handle<v8::Value> appendSeparator(const v8::Arguments& args);
-
-	/** 
-	 * Starts new protocol tag v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> startTag(const v8::Arguments& args);
-    static v8::Handle<v8::Value> startTags(const v8::Arguments& args);
-
-	/** 
-	 * Ends tag v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> endTag(const v8::Arguments& args);
-    static v8::Handle<v8::Value> endTags(const v8::Arguments& args);
-
-	/** 
-	 * Appends event to client buffer v8 extending function
-	 * @param args an function arguments
-	 * @return result of function operation
-	 */
-    static v8::Handle<v8::Value> clientAppendEvent(const v8::Arguments& args);
 
 	/** 
 	 * Sends client data v8 extending function
@@ -403,10 +326,11 @@ protected:
   v8::Persistent<v8::Function>    mRoomUserData;
 
 
-
   void loadFramework();
 
-  std::vector<std::string> mLoadedScripts;
+  bool runScript(const std::string& scriptstr);
+
+  bool mActive;
 };
 
 

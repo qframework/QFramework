@@ -109,7 +109,7 @@ public class ServerkoParse {
             String msg = null;
             while( (msg = execScript("Q.serverko.getData();")) != null && msg.length() != 0)
             {
-                //System.out.println( "Data :" + msg + "\n");
+                ///System.out.println( "Data :" + msg + "\n");
                 if (msg.length() > 0)
                 {
                 	onJSONData(msg);
@@ -165,7 +165,7 @@ public class ServerkoParse {
     }
 	public void execScriptFromFile(String fname) {
         try {
-        	System.out.println("scriptexec " + fname);
+        	//System.out.println("scriptexec " + fname);
             String location = "";
             location += fname;
             InputStream instream = mApp.getInputStream(location, false);
@@ -179,7 +179,7 @@ public class ServerkoParse {
 
 	public void execQScriptFromFile(String fname) {
         try {
-        	System.out.println("qscriptexec " + fname);
+        	//System.out.println("qscriptexec " + fname);
             String location = "";
             location += fname;
             InputStream instream = mApp.getInputStream(location, true); 
@@ -204,6 +204,10 @@ public class ServerkoParse {
 		execQScriptFromFile("layout.js");
 		execQScriptFromFile("colors.js");    
 		execQScriptFromFile("qframework.js");
+		if (mApp.mSupportOld)
+		{
+			execQScriptFromFile("supportold.js");
+		}
 	    
 	}
 
@@ -247,7 +251,6 @@ public class ServerkoParse {
 
 
 	public void execScript(final String respdata, int delay) {
-		if (delay == 0) delay = 10;
         Timer t  = new javax.swing.Timer(delay, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	execScript(respdata);

@@ -207,7 +207,7 @@ public class LayoutAreaText extends LayoutArea {
 	    	w = 0.8f;
 	    	x = 0;//0.1f * width;
 	    	bw  = 0.1f;
-	    	x1 = -width/2.1f + height/2;
+	    	x1 = -width/2.1f + 1/ratio;
 	    }
 	    
         LayoutField field = mItemFields.get(0);
@@ -236,7 +236,7 @@ public class LayoutAreaText extends LayoutArea {
 	
     public void initLayout() {
         super.initLayout();
-
+        mSizeText = mSize;
         if (mSubType == SubType.LABEL) {
             initLabel();
         } else if (mSubType == SubType.MLINE) {
@@ -248,8 +248,12 @@ public class LayoutAreaText extends LayoutArea {
         } 
 
     }	
+    
 	public void setText(String strData) 
 	{
+		if (strData == null)
+			return;
+		
 		super.setText(strData);
 	    if (strData.length() == 0 && mItemFields.size() > 0)
 	    {
@@ -290,7 +294,7 @@ public class LayoutAreaText extends LayoutArea {
 	                fc++;
 	            }
 	            
-	        }			
+	        }		
 			
 		}
 	}

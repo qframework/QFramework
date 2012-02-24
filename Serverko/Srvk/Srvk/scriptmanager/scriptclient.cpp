@@ -164,8 +164,10 @@ void ScriptClient::appendEvent(int id1, const char* id2, const char* pData)
 }
 
 
-void ScriptClient::sendData()
+void ScriptClient::sendData(const char* pData)
 {
+    send2User( mName,  pData );
+    return;
   if (mConnectionID == -1)return;
   if (mSendData.size() == 0)
   {

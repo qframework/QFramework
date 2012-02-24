@@ -64,6 +64,7 @@ public class QApplication extends JFrame {
 
      	selectWDir();
         mApp = new GameonApp(this, "QAPP");
+        mApp.supportOld(true);
         if (mWDir != null)
         	mApp.setWDir(mWDir);
         mApp.init();

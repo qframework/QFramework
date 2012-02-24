@@ -42,7 +42,8 @@ namespace qserver
 
 
 Script::Script():
-  mpParent(NULL)
+  mpParent(NULL) ,
+  mScriptType(NONE)
 {
 }
 
@@ -66,157 +67,22 @@ void Script::onRoomInfo(const char* pInfo)
 }
 
 
-void Script::startData()
-{
-  //mpParent->startData(); 
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_START_DATA, 
-                                      NULL, mpParent->getID(), 0, 
-                                     NULL, NULL, NULL);
-}
 
-
-void Script::appendEvent(int id1, const char* id2,  const char* pData )
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_APPEND_EVENT, 
-                                      NULL, mpParent->getID(), id1, 
-                                     id2, pData, NULL);
-  //mpParent->appendEvent(id1, id2, pData);
-}
-
-void Script::clientAppendTag(const char *pUserID, const char* pTag, const char* pValue )
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_CLIENT_APPEND_TAG, 
-                                      pUserID, mpParent->getID(), 0, 
-                                     pTag, pValue, NULL);
-  //mpParent->clientAppendTag(pUserID, pTag, pValue);
-}
-
-void Script::clientAppendSeparator(const char *pUserID )
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_CLIENT_APPEND_SEPARATOR, 
-                                      pUserID, mpParent->getID(), 0, 
-                                     NULL, NULL, NULL);
-  //mpParent->clientAppendSeparator(pUserID);
-}
-
-void Script::clientStartTag(const char *pUserID, const char* pTag)
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_CLIENT_START_TAG, 
-                                      pUserID, mpParent->getID(), 0, 
-                                     pTag, NULL, NULL);
-
-  //mpParent->clientStartTag(pUserID, pTag);
-}
-
-void Script::clientEndTag(const char *pUserID, const char* pTag)
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_CLIENT_END_TAG, 
-                                      pUserID, mpParent->getID(), 0, 
-                                     pTag, NULL, NULL);
-  //mpParent->clientEndTag(pUserID, pTag);
-}
-
-void Script::clientStartTags(const char *pUserID, const char* pTag)
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_CLIENT_START_TAGS, 
-                                      pUserID, mpParent->getID(), 0, 
-                                     pTag, NULL, NULL);
-  //mpParent->clientStartTags(pUserID, pTag);
-}
-
-void Script::clientEndTags(const char *pUserID, const char* pTag)
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_CLIENT_END_TAGS, 
-                                      pUserID, mpParent->getID(), 0, 
-                                     pTag, NULL, NULL);
-//  mpParent->clientEndTags(pUserID, pTag);
-}
-
-
-void Script::appendTag(const char* pTag, const char* pValue )
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_APPEND_TAG, 
-                                      NULL, mpParent->getID(), 0, 
-                                     pTag, pValue, NULL);
-  //mpParent->appendTag(pTag, pValue);
-}
-
-
-void Script::startTag(const char* pTag)
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_START_TAG, 
-                                      NULL, mpParent->getID(), 0, 
-                                     pTag, NULL, NULL);
-  //mpParent->startTag(pTag);
-}
-
-void Script::endTag(const char* pTag)
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_END_TAG, 
-                                      NULL, mpParent->getID(), 0, 
-                                     pTag, NULL, NULL);
-  //mpParent->endTag(pTag);
-}
-
-void Script::startTags(const char* pTag)
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_START_TAGS, 
-                                      NULL, mpParent->getID(), 0, 
-                                     pTag, NULL, NULL);
-  //mpParent->startTags(pTag);
-}
-
-void Script::endTags(const char* pTag)
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_END_TAGS, 
-                                      NULL, mpParent->getID(), 0, 
-                                     pTag, NULL, NULL);
-  //mpParent->endTags(pTag);
-}
-
-void Script::appendSeparator()
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_APPEND_SEPARATOR, 
-                                      NULL, mpParent->getID(), 0, 
-                                     NULL, NULL, NULL);
-  //mpParent->appendSeparator();
-}
-
-
-void Script::sendData()
+void Script::sendData(const char* pData)
 {
   threadManager.putScriptRequest(ScriptRequest::SCRIPT_SEND_DATA, 
                                       NULL, mpParent->getID(), 0, 
-                                     NULL, NULL, NULL);
+                                     pData, NULL, NULL);
   //mpParent->sendData(); 
 }
 
 
 
-void Script::clientStartData(const char *pUserID)
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_CLIENT_START_DATA, 
-                                      pUserID, mpParent->getID(), 0, 
-                                     NULL, NULL, NULL);
-  //mpParent->clientStartData(pUserID); 
-}
-
-
-void Script::clientAppendEvent(const char *pUserID, int id1, const char* id2,  const char* pData )
-{
-  threadManager.putScriptRequest(ScriptRequest::SCRIPT_CLIENT_APPEND_EVENT, 
-                                      pUserID, mpParent->getID(), id1, 
-                                     id2, pData, NULL);
-  //mpParent->clientAppendEvent(pUserID, id1, id2, pData);
-}
-
-
-
-void Script::clientSendData(const char *pUserID)
+void Script::clientSendData(const char *pUserID, const char* pData)
 {
   threadManager.putScriptRequest(ScriptRequest::SCRIPT_CLIENT_SEND_DATA, 
                                       pUserID, mpParent->getID(), 0, 
-                                     NULL, NULL, NULL);
+                                     pData, NULL, NULL);
   //mpParent->clientSendData(pUserID); 
 }
 
@@ -346,6 +212,11 @@ void Script::odeBodySetPosition(const char* name, const char* x, const char* y, 
                                     name, mpParent->getID(),  x, y, z , NULL);
 
 }
+
+Script::Type Script::getType()
+{
+    return mScriptType;
+} // namespace qserver
 
 
 

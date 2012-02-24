@@ -55,7 +55,7 @@ public class GameonWorldView {
 	    gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
-        perspective(gl , mFov , (float)mWidth/(float)mHeight, mNear , mFar);
+        perspective(gl , mFov , (float)mWidth/(float)mHeight, mNear , mFar, true);
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
 	    gl.glLoadIdentity();
@@ -68,7 +68,7 @@ public class GameonWorldView {
         
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
-        perspective(gl , mFovHud , (float)mWidth/(float)mHeight, mNearHud , mFarHud);
+        perspectiveHud(gl , mFovHud , (float)mWidth/(float)mHeight, mNearHud , mFarHud, true);
         
         gl.glMatrixMode(GL2.GL_MODELVIEW);
 	    gl.glLoadIdentity();
@@ -79,17 +79,38 @@ public class GameonWorldView {
     }
 	        
 
-    private void perspective(GL2 gl, float fovy, float aspect, float zmin , float  zmax)
+    private void perspective(GL2 gl, float fovy, float aspect, float zmin , float  zmax,boolean frustrumUpdate)
     {
         float xmin, xmax, ymin, ymax;
         ymax = zmin * (float)Math.tan(fovy * Math.PI / 360.0f);
         ymin = -ymax;
         xmin = ymin * aspect;
         xmax = ymax * aspect;
-        gl.glFrustumf(xmin, xmax, ymin, ymax, zmin, zmax);
-        mApp.cs().saveProjection(gl,xmin , xmax , ymin , ymax , zmin , zmax);
+        if (frustrumUpdate)
+        {
+        	gl.glFrustumf(xmin, xmax, ymin, ymax, zmin, zmax);
+        }else
+        {
+        	mApp.cs().saveProjection(xmin , xmax , ymin , ymax , zmin , zmax);
+        }
 	 }
-	
+
+    private void perspectiveHud(GL2 gl, float fovy, float aspect, float zmin , float  zmax,boolean frustrumUpdate)
+    {
+        float xmin, xmax, ymin, ymax;
+        ymax = zmin * (float)Math.tan(fovy * Math.PI / 360.0f);
+        ymin = -ymax;
+        xmin = ymin * aspect;
+        xmax = ymax * aspect;
+        if (frustrumUpdate)
+        {        
+        	gl.glFrustumf(xmin, xmax, ymin, ymax, zmin, zmax);
+        }else
+        {
+        	mApp.cs().saveProjectionHud(xmin , xmax , ymin , ymax , zmin , zmax);
+        }
+	 }
+
     
     public void onSurfaceChanged(GL2 gl, int width, int height) {
     	mWidth = (float)width;
@@ -98,7 +119,9 @@ public class GameonWorldView {
 
     	gl.glViewport(0, 0, width, height);
     	mApp.cs().saveViewport(width, height);
-	    perspective(gl , 45.0f , (float)mWidth/(float)mHeight , 0.1f , 8.7f);
+    	perspective(gl , mFov , (float)mWidth/(float)mHeight, mNear , mFar, false);
+    	perspectiveHud(gl , mFovHud , (float)mWidth/(float)mHeight, mNearHud , mFarHud, false);
+    	mApp.setScreenBounds();
     }
         
     public void onSurfaceCreated(GL2 gl, GLU glu) {
@@ -118,7 +141,8 @@ public class GameonWorldView {
         {
     		mApp.textures().init(gl);
         }
-    	perspective(gl , 45.0f , (float)mWidth/(float)mHeight , 0.1f , 8.7f);
+    	perspective(gl , mFov , (float)mWidth/(float)mHeight, mNear , mFar, false);
+    	perspectiveHud(gl , mFovHud , (float)mWidth/(float)mHeight, mNearHud , mFarHud, false);
     }
 
 	public boolean drawSplash(GL2 gl, GLU glu) {
@@ -126,7 +150,7 @@ public class GameonWorldView {
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
-        perspective(gl , 45.0f , (float)mWidth/(float)mHeight , 0.0001f , 28.7f);
+        perspective(gl , 45.0f , (float)mWidth/(float)mHeight , 0.1f , 28.7f, true);
 		
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();		
@@ -156,12 +180,15 @@ public class GameonWorldView {
 		mFar = farf;
 		mNear = nearf;
 		mFov = fovf;
+    	perspective(null , mFov , (float)mWidth/(float)mHeight, mNear , mFar, false);
 	}
 
 	public void setFovHud(float fovf, float nearf, float farf) {
 		mFarHud = farf;
 		mNearHud = nearf;
 		mFovHud = fovf;
+    	perspectiveHud(null , mFovHud , (float)mWidth/(float)mHeight, mNearHud , mFarHud, false);
+		
 	}
 
 }

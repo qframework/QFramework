@@ -41,6 +41,7 @@ function LayoutArea()
     this.background = undefined;
     this.border = undefined;
     this.colors = undefined;
+    this.scrollers = undefined;
 }
         
 
@@ -72,6 +73,7 @@ function Layout(qapp)
         if (send == 1)
         	this.qapp.serverko.startData();
 
+        this.qapp.serverko.reserveSpace();
         this.qapp.serverko.startTag();
         this.qapp.serverko.appendTag( "res", "layout");
         this.qapp.serverko.addSeparator()  
@@ -196,6 +198,12 @@ function Layout(qapp)
                 this.qapp.serverko.addSeparator();           
                 this.qapp.serverko.appendTag( "scale", areas[a].scale);                                                            
             }            
+
+            if (areas[a].scrollers != undefined)
+            {
+                this.qapp.serverko.addSeparator();           
+                this.qapp.serverko.appendTag( "scrollers", areas[a].scrollers);                                                            
+            }      
             
             this.qapp.serverko.endTag( "area");    /// TODO without param        
         }    
@@ -209,105 +217,42 @@ function Layout(qapp)
     this.println = function ( message)
     {
         this.qapp.serverko.appendEvent_(3180 , "stdout" , message ); //text
+        return this.qapp.serverko;
     }
-    this.print_ = function ( message)
-    {
-        this.qapp.serverko.appendEvent_(3180 , "stdout" , message ); //text
-    }    
-    
-    this.print = function ( message)
-    {
-        this.qapp.serverko.appendEvent(3180 , "stdout" , message ); //text
-    }
-    
+
 	//2000
 	this.scriptEnd = function ()
 	{
 	    this.qapp.serverko.appendEvent( 2000 , "" , "" );
+	    return this.qapp.serverko;
 	}
 //------------------------------
 	//3001 - delete area
 	this.areaDelete = function ( area)
 	{
 		this.qapp.serverko.appendEvent( 3001 , area , "" );
-	}
-
-	this.clientAreaDelete = function ( userID, area)
-	{
-		this.qapp.serverko.clientAppendEvent( userID, 3001 , area , "" );
-	}
-
-	this.areaDelete_ = function ( area)
-	{
-		this.qapp.serverko.appendEvent_( 3001 , area , "" );
-	}
-
-	this.clientAreaDelete_ = function ( userID, area)
-	{
-		this.qapp.serverko.clientAppendEvent_( userID, 3001 , area , "" );
+		return this.qapp.serverko;		
 	}
 	
 //------------------------------
 	this.areaClear = function (  area)
 	{
 		this.qapp.serverko.appendEvent( 3002 , area , "" );
+		return this.qapp.serverko;
 	}
 
-	this.areaClear_ = function (  area)
-	{
-		this.qapp.serverko.appendEvent_( 3002 , area , "" );
-	}
-	
-	this.clientAreaClear = function ( userID, area)
-	{
-		this.qapp.serverko.clientAppendEvent( userID, 3002 , area , "" );
-	}
-
-	this.clientAreaClear_ = function ( userID, area)
-	{
-		this.qapp.serverko.clientAppendEvent_( userID, 3002 , area , "" );
-	}
-	
-	//------------------------------	
+//------------------------------	
 	this.areaClearItems = function (  area)
 	{
 		this.qapp.serverko.appendEvent( 3004 , area , "" );
-	}
-
-	this.clientAreaClearItems = function ( userID, area)
-	{
-		this.qapp.serverko.clientAppendEvent( userID, 3004 , area , "" );
-	}
-
-	this.areaClearItems_ = function (  area)
-	{
-		this.qapp.serverko.appendEvent_( 3004 , area , "" );
-	}
-
-	this.clientAreaClearItems_ = function ( userID, area)
-	{
-		this.qapp.serverko.clientAppendEvent_( userID, 3004 , area , "" );
+		return this.qapp.serverko;
 	}
 
 //------------------------------
 	this.itemPlace = function ( item, itemid, areaTo, indexTo, userData)   // 3050
 	{
 	    this.qapp.serverko.appendEvent( 3050 , item +"." +itemid +"|"+userData, areaTo + "," + indexTo);
-	}
-	
-	this.clientItemPlace = function ( userID, item, itemid, areaTo, indexTo, userData)   // 3050
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3050 , item +"." +itemid +"|"+userData, areaTo + "," + indexTo);
-	}
-		
-	this.itemPlace_ = function ( item, itemid, areaTo, indexTo, userData)   // 3050
-	{
-	    this.qapp.serverko.appendEvent_( 3050 , item +"." +itemid +"|"+userData, areaTo + "," + indexTo);
-	}
-	
-	this.clientItemPlace_ = function ( userID, item, itemid, areaTo, indexTo, userData)   // 3050
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3050 , item +"." +itemid +"|"+userData, areaTo + "," + indexTo);
+	    return this.qapp.serverko;
 	}
 	
 //------------------------------
@@ -335,105 +280,35 @@ function Layout(qapp)
 	this.itemRemove               = function ( areaFrom, indexFrom)
 	{
 	    this.qapp.serverko.appendEvent( 3052 , areaFrom, indexFrom);
+	    return this.qapp.serverko;
 	}
 
-	this.clientItemRemove         = function ( userID, areaFrom, indexFrom)
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3052 , areaFrom, indexFrom);
-	}
-	
-	this.itemRemove_               = function ( areaFrom, indexFrom)
-	{
-	    this.qapp.serverko.appendEvent_( 3052 , areaFrom, indexFrom);
-	}
-
-	this.clientItemRemove_         = function ( userID, areaFrom, indexFrom)
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3052 , areaFrom, indexFrom);
-	}
-	
 //------------------------------
 	this.itemMoveA               = function ( areaFrom, indexFrom, areaTo, indexTo, type, delay, path)   // 3053
 	{
 	    this.qapp.serverko.appendEvent( 3053 , "", areaFrom + "," + indexFrom + "," + areaTo + "," + indexTo + "," + type + "," + delay + "," + path);
-	}
-	
-	this.clientItemMoveA         = 	function ( userID ,  areaFrom, indexFrom, areaTo, indexTo, type, delay, path)   // 3053
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3053 , "", areaFrom + "," + indexFrom + "," + areaTo + "," + indexTo + "," + type + "," + delay + "," + path);
-	}
-
-	this.itemMoveA_               = function ( areaFrom, indexFrom, areaTo, indexTo, type, delay, path)   // 3053
-	{
-	    this.qapp.serverko.appendEvent_( 3053 , "", areaFrom + "," + indexFrom + "," + areaTo + "," + indexTo + "," + type + "," + delay + "," + path);
-	}
-	
-	this.clientItemMoveA_         = 	function ( userID ,  areaFrom, indexFrom, areaTo, indexTo, type, delay, path)   // 3053
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3053 , "", areaFrom + "," + indexFrom + "," + areaTo + "," + indexTo + "," + type + "," + delay + "," + path);
+	    return this.qapp.serverko;
 	}
 	
 //------------------------------ 
 	this.itemsAnim               = function (areaId, type, delay)
 	{
 	    this.qapp.serverko.appendEvent( 3054 , areaId , type + "," + delay );
+	    return this.qapp.serverko;
 	}
 
-	this.clientItemsAnim         = function (userID , areaId, type, delay)
-    {
-        this.qapp.serverko.clientAppendEvent( userID , 3054 , areaId , type + "," + delay );
-    }
-
-	this.itemsAnim_               = function (areaId, type, delay)
-	{
-	    this.qapp.serverko.appendEvent_( 3054 , areaId , type + "," + delay );
-	}
-
-	this.clientItemsAnim_         = function (userID , areaId, type, delay)
-    {
-        this.qapp.serverko.clientAppendEvent_( userID , 3054 , areaId , type + "," + delay );
-    }
-	
 //------------------------------
 	this.itemAnim               = function (areaId, index , type, delay)
 	{
 	    this.qapp.serverko.appendEvent( 3055 , areaId , index + "|" + type + "," + delay );
-	}
-	
-	this.clientItemAnim               = function (userID , areaId, index , type, delay)
-	{
-	    this.qapp.serverko.clientAppendEvent(userID ,  3055 , areaId , index + "|" + type + "," + delay );
-	}
-	
-	this.itemAnim_               = function (areaId, index , type, delay)
-	{
-	    this.qapp.serverko.appendEvent_( 3055 , areaId , index + "|" + type + "," + delay );
-	}
-	
-	this.clientItemAnim_               = function (userID , areaId, index , type, delay)
-	{
-	    this.qapp.serverko.clientAppendEvent_(userID ,  3055 , areaId , index + "|" + type + "," + delay );
+	    return this.qapp.serverko;
 	}
 	
 //------------------------------
 	this.areaSetState = function ( area, state)   // 3110
 	{
 	    this.qapp.serverko.appendEvent( 3110 , area , state);
-	}
-
-	this.areaSetState_ = function ( area, state)   // 3110
-	{
-	    this.qapp.serverko.appendEvent_( 3110 , area , state);
-	}
-	
-	this.clientAreaSetState = function ( userID, area, state)   // 3110
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3110 , area , state);
-	}
-	
-	this.clientAreaSetState_ = function ( userID, area, state)   // 3110
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3110 , area , state);
+	    return this.qapp.serverko;
 	}
 
 //------------------------------
@@ -441,125 +316,42 @@ function Layout(qapp)
 	this.areaSetBounds = function ( area, bounds)   // 3120
 	{
 	    this.qapp.serverko.appendEvent( 3120 , area , bounds  );
+	    return this.qapp.serverko;
 	}
-	
-	this.clientAreaSetBounds = function ( userID, area, bounds)   // 3120
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3120 , area , bounds  );
-	}
-	
-	this.areaSetBounds_ = function ( area, bounds)   // 3120
-	{
-	    this.qapp.serverko.appendEvent_( 3120 , area , bounds  );
-	}
-	
-	this.clientAreaSetBounds_ = function ( userID, area, bounds)   // 3120
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3120 , area , bounds  );
-	}	
 	
 //------------------------------
 	this.areaSetText = function ( area, text)   
 	{
 	    this.qapp.serverko.appendEvent( 3180 , area , text );
-	}
-	
-	this.areaSetText_ = function ( area, text)   
-	{
-	    this.qapp.serverko.appendEvent_( 3180 , area , text );
-	}
-	
-	this.clientAreaSetText = function ( userID, area, text)   // 3180
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3180 , area , text );
-	}
-	
-	this.clientAreaSetText_ = function ( userID, area, text)   // 3180
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3180 , area , text );
+	    return this.qapp.serverko;
 	}
 	
 //------------------------------
 	this.areaSetLocation = function ( area , loc)
 	{
 		this.qapp.serverko.appendEvent( 3190 , area , loc );
-	}
-	this.clientAreaSetLocation = function ( userID, area, loc)   
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3190 , area , loc );
+		return this.qapp.serverko;
 	}
 
-	this.areaSetLocation_ = function ( area , loc)
-	{
-		this.qapp.serverko.appendEvent_( 3190 , area , loc );
-	}	
-	
-	this.clientAreaSetLocation_ = function ( userID, area, loc)   
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3190 , area , loc );
-	}
-	
 //------------------------------
 	this.areaSetScale = function ( area, loc)   
 	{
 	    this.qapp.serverko.appendEvent( 3191 , area , loc );
+	    return this.qapp.serverko;
 	}
 	
-	this.clientAreaSetScale = function ( userID, area, loc)   
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3191 , area , loc );
-	}
-
-	this.areaSetScale_ = function ( area, loc)   
-	{
-	    this.qapp.serverko.appendEvent_( 3191 , area , loc );
-	}
-	
-	this.clientAreaSetScale_ = function ( userID, area, loc)   
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3191 , area , loc );
-	}
-
 //------------------------------
 	this.areaSetItemScale = function ( area, index, loc)   // 3190
 	{
 	    this.qapp.serverko.appendEvent( 3192 , area , index + ","+ loc );
-	}
-	
-	this.areaSetItemScale_ = function ( area, index, loc)   // 3190
-	{
-	    this.qapp.serverko.appendEvent_( 3192 , area , index + ","+ loc );
-	}
-	
-	this.clientAreaSetItemScale_ = function ( userID, area, index, loc)   // 3190
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3192 , area , index + ","+ loc  );
-	}
-
-	this.clientAreaSetItemScale_ = function ( userID, area, index, loc)   // 3190
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3192 , area , index + ","+ loc  );
+	    return this.qapp.serverko;
 	}
 	
 //------------------------------
 	this.areaSetRotation = function ( area, loc)   
 	{
 	    this.qapp.serverko.appendEvent( 3195 , area , loc );
-	}
-	
-	this.clientAreaSetRotation = function ( userID, area, loc)   
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3195 , area , loc );
-	}
-	
-	this.areaSetRotation_ = function ( area, loc)   
-	{
-	    this.qapp.serverko.appendEvent_( 3195 , area , loc );
-	}
-	
-	this.clientAreaSetRotation_ = function ( userID, area, loc)   
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3195 , area , loc );
+	    return this.qapp.serverko;
 	}
 	
 //------------------------------
@@ -567,87 +359,29 @@ function Layout(qapp)
 	this.areaSetItemScale = function ( area, index, loc)   
 	{
 	    this.qapp.serverko.appendEvent( 3192 , area , index + ","+ loc );
-	}
-	
-	this.clientAreaSetItemScale = function ( userID, area, index, loc)   
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3192 , area , index + ","+ loc  );
-	}
-
-	this.areaSetItemScale_ = function ( area, index, loc)   
-	{
-	    this.qapp.serverko.appendEvent_( 3192 , area , index + ","+ loc );
-	}
-	
-	this.clientAreaSetItemScale_ = function ( userID, area, index, loc)   
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3192 , area , index + ","+ loc  );
+	    return this.qapp.serverko;
 	}
 	
 //------------------------------
 	this.areaSetOnclick = function ( area, data)   // 3200
 	{
 	    this.qapp.serverko.appendEvent( 3200 , area , data );
+	    return this.qapp.serverko;
 	}
-	
-	this.clientAreaSetOnclick = function ( userID, area, data)   // 3180
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3200 , area , data );
-	}
-
-	this.areaSetOnclick_ = function ( area, data)   // 3200
-	{
-	    this.qapp.serverko.appendEvent_( 3200 , area , data );
-	}
-	
-	this.clientAreaSetOnclick_ = function ( userID, area, data)   // 3180
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3200 , area , data );
-	}
-
 	
 //------------------------------
 	this.areaSetOnFocusGain = function ( area, data)   // 3200
 	{
 	    this.qapp.serverko.appendEvent( 3201 , area , data );
+	    return this.qapp.serverko;
 	}
 	
-	this.clientAreaSetOnFocusGain = function ( userID, area, data)   // 3180
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3201 , area , data );
-	}
-	this.areaSetOnFocusGain_ = function ( area, data)   // 3200
-	{
-	    this.qapp.serverko.appendEvent_( 3201 , area , data );
-	}
-	
-	this.clientAreaSetOnFocusGain_ = function ( userID, area, data)   // 3180
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3201 , area , data );
-	}
-	
-
 //------------------------------
 	
 	this.areaSetOnFocusLost = function ( area, data)   // 3200
 	{
 	    this.qapp.serverko.appendEvent( 3202 , area , data );
-	}
-	
-	this.clientAreaSetOnFocusLost = function ( userID, area, data)   // 3180
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3202 , area , data );
-	}
-	
-	
-	this.areaSetOnFocusLost_ = function ( area, data)   // 3200
-	{
-	    this.qapp.serverko.appendEvent_( 3202 , area , data );
-	}
-	
-	this.clientAreaSetOnFocusLost_ = function ( userID, area, data)   // 3180
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3202 , area , data );
+	    return this.qapp.serverko;
 	}
 	
 	
@@ -656,140 +390,51 @@ function Layout(qapp)
 	this.areaSetItems           = function ( area, items)   // 3220
 	{
 	    this.qapp.serverko.appendEvent( 3220 , area , items );
+	    return this.qapp.serverko;
 	}
 	
-	this.clientAreaSetItems     = function ( userID, area, items)   // 3220
+	//------------------------------
+	this.areaAnim = function ( area, type , delay , data )   
 	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3220 , area , items );
+	    this.qapp.serverko.appendEvent( 3210 , area , type , delay , data );
+	    return this.qapp.serverko;
 	}
 	
-	this.areaSetItems_           = function ( area, items)   // 3220
-	{
-	    this.qapp.serverko.appendEvent_( 3220 , area , items );
-	}
 	
-	this.clientAreaSetItems_     = function ( userID, area, items)   // 3220
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3220 , area , items );
-	}
-
-
-	//3221 - items
-//------------------------------
-	/*
-	this.clientAreaSetItemsA     = function ( userID, area, items)   // 3220
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3221 , area , items );
-	}
-	
-	this.areaSetItemsA           = function ( area, items) 
-	{
-	    this.qapp.serverko.appendEvent( 3221 , area , items );
-	}
-*/
 
 //------------------------------
 	
 	this.areaSetItem            = function ( area, field, item)   // 3222
 	{
 	    this.qapp.serverko.appendEvent( 3222 , area , field+","+item );
+	    return this.qapp.serverko;
 	}
-	this.areaSetItem_           = function ( area, field, item)   // 3222
-	{
-	    this.qapp.serverko.appendEvent_( 3222 , area , field+","+item );
-	}	
-	this.clientAreaSetItem      = function ( userID, area, field, item)   // 3222
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3222 , area , field+","+item );
-	}	
-	this.clientAreaSetItem_      = function ( userID, area, field, item)   // 3222
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3222 , area , field+","+item );
-	}	
-	
+
 //------------------------------
-	this.clientAreaInvertItem    = function ( userID, area, field)   // 3222
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3223 , area , field );
-	}
-	
 	this.areaInvertItem            = function ( area, field)   // 3223
 	{
 	    this.qapp.serverko.appendEvent( 3223 , area , field );
-	}
-	
-	//3223 - items
-	this.clientAreaSetItemB      = function ( userID , area, field, item)   
-	{
-	    this.qapp.serverko.clientAppendEvent( userID , 3224 , area , field+","+item );
+	    return this.qapp.serverko;
 	}
 
 	this.areaSetItemB            = function ( area, field, item) 
 	{
 	    this.qapp.serverko.appendEvent( 3224 , area , field+","+item );
-	}
-    //3225
-//------------------------------
-	/*
-    this.areaPushItemFront      = function (area, item)
-    {
-        this.qapp.serverko.appendEvent( 3225 , area , item );
-    }
-    
-	
-	//3240 - foreground
-    this.areaSetForeground = function ( area, text)   // 3240
-	{
-	    this.qapp.serverko.appendEvent( 3240 , area , text );
+	    return this.qapp.serverko;
 	}
 
-	this.clientAreaSetForeground = function ( userID , area, text)   // 3240
-	{
-	    this.qapp.serverko.clientAppendEvent( userID , 3240 , area , text );
-	}
-	*/
-	//3250 - background
-//------------------------------	
+	//------------------------------	
     this.areaSetBackground = function ( area, text)   // 3250
 	{
 	    this.qapp.serverko.appendEvent( 3250 , area , text );
+	    return this.qapp.serverko;
 	}
-
-    this.areaSetBackground_ = function ( area, text)   // 3250
-	{
-	    this.qapp.serverko.appendEvent_( 3250 , area , text );
-	}
-    
-	this.clientAreaSetBackground = function ( userID, area, text)   // 3250
-	{
-	    this.qapp.serverko.clientAppendEvent( userID , 3250 , area , text );
-	}
-
-	this.clientAreaSetBackground_ = function ( userID, area, text)   // 3250
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID , 3250 , area , text );
-	}
-
 	//3270 - fields
 //------------------------------	
 	this.areaSetFields = function ( area, fields)   // 3270
 	{
 	    this.qapp.serverko.appendEvent( 3270 , area , fields  );
-	}
-	
-	this.cilentAreaSetFields = function ( userID, area, fields)   // 3270
-	{
-	    this.qapp.serverko.clientAppendEvent( userID, 3270 , area , fields  );
-	}
-
-	this.areaSetFields_ = function ( area, fields)   // 3270
-	{
-	    this.qapp.serverko.appendEvent_( 3270 , area , fields  );
-	}
-	
-	this.cilentAreaSetFields_ = function ( userID, area, fields)   // 3270
-	{
-	    this.qapp.serverko.clientAppendEvent_( userID, 3270 , area , fields  );
+	    return this.qapp.serverko;
 	}
 	
 //------------------------------	
@@ -802,7 +447,7 @@ function Layout(qapp)
     	var data = 	"Q.startUpdate();Q.layout.areaSetBackground(";
     	data += "'" + area +"'" +  "," + "'" + oldback +"'" ;
     	data += ");Q.sendUpdate();"
-    	this.qapp.exec_( time , data);
+    	this.qapp.evals_( time , data);
     }
 
     this.updateBack_ = function (area, time , newback, oldback)
@@ -816,211 +461,76 @@ function Layout(qapp)
     	var data = 	"Q.startUpdate();Q.layout.areaSetBackground(";
     	data += "'" + area +"'" +  "," + "'" + oldback +"'" ;
     	data += ");Q.sendUpdate();"
-    	this.qapp.exec_( time , data);
+    	this.qapp.evals_( time , data);
     }
     
 //------------------------------    
     this.add = function (type,areas)
     {
         this.createLayout(type,areas , 0);
-    }
-
-    this.clientAdd = function (userID , type,areas)
-    {
-    	this.createLayout(type,areas , 0);
-    }
-    
-    this.add_ = function (type,areas)
-    {
-        this.createLayout(type,areas , 1);
-    }
-
-    this.clientAdd_ = function (userID , type,areas)
-    {
-    	this.createLayout(type,areas , 1);
+        return this.qapp.serverko;
     }
 
 //------------------------------    
     this.show = function (pageid)
     {
         this.qapp.serverko.appendEvent( 2010 , pageid , "" );
+        return this.qapp.serverko;
     }
-    this.clientShow = function (userID ,pageid)
-    {
-        this.qapp.serverko.clientAppendEvent( userID, 2010 , pageid , "" );
-    }
-
-    
-    this.show_ = function (pageid)
-    {
-        this.qapp.serverko.appendEvent_( 2010 , pageid , "" );
-    }
-    
-    this.clientShow_ = function (userID, pageid)
-    {
-        this.qapp.serverko.clientAppendEvent_( userID, 2010 , pageid , "" );
-    }
-    
 //------------------------------    
     this.showAnim = function (pageid, anim)
     {
         this.qapp.serverko.appendEvent( 2011 , pageid , anim );
-    }
-
-    this.showAnim_ = function (pageid , anim)
-    {
-        this.qapp.serverko.appendEvent_( 2011 , pageid , anim );
-    }    
-
-    this.clientShowAnim = function (userID , pageid, anim)
-    {
-        this.qapp.serverko.clientAppendEvent( userID , 2011 , pageid , anim );
+        return this.qapp.serverko;
     }
 
 //------------------------------
     this.popup = function (pageid)
     {
         this.qapp.serverko.appendEvent( 2012 , pageid , "" );
+        return this.qapp.serverko;
     }
 
-
-    this.clientPopup = function (userID ,pageid)
-    {
-        this.qapp.serverko.clientAppendEvent( userID, 2012 , pageid , "" );
-    }
-
-    this.popup_ = function (pageid)
-    {
-        this.qapp.serverko.appendEvent_( 2012 , pageid , "" );
-    }
-
-    this.clientPopup_ = function (userID ,pageid)
-    {
-        this.qapp.serverko.clientAppendEvent_( userID, 2012 , pageid , "" );
-        
-    }
-    
     this.popupAnim = function (pageid, anim)
     {
         this.qapp.serverko.appendEvent( 2013 , pageid , anim );
+        return this.qapp.serverko;
     }
     
-    
-    this.popupAnim_ = function (pageid, anim)
-    {
-        this.qapp.serverko.appendEvent_( 2013 , pageid , anim );
-        
-    }
-    
-    this.clientPopupAnim = function (userID , pageid, anim)
-    {
-        this.qapp.serverko.clientAppendEvent( userID , 2013 , pageid , anim );
-    }
-    
-    this.clientPopupAnim_ = function (userID , pageid, anim)
-    {
-        this.qapp.serverko.clientAppendEvent_( userID , 2013 , pageid , anim );
-        
-    }    
   //------------------------------    
     this.clear = function (pageid)
     {
         this.qapp.serverko.appendEvent( 2015 , pageid , "" );
+        return this.qapp.serverko;
     }
-	
-	this.clear_ = function (pageid)
-    {
-        this.qapp.serverko.appendEvent_( 2015 , pageid , "" );
-    }	
-
-    this.clientClear = function (userID , pageid)
-    {
-        this.qapp.serverko.clientAppendEvent( userID , 2015 , pageid , "" );
-    }
-	
-	this.clientClear_ = function (userID , pageid)
-    {
-        this.qapp.serverko.clientAppendEvent_( userID , 2015 , pageid , "" );
-    }	
 	
 //------------------------------    
     this.hide = function (pageid)
     {
         this.qapp.serverko.appendEvent( 2020 , pageid , "" );
+        return this.qapp.serverko;
     }
 
-    this.hide_ = function (pageid)
-    {
-        this.qapp.serverko.appendEvent_( 2020 , pageid , "" );
-    }
-    
-    this.clientHide = function(userID ,pageid)
-    {
-        this.qapp.serverko.clientAppendEvent( userID ,2020 , pageid , "" );
-    }
-    
-    this.clientHide_ = function (userID ,pageid)
-    {
-        this.qapp.serverko.clientAppendEvent_( userID ,2020 , pageid , "" );
-    }
-
-    
     this.hideAnim = function (pageid, anim)
     {
         this.qapp.serverko.appendEvent( 2021 , pageid , anim );
+        return this.qapp.serverko;
     }
 
-    
-    this.hideAnim_ = function (pageid , anim)
-    {
-        this.qapp.serverko.appendEvent_( 2021 , pageid , anim );
-    }
-    
-
-    this.clientHideAnim = function (userID , pageid, anim)
-    {
-        this.qapp.serverko.clientAppendEvent(userID , 2021 , pageid , anim );
-    }
-
-    
-    this.clientHideAnim_ = function (userID , pageid , anim)
-    {
-        this.qapp.serverko.clientAppendEvent_( userID, 2021 , pageid , anim );
-    }
     
 //------------------------------    
     
     this.editText = function (deftext, onreturn)
     {
         this.qapp.serverko.appendEvent( 1002 , deftext , onreturn );
+        return this.qapp.serverko;
     }
-    
-    this.editText_ = function (deftext, onreturn)
-    {
-        this.qapp.serverko.appendEvent_( 1002 , deftext , onreturn );
-    }
-
     
 //------------------------------    
     this.anim = function (type, data)
     {
         this.qapp.serverko.appendEvent( 2030 , type , data );
-    }
-    
-    this.anim_ = function (type, data)
-    {
-        this.qapp.serverko.appendEvent_( 2030 , type , data );
-    }
-
-
-    this.clientAnim = function (userID , type, data)
-    {
-        this.qapp.serverko.clientAppendEvent( userID , 2030 , type , data );
-    }
-    
-    this.clientAnim_ = function (userID, type, data)
-    {
-        this.qapp.serverko.clientAppendEvent_( userID, 2030 , type , data );
+        return this.qapp.serverko;
     }
     
   //------------------------------    
@@ -1037,7 +547,23 @@ function Layout(qapp)
     }   
       
 
-    
+  //------------------------------
+	this.areaSetScrollers = function ( area, loc)   
+	{
+	    this.qapp.serverko.appendEvent( 3400 , area , loc );
+	    return this.qapp.serverko;
+	}
+	
+	
+//------------------------------
+	this.areaPushItemFront = function ( area, item)   
+	{
+	    this.qapp.serverko.appendEvent( 3225,  area , item );
+	    return this.qapp.serverko;
+	}
+
+
+//------------------------------
 }
 
 //print("JS:layout_handler start "  );  
@@ -1053,11 +579,12 @@ function Textures(qapp)
 	this.newFromFile = function (name, file)
 	{
 		this.qapp.serverko.appendEvent( 4000 , name, file);
+		return this.qapp.serverko;
 	}
-
-	this.newFromFile_ = function (name, file)
+	this.remove = function (name)
 	{
-		this.qapp.serverko.appendEvent_( 4000 , name, file);
+		this.qapp.serverko.appendEvent( 4001 , name);
+		return this.qapp.serverko;
 	}
 	
     this.createTextures = function(textures, send)
@@ -1069,6 +596,7 @@ function Textures(qapp)
         if (send == 1)
         	this.qapp.serverko.startData();
 
+        this.qapp.serverko.reserveSpace();
         this.qapp.serverko.startTag();
         this.qapp.serverko.appendTag( "res", "texts");
         this.qapp.serverko.addSeparator()      
@@ -1105,22 +633,9 @@ function Textures(qapp)
     this.add = function (texts)
     {
         this.createTextures(texts , 0);
+        return this.qapp.serverko;
     }
 
-    this.clientAdd = function (userID , texts)
-    {
-    	this.createTextures(texts , 0);
-    }
-    
-    this.add_ = function (texts)
-    {
-        this.createTextures(texts , 1);
-    }
-
-    this.clientAdd_ = function (userID , texts)
-    {
-    	this.createTextures(texts , 1);
-    }
     
 }
 
@@ -1138,42 +653,29 @@ function Sounds(qapp)
 	this.newFromFile = function (name, file)
 	{
 		this.qapp.serverko.appendEvent( 5000 , name, file);
-	}
-	this.newFromFile_ = function (name, file)
-	{
-		this.qapp.serverko.appendEvent_( 5000 , name, file);
+		return this.qapp.serverko;
 	}
 
     this.play =  function (sound)
     {
     	this.qapp.serverko.appendEvent( 5010 , "play", sound );
+    	return this.qapp.serverko;
     }
 
-    this.play_ = function (sound)
-    {
-    	this.qapp.serverko.appendEvent_( 5010 , "play", sound );
-    }
 
-    
     this.volume = function (value)
     {
     	this.qapp.serverko.appendEvent( 5011 , value, "" );
+    	return this.qapp.serverko;
     }
 
-    this.volume_ = function (value)
-    {
-    	this.qapp.serverko.appendEvent_( 5011 , value, "" );
-    }
 
     this.mute = function (val)
     {
     	this.qapp.serverko.appendEvent( 5012 , "mute", val );
+    	return this.qapp.serverko;
     }
 
-    this.mute_ = function (val)
-    {
-    	this.qapp.serverko.appendEvent_( 5012 , "mute", val );
-    }
 
 
 }
@@ -1194,38 +696,26 @@ function Models(qapp)
 	this.newFromTemplate = function (name , template)
 	{
 		this.qapp.serverko.appendEvent( 6001 , name, template);
+		return this.qapp.serverko;
 	}
-	this.newFromTemplate_ = function (name , template)
-	{
-		this.qapp.serverko.appendEvent_( 6001 , name, template);
-	}
-	
 	this.setTexture = function (name, texture, offset)
 	{
 		this.qapp.serverko.appendEvent( 6002 , name, texture + ";" + offset);
-	}
-	this.setTexture_ = function (name, texture, offset)
-	{
-		this.qapp.serverko.appendEvent_( 6002 , name, texture + ";" + offset);
+		return this.qapp.serverko;
 	}
 	
 	this.create = function (name)
 	{
 		this.qapp.serverko.appendEvent( 6003 , name, "");
-	}
-	this.create_ = function (name)
-	{
-		this.qapp.serverko.appendEvent_( 6003 , name, "");
+		return this.qapp.serverko;
 	}
 
 	this.setSubmodels = function (name, count)
 	{
 		this.qapp.serverko.appendEvent( 6004 , name, count);
+		return this.qapp.serverko;
 	}
-	this.setSubmodels_ = function (name, count)
-	{
-		this.qapp.serverko.appendEvent_( 6004 , name, count);
-	}
+
 	
     this.createModels = function(objs, send)
     {
@@ -1235,6 +725,7 @@ function Models(qapp)
         if (send == 1)
         	this.qapp.serverko.startData();
 
+        this.qapp.serverko.reserveSpace();
         this.qapp.serverko.startTag();
         this.qapp.serverko.appendTag( "res", "models");
         this.qapp.serverko.addSeparator()      
@@ -1282,36 +773,11 @@ function Models(qapp)
     this.add = function (objs)
     {
         this.createModels(objs , 0);
-    }
-
-    this.clientAdd = function (userID , objs)
-    {
-    	this.createModels(objs , 0);
-    }
-    
-    this.add_ = function (objs)
-    {
-        this.createModels(objs , 1);
-    }
-
-    this.clientAdd_ = function (userID , objs)
-    {
-    	this.createModels(objs , 1);
+        return this.qapp.serverko;
     }
 
     
 }
-
-/*
-var textures = new Textures();
-var sounds = new Sounds();
-var layout = new Layout();
-var models = new Models();
-*/
-
-
-// delayed script event/execution 
-// onlick with prefix [s] will automaticly exec script
 
 function PadDigits2(n, totalDigits, str)
 {

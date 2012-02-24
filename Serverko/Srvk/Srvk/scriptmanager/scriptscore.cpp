@@ -39,7 +39,7 @@ void ScriptsCore::clear()
 }
 
 ScriptsCore::ScriptsCore()  :
-  mInfoEvent(0)
+  mInfoEvent(0) , mJSScriptsCount(0)
 {
   
 }
@@ -68,7 +68,10 @@ void ScriptsCore::doTick(unsigned int msec)
     // fire gather info 
     doInfo();
 
-    JSScript::memclean();
+    if (mJSScriptsCount)
+    {
+        JSScript::memclean();
+    }
   }
 }
 
@@ -156,18 +159,22 @@ void ScriptsCore::getGameInfo(std::string& info , int id)
 
 int ScriptsCore::addScript(ScriptSession* pScript)
 {
-  for (unsigned int a=0; a< mScripts.size(); a++)
-  {
-    if (mScripts[a] == NULL)
+    if (pScript->getType() == Script::JAVASCRIPT)
     {
-      mScripts[a] = pScript;
-      pScript->setID(a);
-      return a;
+        mJSScriptsCount++;
     }
-  }
-  mScripts.push_back(pScript);
-  pScript->setID((unsigned int)mScripts.size()-1);
-  return (unsigned int)(mScripts.size()-1);
+    for (unsigned int a=0; a< mScripts.size(); a++)
+    {
+        if (mScripts[a] == NULL)
+        {
+            mScripts[a] = pScript;
+            pScript->setID(a);
+            return a;
+        }
+    }
+    mScripts.push_back(pScript);
+    pScript->setID((unsigned int)mScripts.size()-1);
+    return (unsigned int)(mScripts.size()-1);
 }
 
 
@@ -193,7 +200,8 @@ void ScriptsCore::doInfo()
   }
   std::string info;
   getInfo(info);
-  //0 
+  // for now send only to first room
+  // TODO in future - send to registered
   ScriptSession* pServerB = mScripts[1];
   if (pServerB)
   {

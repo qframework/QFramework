@@ -26,6 +26,11 @@ import java.util.Vector;
 
 import javax.media.opengl.GL2;
 
+// TODO 
+// model creation , from formula? and parameters?
+// different geometry shapes
+// difrerent mapping
+// all programatically 
 
 public class GameonModel extends GLModel{
 	
@@ -38,7 +43,8 @@ public class GameonModel extends GLModel{
 	protected boolean mIsModel = false;
 	private GameonWorld mWorld;
 	private boolean mVisible = true;
-    
+	private boolean mActive = true;
+	
 	public GameonModel(String name, GameonApp app) {
 		super(name , app);
 		mApp = app;
@@ -486,6 +492,9 @@ public class GameonModel extends GLModel{
         
     }
 	public void setState(State state) {
+		if (!mActive && state == State.VISIBLE)
+			return;
+		
 		for (int a=0; a< mRefs.size(); a++)
 		{
 			GameonModelRef ref = mRefs.elementAt(a);
@@ -739,5 +748,24 @@ public class GameonModel extends GLModel{
 	public void unsetWorld() {
 		mWorld = null;
 		
-	}    
+	}
+	
+	protected void createAnim(String type, int refid , String delay, String data)
+	{
+		if (refid < 0 && refid >= mRefs.size())
+		{
+			return;
+		}
+		
+		GameonModelRef ref = mRefs.get(refid);
+		mApp.anims().animModelRef(type , ref, delay , data);
+		
+	}
+	
+
+	
+	protected void setActive(boolean active)
+	{
+		mActive = active;
+	}
 }

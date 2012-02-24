@@ -129,7 +129,7 @@ public:
   /** 
    * Sends data to user
    */
-  void sendData();
+  void sendData(const char* pData);
 
   /** 
    * Appends protocol tag to client data buffer

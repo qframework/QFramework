@@ -27,6 +27,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -39,6 +42,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 
@@ -61,6 +65,8 @@ public class TextureFactory {
 	HashMap<String, Integer>	mTextures = new HashMap<String, Integer>();
 	Vector<Texture>  mTextureIds = new Vector<Texture>();
 	Vector<StringString> mInfos = new Vector<StringString>();
+	Vector<String>	mToDelete = new Vector<String>();
+	
 	boolean mUpdated = false;
 	GameonApp mApp;
 	public TextureFactory(GameonApp app)
@@ -132,11 +138,44 @@ public class TextureFactory {
 		//Log.d("model", " get failed " + strData);
 		return mTextureDefault;
 	}
+	
+	public void deleteTexture(GL2 gl, String textname)
+	{
+		mToDelete.add(textname);
+	}
+	
+	public void flushTextures(GL2 gl)
+	{
+		for (int a=0; a< mToDelete.size(); a++)
+		{
+			clearTexture(gl, mToDelete.get(a));
+		}
+		mToDelete.clear();
+	}
+	
+	private void clearTexture(GL2 gl, String textname)
+	{
+		if (mTextures.containsKey(textname))
+		{
+			int id = mTextures.get(textname);
+			gl.glDeleteTextures(1 , new int[]{id} ,0);
+			mTextures.remove(textname);
+			for (int a=0; a < mInfos.size(); a++)
+			{
+				StringString info = mInfos.get(a);
+				if (info.b.equals(textname))
+				{
+					mInfos.remove(a);
+					break;
+				}
+			}
+		}
+		
+	}
 	public void clear() {
 		// TODO Auto-generated method stub
 		mTextures.clear();
 		mInfos.clear();
-				
 	}
 	
 

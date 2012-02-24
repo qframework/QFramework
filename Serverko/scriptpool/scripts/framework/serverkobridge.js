@@ -1,223 +1,311 @@
+/*
+   Copyright 2012, Telum Slavonski Brod, Croatia.
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   
+   This file is part of QFramework project, and can be used only as part of project.
+   Should be used for peace, not war :)   
+*/
+
 console = 
 { 
-	msgs: new Array(), log: function(msg) 
-	{ print(msg); }, 
-	info: function(msg) { print(msg); }, 
-	warn : function(msg) { print(msg); }, 
-	error: function(msg) { print(msg); }, 
+	msgs: new Array(), 
+    log: function(msg) 	{ print("JS:"+msg); }, 
+	info: function(msg) { print("INFO:"+msg); }, 
+	warn : function(msg) { print("WARN:"+msg); }, 
+	error: function(msg) { print("ERROR:"+msg); }, 
 	shift: function() { return console.msgs.shift(); } 
 };
 	
 
-function serverko_startData()
+function Serverko()
 {
-    serverkob.startData();
-    
+	this.databuffer = new Array();
+	this.clientbuffer = {};
+	this.sendbuffer = new Array();
+    console.log ( " client buffer " + this.clientbuffer.toString() );    	
 }
 
-function serverko_appendEvent(id, area, data)
+Serverko.prototype.startData = function ()
 {
-    serverkob.appendEvent(id, area, data);
+	if (this.databuffer.length >  300)
+	{
+		console.log("ERROR: data push large " + this.databuffer[300]);
+	}
+	this.databuffer.push(new Array())
 }
 
-function serverko_sendData()
+Serverko.prototype.appendEvent = 	function (id, area, data , data2, data3, data4, data5)
 {
-    serverkob.sendData();
+	if (this.databuffer.length == 0)
+	{
+		this.databuffer.push(new Array());
+	}
+
+	var str = "";
+			
+	str += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area;
+	        
+	if (data != undefined)
+	    str += "\",\"data\":\""+data;
+	if (data2 != undefined)
+	    str += "\",\"data2\":\""+data2;
+	if (data3 != undefined)
+	    str += "\",\"data3\":\""+data3;
+	if (data4 != undefined)
+	    str += "\",\"data4\":\""+data4;	        
+	        
+	        	
+	str += "\"}";
+	        
+	this.databuffer[ this.databuffer.length -1 ].push( str );
+}
+	
+Serverko.prototype.appendEvent_ = 	function (id, area, data , data2, data3, data4, data5)
+{
+    this.startData();
+    this.appendEvent(area, data , data2, data3, data4, data5)
+    this.sendData();
+}
+	
+	
+Serverko.prototype.clientStartData = 	function (userID)
+{
+	// just in case of recursion , is 300 decent number? it was for spartans..
+	databuffer = this.clientbuffer[userID];
+
+	if (databuffer.length >  300)
+	{
+		console.log("ERROR: data push large " + databuffer[300]);
+	}
+	databuffer.push(new Array())
 }
 
-
-
-function serverko_clientStartData(userID)
+Serverko.prototype.clientAppendEvent = function (userID , id, area, data, data2, data3, data4)
 {
-    serverkob.clientStartData(userID);
+    databuffer = this.clientbuffer[userID];
+
+	if (databuffer.length == 0)
+	{
+		databuffer.push(new Array());
+	}
+
+	var str = "";
+			
+			
+	str += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area;
+	        
+	if (data != undefined)
+	    str += "\",\"data\":\""+data;
+	if (data2 != undefined)
+	    str += "\",\"data2\":\""+data2;
+	if (data3 != undefined)
+	    str += "\",\"data3\":\""+data3;
+	if (data4 != undefined)
+	    str += "\",\"data4\":\""+data4;	        
+	        
+	        	
+	str += "\"}";
+	        
+	databuffer[ databuffer.length -1 ].push( str );
+                
 }
 
-function serverko_clientAppendEvent(userID , id, area, data)
+Serverko.prototype.clientAppendEvent_ = function (userID , id, area, data, data2, data3, data4)
 {
-    serverkob.clientAppendEvent(userID , id, area, data)
+	this.clientStartData(userID);
+    this.clientAppendEvent(id, area, data, data2, data3, data4)
+	this.clientSendData(userID);
 }
 
-function serverko_clientSendData(userID)
+Serverko.prototype.reserveSpace = function ()
 {
-    serverkob.clientSendData(userID);
-}
-
-function serverko_disconnectClient(userID)
-{
-    serverkob.disconnectClient(userID);
-}
-
-
-function serverko_startTag(id) 
-{
-	serverkob.startTag(id);
-}
-
-function serverko_appendTag( id, data)
-{
-	serverkob._appendTag( id, data);
-}
-
-function serverko_endTag(id)
-{
-	serverkob.endTag(id);
-}
-
-function serverko_startTag2(id) 
-{
-    serverkob.startTag(id);
-
-}
-
-function serverko_appendTag2( id, data)
-{
-    serverkob.appendTag( id, data);
-}
-
-function serverko_startTags2( id, data)
-{
-    serverkob.startTags( id, data);
-}
-
-function serverko_endTags2(id)
-{
-    serverkob.endTags(id);
-}
-
-function serverko_appendSeparator2()
-{
-    serverkob.addSeparator();
-}
-
-
-function serverko_endTag2(id)
-{
-    serverkob.endTag(id);
-}
-
-
-
-function serverko_clientStartTag(userID , id) 
-{
-	serverkob.clientStartTag(userID , id);
-}
-
-function serverko_clientAppendTag( userID , id, data)
-{
-	serverkob.clientAppendTag( userID , id, data);
-}
-
-function serverko_clientEndTag(userID , id)
-{
-	serverkob.clientEndTag(userID , id);
-}
-
-function serverko_clientStartTag2(userID , id) 
-{
-    serverkob.clientStartTag(userID , id);
-
-}
-
-function serverko_clientAppendTag2( userID , id, data)
-{
-    serverkob.clientAppendTag( userID , id, data);
-}
-
-function serverko_clientStartTags2( userID , id)
-{
-    serverkob.clientStartTags( userID , id);
-}
-
-function serverko_clientEndTags2(userID , id)
-{
-    serverkob.clientEndTags(userID , id);
-}
-
-function serverko_clientAppendSeparator2(userID )
-{
-    serverkob.clientAddSeparator(userID );
+	if (this.databuffer.length == 0)
+	{
+		this.databuffer.push(new Array());
+	}		
+	arr = this.databuffer[ this.databuffer.length -1 ];
+	arr.push("")
 }
 
 
-function serverko_clientEndTag2(userID , id)
-{
-    serverkob.clientEndTag(userID , id);
-}
-
-
-
-function serverko_storeLayout(id)
+Serverko.prototype.startTag =  function (id) 
 {
 	
+	var str;
+    if (id != undefined)
+    {
+        str = "{\""+id+"\": ";
+    }
+    else
+    {
+        str = "{";
+    }
+    arr = this.databuffer[ this.databuffer.length -1 ]; 
+    arr[ arr.length -1 ]+= str;
+}
+
+Serverko.prototype.startTags =  	function ( id, data)
+{
+	arr = this.databuffer[ this.databuffer.length -1 ];
+	arr[arr.length-1] += "\""+id+"\": ["; 
+}
+	
+Serverko.prototype.appendTag = 	function ( id, data)
+{
+	arr = this.databuffer[ this.databuffer.length -1 ];
+	arr[arr.length-1] += "\""+id+"\": " + "\""+data+"\"";
+}
+	
+Serverko.prototype.endTag = 	function (id)
+{
+	arr = this.databuffer[ this.databuffer.length -1 ];
+	arr[arr.length-1] += "}";
+}
+	
+Serverko.prototype.endTags = 	function (id)
+{
+	arr = this.databuffer[ this.databuffer.length -1 ];
+	arr[arr.length-1] += "]";
+}        
+
+Serverko.prototype.addSeparator = function ()
+{
+	arr = this.databuffer[ this.databuffer.length -1 ];
+	arr[arr.length-1] += ",";
+}
+
+	
+// modifierers
+Serverko.prototype.toUser = function(userid)
+{
+	arr = this.databuffer[ this.databuffer.length -1 ];
+	var str = arr.pop();
+    databuffer = this.clientbuffer[userid];
+    databuffer[ databuffer.length -1 ].push( str );
+ 	return this;
+}
+	
+Serverko.prototype.toUserNow = function(userid)
+{
+	arr = this.databuffer[ this.databuffer.length -1 ];
+	var data = arr.pop();
+    var str = "{\"gs\":{\"room\":[" + data + "]}}\r\n" 
+    serverkob.clientSendData(userid , str);
+	return this;
+}	
+
+Serverko.prototype.now = function()
+{
+	arr = this.databuffer[ this.databuffer.length -1 ];
+	var data = arr.pop();
+    if (data != undefined && data.length > 0)
+    {
+        var str = "{\"gs\":{\"room\":[" + data + "]}}\r\n" 
+        serverkob.sendData(str);    
+    }
+    return this;
 }
 
 
-function serverko_loadModule(id)
+// needed
+Serverko.prototype.evals = function(delay, script) 
 {
-    serverkob.loadModule(id);
+    console.log( "  evals "  + delay + "  "  + script);
+    serverkob.evals(delay, script);
+}
+
+Serverko.prototype.evals_ = function(delay, script) 
+{
+    console.log( "  evals "  + delay + "  "  + script);
+    serverkob.evals(delay, script);
+}
     
-}
-function serverko_loadModule2(id)
+
+Serverko.prototype.sendData =  function()
 {
-	serverkob.loadModule2(id);
-    
+    if (this.databuffer.length > 0)
+	{
+		var arr = this.databuffer.pop();
+		var data = "" 
+		while (arr.length > 0)
+		{
+			data += arr.shift();
+            if (arr.length > 0)
+            {
+                data += ",";
+            }
+
+		}
+			
+		var str = "{\"gs\":{\"room\":[" + data + "]}}\r\n" 
+        serverkob.sendData(str);
+	}
+
 }
 
-function serverko_trace(str)
+Serverko.prototype.clientSendData =  function(userID)
 {
+    databuffer = this.clientbuffer[userID];
+    if (databuffer.length > 0)
+	{
+      //  console.log ( "data buff " + databuffer.toString() );
+		var arr = databuffer.pop();
+		var data = "" 
+		while (arr.length > 0)
+		{
+			data += arr.shift();
+            if (arr.length > 0)
+            {
+                data += ",";
+            }
+		}
+			
+		var str = "{\"gs\":{\"room\":[" + data + "]}}\r\n" 
+        serverkob.clientSendData(userID , str);
+	}
+
+        
 }
 
-function serverko_clientSpectate(userID , yesno)
+Serverko.prototype.sendEvent = function(id, delay, data) 
 {
-}
-
-function serverko_sendEvent(id, delay, data) {
     serverkob.sendEvent(id, delay, data);
 }
 
-function serverko_exec(delay, script) {
-    serverkob.exec(delay, script);
-}
-
-function serverko_exec_(delay, script) {
-    //print("INFO: exec " + delay + " " + script);
-    serverkob.exec(delay, script);
-}
-
-function Serverko()
+Serverko.prototype.disconnectClient =  function(id)
 {
-	this.startData = serverko_startData;
-	this.appendEvent = serverko_appendEvent;
-	this.sendData =  serverko_sendData;
-	this.clientStartData = serverko_clientStartData;
-	this.clientAppendEvent =  serverko_clientAppendEvent;
-	this.clientSendData =  serverko_clientSendData;
-	this.disconnectClient =  serverko_disconnectClient;
-	this.startTag =  serverko_startTag2;
-	this.startTags =  serverko_startTags2;        
-	this.appendTag = serverko_appendTag2;
-	this.endTag = serverko_endTag2;
-	this.endTags = serverko_endTags2;        
-	this.addSeparator = serverko_appendSeparator2;
+    serverkob.disconnectClient(id);
+}
 	
-	this.clientStartTag =  serverko_clientStartTag2;
-	this.clientStartTags =  serverko_clientStartTags2;        
-	this.clientAppendTag = serverko_clientAppendTag2;
-	this.clientEndTag = serverko_clientEndTag2;
-	this.clientEndTags = serverko_clientEndTags2;        
-	this.clientAddSeparator = serverko_clientAppendSeparator2;
-	
-			
-	this.storeLayout = serverko_storeLayout;
-	//this.getLayout = serverko_getLayout;
-	this.loadModule = serverko_loadModule;
-	this.loadModule2 = serverko_loadModule2;
-    this.trace = serverko_trace;
-    this.sendEvent = serverko_sendEvent;
-    this.clientSpectate = serverko_clientSpectate;
-    this.exec = serverko_exec;
-    this.exec_ = serverko_exec_;
-
+Serverko.prototype.loadModule = function(id)
+{
+    serverkob.loadModule(id);
 }
 
-var serverko = new Serverko();
+Serverko.prototype.loadModule2 = function(id)
+{
+    serverkob.loadModule2(id);
+}
+
+Serverko.prototype.onClientConnected = function(userID , serverko)
+{
+    console.log("connected "+ userID + " " + serverko.clientbuffer.toString());
+    serverko.clientbuffer[userID] = new Array();
+}
+
+Serverko.prototype.onClientDisconnected = function(userID , serverko)
+{
+    console.log("disconnected  "+ userID);
+    delete serverko.clientbuffer[userID];
+}

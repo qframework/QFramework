@@ -68,7 +68,7 @@ function test_loadlayout()
 	var menu3 = new MenuArea();
 	menu3.type = "text.label";
 	menu3.location= "0.0,0.6,2.4,0.25,0.0";
-	menu3.text = "test3: Q.exec_";
+	menu3.text = "test3: Q.evals";
 	menu3.onclick = "js: tq1_exec();";
 	areas.push(menu3);
 
@@ -162,6 +162,4 @@ test_loadresources();
 test_loadlayout();
 
 Q.handlers.onEvent.push(test_onData);
-// will test
-// Q.exec_
-// event
+

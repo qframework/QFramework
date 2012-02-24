@@ -105,6 +105,7 @@ public class LayoutArea {
     protected float[] mLocation = new float[5];
     protected float[] mRotation = new float[3];
     protected float[] mScale = new float[3];
+    protected float[] mScrollers = new float[6]; // 
     
     protected Type mType = Type.NONE;
     protected State mState = State.VISIBLE;
@@ -115,8 +116,8 @@ public class LayoutArea {
     protected Vector<LayoutField> mItemFields = new Vector<LayoutField>();
     protected String mText;
     protected String mData;
-    protected int mSize, mSizeW, mSizeH;
-    
+    protected int mSize, mSizeW, mSizeH = 1;
+    protected int mSizeText = -1;
     protected GLColor mColorForeground;
     protected int mColorForeground2 = 1;
     protected GLColor mColorBackground = null;
@@ -133,6 +134,10 @@ public class LayoutArea {
 	protected Border mBorder = Border.NONE;
 	protected boolean mDisabledInput = false;
 	protected boolean mPageVisible = false;
+	protected boolean mHasScrollH = false;
+	protected boolean mHasScrollV = false;
+	protected AnimData	mScollerAnim;
+	protected int mActiveItems = 1;
 	
     public LayoutArea(GameonApp app) {
     	mApp = app;
@@ -148,12 +153,17 @@ public class LayoutArea {
         mBounds[0] = 1.0f;
         mBounds[1] = 1.0f;
         mBounds[2] = 1.0f;
+        
+		mScrollers[0] = 0.0f;
+		mScrollers[1] = -0.5f;
+		mScrollers[2] = 0.5f;
+
+        
     }
 
-    public void initLayout() {
-
-
-        }
+    public void initLayout() 
+    {
+    }
 
 
     public void removeFigure(int index) {
@@ -168,6 +178,8 @@ public class LayoutArea {
     }
 
     public void setText(String strData) {
+    	if (strData == null)
+    		return;
 		if (strData.startsWith("#64#"))
 		{
 			mText = Base64Coder.decodeString(strData.substring(4));
@@ -228,6 +240,11 @@ public class LayoutArea {
         mData = "";
         for (int a = 0; a < mItemFields.size(); a++) {
             mItemFields.get(a).clear();
+        }
+        
+        if (mScollerAnim != null)
+        {
+        	mScollerAnim.cancel();
         }
     }
 
@@ -407,6 +424,10 @@ public class LayoutArea {
             	mParent.setVisibleArea(this, true);
             }
         } else if (strState.equals("hidden")) {
+            if (mScollerAnim != null)
+            {
+            	mScollerAnim.cancel();
+            }
             mState = LayoutArea.State.HIDDEN;
             mParent.setVisibleArea(this, false);
         } 
@@ -505,7 +526,6 @@ public class LayoutArea {
         try {
             try {
                 mSize = Integer.parseInt(tok.nextToken());
-                mSizeW = mSize;
             } catch (NumberFormatException e) {
             }
             try {
@@ -543,7 +563,7 @@ public class LayoutArea {
 
     protected FieldItemType getType(String val) {
         if (val.charAt(0) != '[') {
-            return FieldItemType.ITEM;
+            return FieldItemType.TEXT;
         }
         if (val.charAt(1) == 'i') {
             return FieldItemType.ITEM;
@@ -555,7 +575,7 @@ public class LayoutArea {
             return FieldItemType.TEXTH;
         }
 
-        return FieldItemType.ITEM;
+        return FieldItemType.TEXT;
     }
 
     protected void pushFrontItem(String strData) {
@@ -563,18 +583,12 @@ public class LayoutArea {
     	for (int a=mItemFields.size()-1; a > 0 ; a--)
     	{
     		LayoutField f2 = mItemFields.elementAt(a);
-    		if (a >= mSize)
-    		{
-    			f2.clear();
-    		}else
-    		{
-    			LayoutField f1 = mItemFields.elementAt(a-1);
-    			if (f1.mText != null && f1.mText.mText != null )
-    			{
-    				f2.setText(f1.mText.mText, mSizeW);
-    			}
-    		}
-    		
+			f2.clear();
+			LayoutField f1 = mItemFields.elementAt(a-1);
+			if (f1.mText != null && f1.mText.mText != null )
+			{
+				f2.setText(f1.mText.mText, mSizeText);
+			}
     	}
     	
     	this.createItem(0, strData ,false);
@@ -607,6 +621,7 @@ public class LayoutArea {
         }
         setField(fieldind);
         field = mItemFields.get(fieldind);
+        mActiveItems ++;
         if (type == FieldItemType.ITEM) {
                 // just draw item
                 //field.mItem = mApp.items().createItem(data, null);
@@ -614,12 +629,11 @@ public class LayoutArea {
             		field.setItem(data, false, showback);
             	}                
                 field.mText = null;
-                
             } else if (type == FieldItemType.TEXT) {
-                field.setText(data, mSizeW);
+                field.setText(data, mSizeText);
                 field.mItem = null;
             }else if (type == FieldItemType.TEXTH) {
-                field.setText(data, mSizeW);
+                field.setText(data, mSizeText);
                 field.mItem = null;
             }
     }
@@ -638,6 +652,7 @@ public class LayoutArea {
 
         // update vector of items on fields
         //&& count < mSize
+        mActiveItems ++;
         while (tok.hasMoreTokens()) {
             val = tok.nextToken();
             type = getType(val);
@@ -651,7 +666,7 @@ public class LayoutArea {
             	}
                 field.mText = null;
             } else if (type == FieldItemType.TEXT) {
-                field.setText(data, mSizeW);
+                field.setText(data, mSizeText);
                 //field.mColorFore = mColorForeground;
                 field.mItem = null;
             } else {
@@ -864,6 +879,7 @@ public class LayoutArea {
 			return;
 		}
 		int count  = 0;
+		mActiveItems = 0;
 		for (int a=0; a < mItemFields.size(); a++)
 		{
 			LayoutField field = mItemFields.get(a);
@@ -873,8 +889,13 @@ public class LayoutArea {
 			{
 				count ++;
 			}
+			if (field.mText != null || field.mItem != null)
+			{
+				mActiveItems++;
+			}
 		}
 		if (count == mItemFields.size()){
+			createCustomModel();
 			return;
 		}
 		mModel = new GameonModel("area"+ this.mID , mApp);
@@ -970,7 +991,7 @@ public class LayoutArea {
 
 		float mindist = 1e06f;
 		int index = 0;
-		
+		float loc[] = new float[3];
 		for (int a=0; a < mItemFields.size(); a++)
 		{
 			// give priority to those with items or texts 
@@ -978,7 +999,7 @@ public class LayoutArea {
 			if (f.mText != null || f.mItem != null)
 			{
 				GameonModelRef ref = f.mRef;
-				float dist = ref.intersectsRay(eye, ray);
+				float dist = ref.intersectsRay(eye, ray , loc);
 				if (dist < mindist)
 				{
 					mindist = dist;
@@ -994,6 +1015,9 @@ public class LayoutArea {
 			pair.mOnFocusLost = mOnFocusLost;
 			pair.mOnFocusGain = mOnFocusGain;
 			pair.mIndex = index;
+			pair.mLoc[0] = loc[0];
+			pair.mLoc[1] = loc[1];
+			pair.mLoc[2] = loc[2];
 			return pair;							
 		}
 
@@ -1001,7 +1025,7 @@ public class LayoutArea {
 		{
 			LayoutField f = mItemFields.get(a);
 			GameonModelRef ref = f.mRef;
-			float dist = ref.intersectsRay(eye, ray);
+			float dist = ref.intersectsRay(eye, ray , loc);
 			if (dist < mindist)
 			{
 				mindist = dist;
@@ -1016,6 +1040,9 @@ public class LayoutArea {
 			pair.mOnFocusLost = mOnFocusLost;
 			pair.mOnFocusGain = mOnFocusGain;
 			pair.mIndex = index;
+			pair.mLoc[0] = loc[0];
+			pair.mLoc[1] = loc[1];
+			pair.mLoc[2] = loc[2];			
 			return pair;							
 		}
 		
@@ -1024,21 +1051,21 @@ public class LayoutArea {
 		if (mModelBack != null)
 		{
 			GameonModelRef ref = mModelBack.ref(0);
-			float dist = ref.intersectsRay(eye,ray);
+			float dist = ref.intersectsRay(eye,ray , loc);
 			if (dist <= mindist)
 			{
 				mindist = dist;
-				index = 0;
+				index = -1;
 			}			
 		}
 		if (mModel != null)
 		{
 			GameonModelRef ref = mModel.ref(0);
-			float dist = ref.intersectsRay(eye,ray);
+			float dist = ref.intersectsRay(eye,ray, loc);
 			if (dist <= mindist)
 			{
 				mindist = dist;
-				index = 0;
+				index = -1;
 			}
 		}			
 		if (mindist != 1e6f)
@@ -1049,6 +1076,9 @@ public class LayoutArea {
 			pair.mOnFocusLost = mOnFocusLost;
 			pair.mOnFocusGain = mOnFocusGain;
 			pair.mIndex = index;
+			pair.mLoc[0] = loc[0];
+			pair.mLoc[1] = loc[1];
+			pair.mLoc[2] = loc[2];			
 			return pair;							
 		}
 				
@@ -1155,6 +1185,9 @@ public class LayoutArea {
 	
 	boolean hasTouchEvent() 
 	{
+		if (mHasScrollH || mHasScrollV)
+			return true;
+		
 		if ( (mOnclick != null && mOnclick.length() > 0) || 
 			(mOnFocusLost != null && mOnFocusLost.length() > 0) ||
 			(mOnFocusGain != null && mOnFocusGain.length() > 0) )
@@ -1203,7 +1236,8 @@ public class LayoutArea {
             ref.setScale(mBounds);
             ref.setAddScale(mScale);
             ref.set();
-		}		
+		}
+		
 		for (int a=0; a < mItemFields.size(); a++)
 		{
 			LayoutField f = mItemFields.get(a);
@@ -1235,6 +1269,85 @@ public class LayoutArea {
             ref.set();
 		}
 	}
+
 	
+	void updateScrollers()
+	{
+		
+	}
+	void createCustomModel()
+	{
+		
+	}
+	public void setScrollers(String data)
+	{
+		int num = ServerkoParse.parseFloatArray(mScrollers, data);
+		if (num > 0)
+		{
+			// update scrollers
+			if (mScrollers[0] < mScrollers[1])
+			{
+				mScrollers[0] = mScrollers[1];
+			}else if (mScrollers[0] > mScrollers[2])
+			{
+				mScrollers[0] = mScrollers[2];
+			}
+			updateScrollers();
+		}
+	}
+
 	
+	public void setScrollerVal(float val)
+	{
+		mScrollers[0] = val;
+		//System.out.println( "set scroll " + val);
+		updateScrollers();
+	}
+	public void onDragg(float dx, float dy, float dz)
+	{
+		//System.out.println( "dragg " + dx + " " + dy + " " + dz);
+		if (mHasScrollH || mHasScrollV)
+		{
+			if (mScollerAnim == null)
+			{
+				mScollerAnim = mApp.anims().getScollerAnim(this);
+				mScollerAnim.setActive(true);
+				mScollerAnim.mAreaOwner = this;
+				mApp.anims().incCount();
+
+			}
+			if (mScollerAnim != null)
+			{
+				float p;
+				if (mHasScrollV)
+				{
+					p = dy / mBounds[1];
+				}else
+				{
+					p = -dx / mBounds[0];
+				}
+				mScollerAnim.addScrollerData(p, 200, mScrollers[1] , mScrollers[2] );
+			}
+						
+		}
+	}
+	
+	public void anim(String type, String delay, String data)
+	{
+	    //
+	    if (mModel != null)
+	    {
+	        mModel.createAnim(type , 0,  delay , data);
+	    }
+	    if (mModelBack != null)
+	    {
+	        mModelBack.createAnim(type , 0, delay  , data);
+	    }    
+	    for (int a=0; a< mItemFields.size(); a++)
+	    {
+	        LayoutField field = mItemFields.get(a);
+	        field.createAnim(type, delay , data );
+	    }
+	}
 }
+

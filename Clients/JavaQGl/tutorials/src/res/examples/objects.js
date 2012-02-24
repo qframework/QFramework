@@ -50,10 +50,9 @@ function setuplayout()
 	object1.name = "cube1";
 	object1.template = "cube";
 	object1.location = "0.0,0.0,0.2";
-	object1.bounds = "0.2,0.2,0.2";
+	object1.bounds = "0.5,0.5,0.5";
 	object1.texture = "qtext";
 	object1.state = "visible";	
-
 	
 	var object2 = new WorldObject();
 	object2.name = "sphere1";
@@ -77,7 +76,7 @@ function setuplayout()
 	objects.push(object2);
 	objects.push(object3);
 	
-	Q.objects.add_(objects);
+	Q.objects.add(objects).now();
 	
 
 	// add exit area
@@ -90,9 +89,9 @@ function setuplayout()
 	areaExit.onclick = 'js:test_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("objects", areas);
+	Q.layout.add("objects", areas).now();
 	// show page
-	Q.layout.show_("objects");	
+	Q.layout.show("objects").now();	
 	
 	
 }
@@ -120,14 +119,14 @@ function animobjects()
 {
 	Q.startUpdate();
 	Q.anim.rotate("cube1","360,0,0","1000,10","");
-	Q.anim.move("plane1","0.6,-0.5,0.2","1000,3","");
-	Q.anim.move("sphere1","-0.6,-1.1,0.2","1000,-3","");
+	Q.anim.move("plane1","0.3,-0.5,0.2","1000,3","");
+	Q.anim.move("sphere1","-0.3,-1.1,0.2","1000,-3","");
 	Q.sendUpdate();
 }
 
 
 // change camera to see difference
-Q.camera.set_(0,0,0, 0,-2,2);
+Q.camera.set(0,0,0, 0,-2,2).now();
 // put layout into queue to allow camera change to take effect
-Q.exec_(0,"setuplayout();");
+Q.evals(0,"setuplayout();").now();
 

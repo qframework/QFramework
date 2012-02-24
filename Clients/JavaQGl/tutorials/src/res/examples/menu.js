@@ -92,9 +92,9 @@ function setuplayout()
 	areaExit.onclick = 'js:coords_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("worldhud", areas);
+	Q.layout.add("worldhud", areas).now();
 	// show page
-	Q.layout.show_("worldhud");	
+	Q.layout.show("worldhud").now();	
 	
 	
 }

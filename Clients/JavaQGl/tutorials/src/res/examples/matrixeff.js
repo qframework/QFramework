@@ -56,8 +56,6 @@ function matrix_init( no , speed, xmin, xmax, ymin, ymax, loc, color1, color2)
 	
 	matrix_texts = new Array(matrix_no);
 	
-	//Q.exec_(matrix_int, "matrix_update();");
-	
 	matrix_rows = [ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 	
 	matrix_loops = 0;
@@ -124,18 +122,17 @@ function matrix_update()
 	    area.colors = "FF11FF11,FF11FF11,00111111,00111111";
         var areas = new Array();
         areas.push(area);
-        Q.layout.add_(areaname, areas);
+        Q.layout.add(areaname, areas).now();
     }else
     {
        // console.log(" update matrix " + areaname + " " +x +","+y+","+w+","+h+","+z);    
-        Q.layout.areaSetLocation_(areaname,x +","+y+","+w+","+h+","+z);
+        Q.layout.areaSetLocation(areaname,x +","+y+","+w+","+h+","+z).now();
     }
     
     matrix_texts[matrix_count] = "0";
 	
     // start area moving...
-    Q.layout.showAnim_(areaname,"top,"+matrix_speed)
-    //Q.layout.show_(areaname,"top,"+matrix_speed)
+    Q.layout.showAnim(areaname,"top,"+matrix_speed).now();
 
     Q.startUpdate();
     for (var a =0; a < matrix_no; a++)
@@ -155,7 +152,7 @@ function matrix_update()
 	matrix_count++;
 
     
-    Q.exec_(matrix_int, "matrix_update();");
+    Q.evals(matrix_int, "matrix_update();").now();
     
 }
 
@@ -183,7 +180,7 @@ function matrix_enable()
 		return;
 	}
 	matrix_active = true;
-	Q.exec_(matrix_int, "matrix_update();");
+	Q.evals(matrix_int, "matrix_update();").now();
 }
 
 
@@ -212,9 +209,9 @@ function setuplayout()
 	areaExit.onclick = 'js:test_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("matrix", areas);
+	Q.layout.add("matrix", areas).now();
 	// show page
-	Q.layout.show_("matrix");	
+	Q.layout.show("matrix").now();	
 	
 	matrix_init( 12 , 12000 , wx1, wx2, wy1, wy2, "hud");
 	matrix_enable();

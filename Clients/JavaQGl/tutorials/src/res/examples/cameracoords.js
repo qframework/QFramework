@@ -100,9 +100,9 @@ function setuplayout()
 	areaExit.onclick = 'js:test_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("cameracoords", areas);
+	Q.layout.add("cameracoords", areas).now();
 	// show page
-	Q.layout.show_("cameracoords");	
+	Q.layout.show("cameracoords").now();	
 	
 	
 }
@@ -121,7 +121,7 @@ function test_exit(area,index)
 
 
 // change camera to see difference
-Q.camera.set_(0,0,0, 0,-2,2);
+Q.camera.set(0,0,0, 0,-2,2).now();
 // put layout into queue to allow camera change to take effect
-Q.exec_(0,"setuplayout();");
+Q.evals(0,"setuplayout();").now();
 

@@ -57,7 +57,9 @@ public class TextureFactory {
 	public int mTextureDefault;
 	public int mTextureFont;
 	HashMap<String, Integer>	mTextures = new HashMap<String, Integer>();
+	Vector<Integer>  mTextureIds = new Vector<Integer>();
 	Vector < StringString > mInfos = new Vector <StringString>();
+        Vector<String>	mToDelete = new Vector<String>();
 	Context mContext;
 	int mTextCounter = 1;
 	boolean mUpdated = false;
@@ -124,7 +126,7 @@ public class TextureFactory {
 		mTextureDefault = loadTextureFromFile( gl, "whitesys.png" , mContext , true);
 		if (mApp.cs().getCanvasW() < 500)
 		{
-			mTextureFont = loadTextureFromFile( gl, "fontsys.png" , mContext , true);
+			mTextureFont = loadTextureFromFile( gl, "fontsyss.png" , mContext , true);
 		}
 		else
 		{
@@ -159,6 +161,40 @@ public class TextureFactory {
 		}
 		Log.d("model", " get failed " + strData);
 		return mTextureDefault;
+	}
+	
+	public void deleteTexture(GL10 gl, String textname)
+	{
+		mToDelete.add(textname);
+	}
+	
+	public void flushTextures(GL10 gl)
+	{
+		for (int a=0; a< mToDelete.size(); a++)
+		{
+			clearTexture(gl, mToDelete.get(a));
+		}
+		mToDelete.clear();
+	}
+	
+	private void clearTexture(GL10 gl, String textname)
+	{
+		if (mTextures.containsKey(textname))
+		{
+			int id = mTextures.get(textname);
+			gl.glDeleteTextures(1 , new int[]{id} ,0);
+			mTextures.remove(textname);
+			for (int a=0; a < mInfos.size(); a++)
+			{
+				StringString info = mInfos.get(a);
+				if (info.b.equals(textname))
+				{
+					mInfos.remove(a);
+					break;
+				}
+			}
+		}
+		
 	}
 	public void clear() {
 		// TODO Auto-generated method stub

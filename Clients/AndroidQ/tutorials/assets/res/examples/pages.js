@@ -70,9 +70,9 @@ function setuplayout()
 	areaExit.onclick = 'js:coords_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("areapages", areas);
+	Q.layout.add("areapages", areas).now();
 	// show page
-	Q.layout.show_("areapages");	
+	Q.layout.show("areapages").now();	
 
 	
 	var areas = new Array();
@@ -92,7 +92,7 @@ function setuplayout()
 	item.text = "Page1";
 	areas.push(item);
 
-	Q.layout.add_("pages1", areas);
+	Q.layout.add("pages1", areas).now();
 	
 	
 	var areas = new Array();
@@ -112,7 +112,7 @@ function setuplayout()
 	item.text = "Page2";
 	areas.push(item);
 
-	Q.layout.add_("pages2", areas);
+	Q.layout.add("pages2", areas).now();
 	
 }
 

@@ -164,7 +164,7 @@ public class LayoutItem {
 		{
 			mModelRef.setAreaPosition(area.mLocation);
 			mModelRef.setAreaRotate(area.mRotation);
-			//mModelRef.setAreaScale(area.mBounds);
+			mModelRef.mulScale(area.mBounds);
 			mModelRef.set();
 		}
 		

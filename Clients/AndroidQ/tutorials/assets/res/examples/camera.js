@@ -23,98 +23,122 @@
 // setup layout
 function setuplayout()
 {
-	// round to fixed for better display, but use full float in calculations
-    var x1 = Q.layout.hudxmin.toFixed(1);
-    var x2 = Q.layout.hudxmax.toFixed(1);    
-    var y1 = Q.layout.hudymin.toFixed(1);
-    var y2 = Q.layout.hudymax.toFixed(1);
+    var x1 = Q.layout.hudxmin;
+    var x2 = Q.layout.hudxmax;    
+    var y1 = Q.layout.hudymin;
+    var y2 = Q.layout.hudymax;
     
-    var wx1 = Q.layout.worldxmin.toFixed(1);
-    var wx2 = Q.layout.worldxmax.toFixed(1);    
-    var wy1 = Q.layout.worldymin.toFixed(1);
-    var wy2 = Q.layout.worldymax.toFixed(1);
+    var wx1 = Q.layout.worldxmin;
+    var wx2 = Q.layout.worldxmax;    
+    var wy1 = Q.layout.worldymin;
+    var wy2 = Q.layout.worldymax;
 
 	var areas = new Array();
 	
 	// add text labels
 	var item = new LayoutArea();
-	item.type = "text.mline";   // multiline
-	item.background="FFEE1111";
-	item.location= "0.0,0.0,0.0";
-	item.display ="hud";
-	item.size = "2,22";			// size 2 rows with 22 chars
-	item.bounds="3.2,0.4";
-	item.text = "snap world camera to (-2.0,2.0)";
-	areas.push(item);
-
-	var item = new LayoutArea();
-	item.type = "text.mline";   // multiline
-	item.background="FFEE1111";
-	item.location= "0.0,-0.8,0.0";
-	item.display ="hud";
-	item.size = "2,22";			// size 2 rows with 22 chars
-	item.bounds="3.2,0.4";
-	item.text = "move world camera to (0.0,2.0,2.0)";
+	item.type = "text.button";
+	item.id = "proj";
+	item.background="FF331133";
+	item.location= "0.0,0.8,0.0";
+	item.bounds="2.2,0.2";
+	item.display = "hud";
+	item.text = "projection, FOV 45";
+	item.onclick = "js:menu_clicked";
 	areas.push(item);
 
 	
-	var item = new LayoutArea();
-	item.type = "text.label";
-	item.background="FFEE1111";
-	item.display ="hud";
-	item.location= "-0.8,0.8,0.0";
-	imte.text = "-0.8,0.8,0.0";
-	item.bounds="0.8,0.2";
-	areas.push(item);
+	// add some objects to display
+	var object1 = new WorldObject();
+	object1.name = "cube1";
+	object1.template = "cube";
+	object1.location = "0.0,0.0,0.2";
+	object1.bounds = "0.2,0.2,0.2";
+	object1.texture = "qtext";
+	object1.state = "visible";	
 
-	var item = new LayoutArea();
-	item.type = "layout.back";
-	item.background="FFEE1111";
-	item.display ="hud";
-	item.location= x2+","+y2+",0.0";
-	item.bounds="0.2,0.2";
-	areas.push(item);
-
-	var item = new LayoutArea();
-	item.type = "layout.back";
-	item.background="FFEE1111";
-	item.display ="hud";
-	item.location= x2+","+y1+",0.0";
-	item.bounds="0.2,0.2";
-	areas.push(item);
-
-	var item = new LayoutArea();
-	item.type = "layout.back";
-	item.background="FFEE1111";
-	item.display ="hud";
-	item.location= x1+","+y2+",0.0";
-	item.bounds="0.2,0.2";
-	areas.push(item);
+	var object2 = new WorldObject();
+	object2.name = "sphere1";
+	object2.template = "sphere";
+	object2.location = "-0.6,-0.0,0.2";
+	object2.bounds = "0.2,0.2,0.2";
+	object2.texture = "qtext";
+	object2.state = "visible";
 	
+	var object3 = new WorldObject();
+	object3.name = "plane1";
+	object3.template = "plane";
+	object3.location = "0.6,-0.0,0.2";
+	object3.bounds = "0.2,0.2,0.2";
+	object3.texture = "qtext";
+	object3.state = "visible";
 
+	
+	var objects = new Array();
+	objects.push(object1);
+	objects.push(object2);
+	objects.push(object3);
+	
+	Q.objects.add(objects).now();	
+	
 	// add exit area
 	var areaExit = new LayoutArea();    
 	areaExit.type = 'layout.back';
+	areaExit.id = "cameraexit";
 	areaExit.background = 'FFFFFFFF,icons.2.8.8';
-	areaExit.location= '0.0,0.4';
+	areaExit.location= (x2- 0.11) +','+(y2-0.11);
 	areaExit.bounds = '0.20,0.20';
 	areaExit.display = 'hud';
-	areaExit.onclick = 'js:test_exit';
+	areaExit.onclick = 'js:camera_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("camera", areas);
+	Q.layout.add("camera", areas).now();
 	// show page
-	Q.layout.show_("camera");	
+	Q.layout.show("camera").now();	
 	
 	
 }
 
+var projvals = [ 60,30,45];
+var pcount = 0;
 
-function test_exit(area,index)
+function menu_clicked(area, index)
 {
+	if (area == "proj")
+	{
+		
+		Q.camera.proj( projvals[pcount++], 0.1,8.00).now();
+		Q.evals(0,"camera_updateExit();").now();
+		if (pcount >= projvals.length)
+		{
+			pcount = 0;
+		}
+		Q.layout.areaSetText("proj" , "projection, FOV " + projvals[pcount]).now();
+		
+	}
+	
+}
+
+function camera_updateExit()
+{
+	
+	var x2 = Q.layout.hudxmax;
+	var y2 = Q.layout.hudymax;
+	Q.layout.areaSetLocation("cameraexit" , ''+(x2- 0.11) +','+(y2-0.11) ).now();
+	
+}
+
+
+function camera_exit(area,index)
+{
+	
 	Q.startUpdate();
+	Q.camera.proj( 45.0, 0.1,8.00);
 	Q.layout.clear("camera");
-	// go to default
+	Q.objects.remove("cube1");
+	Q.objects.remove("plane1");
+	Q.objects.remove("sphere1");
+
 	Q.camera.fit( "4.0,0");
 	Q.camera.fitHud( "4.0,0");
 	Q.layout.show('mainmenu');
@@ -123,7 +147,7 @@ function test_exit(area,index)
 
 
 // change camera to see difference
-Q.camera.set_(0,0,0, 0,-2,2);
+Q.camera.set(0,0,0, 0,-2,2).now();
 // put layout into queue to allow camera change to take effect
-Q.exec_(0,"setuplayout();");
+Q.evals(0,"setuplayout();").now();
 

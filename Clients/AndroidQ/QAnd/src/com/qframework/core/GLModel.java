@@ -169,9 +169,20 @@ public class GLModel {
 	{
 		if (mTextureID != mLastText || mApp.textures().isUpdated())
 		{
-			gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
-			mLastText = mTextureID;
+			/*
+			if (gl.glIsTexture(mTextureID))
+			{*/
+
+			    gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
+			    mLastText = mTextureID;
+/*			}else
+			{
+				gl.glBindTexture(GL10.GL_TEXTURE_2D, 1);
+				mLastText = 1;
+				
+			}*/
 			mApp.textures().resetUpdated();
+
 		}		
 	}
 	public boolean drawRef(GL10 gl, GameonModelRef ref , boolean initRef)

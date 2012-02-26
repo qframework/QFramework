@@ -76,22 +76,22 @@ function setuplayout()
 	areaExit.onclick = 'js:test_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("animscreen", areas);
+	Q.layout.add("animscreen", areas).now();
 	// show page
-	Q.layout.show_("animscreen");	
+	Q.layout.show("animscreen").now();	
 	
 }
 
 function redish_screen()
 {
-	Q.layout.anim_("color","500,"+currcolor+",FFFFAAAA");
+	Q.layout.anim("color","500,"+currcolor+",FFFFAAAA").now();
 	currcolor = "FFFFAAAA";
 }
 
 
 function darker_screen()
 {
-	Q.layout.anim_("color","500,"+currcolor+",FFAAAAAA");
+	Q.layout.anim("color","500,"+currcolor+",FFAAAAAA").now();
 	currcolor = "FFAAAAAA";
 	
 }
@@ -99,7 +99,7 @@ function darker_screen()
 
 function lighter_screen()
 {
-	Q.layout.anim_("color","500,"+currcolor+",FFFFFFFF");
+	Q.layout.anim("color","500,"+currcolor+",FFFFFFFF").now();
 	currcolor = "FFFFFFFF";
 	
 }
@@ -115,7 +115,7 @@ function test_exit(area,index)
 	Q.layout.show('mainmenu');
 	Q.sendUpdate();
 
-	Q.layout.anim_("color","0,"+currcolor+",FFFFFFFF");
+	Q.layout.anim("color","0,"+currcolor+",FFFFFFFF").now();
 	
 }
 
@@ -141,7 +141,7 @@ function menu_focuslost(area,index)
 
 
 // change camera to see difference
-Q.camera.set_(0,0,0, 0,-2,2);
+Q.camera.set(0,0,0, 0,-2,2).now();
 // put layout into queue to allow camera change to take effect
-Q.exec_(0,"setuplayout();");
+Q.evals(0,"setuplayout();").now();
 

@@ -59,7 +59,7 @@ public class EAGLView extends EAGLViewInterface  {
 	        	mApp.mouseClicked((int)x, (int)y);
 	        break;
 	        case MotionEvent.ACTION_MOVE:
-	        	mApp.mouseDragged((int)x, (int)y);
+	        	mApp.mouseDragged((int)x, (int)y  , false);
 	        }
 	        return true;
 	    }
@@ -84,7 +84,7 @@ public class EAGLView extends EAGLViewInterface  {
 		    	{
 		    		String preexec = "CanvasW = " + width + ";CanvasH = " + height + ";";	    	
 		    		mApp.start("main.js" , preexec);
-		    		mView.onSurfaceChanged(gl, width, height);
+		    		mApp.surfaceChanged(gl, width, height);
 		    		doOnce1 = true;
 		    	}else
 		    	{

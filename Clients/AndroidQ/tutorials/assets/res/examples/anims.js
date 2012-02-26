@@ -28,53 +28,18 @@ function setuplayout()
 	
 	// add text labels
 	var item = new LayoutArea();
-	item.type = "text.label";
-	item.background="FFEE1111";
-	item.location= "0.0,-0.6,0.0";
-	item.bounds="2.2,0.2";
-	item.text = "area in world space";
-	areas.push(item);
-	
-	var item = new LayoutArea();
-	item.type = "text.label";
-	item.background="FF11EE11";
-	item.location= "0.0,-0.0,0.0";
-	item.bounds="2.2,0.2";
-	item.text = "area in world space";
-	areas.push(item);
-	
-	var item = new LayoutArea();
-	item.type = "text.label";
-	item.background="FF1111EE";
-	item.location= "0.0,0.6,0.0";
-	item.bounds="2.2,0.2";
-	item.text = "area in world space";
-	areas.push(item);
-
-
-	var item = new LayoutArea();
-	item.type = "text.label";
-	item.background="77EE1111";
-	item.location= "0.0,-1.0,0.0";
-	item.bounds="2.2,0.2";
+	item.type = "text.button";
+	item.id = "area1";
+	item.background="FF331133";
+	item.location= "-0.6,0.6,0.0";
+	item.bounds="2.2,0.3";
 	item.display = "hud";
-	item.text = "area on hud display";
+	item.text = "Anim Area 1";
+	item.onclick = "js:menu_clicked";
+	item.onfocuslost = "js:menu_focuslost";
+	item.onfocusgain = "js:menu_focusgain";	
 	areas.push(item);
 	
-	var item = new LayoutArea();
-	item.type = "text.label";
-	item.background="771111EE";
-	item.location= "0.0,1.0,0.0";
-	item.bounds="2.2,0.2";
-	item.display = "hud";
-	item.text = "area on hud display";
-	areas.push(item);
-
-	// change camera to see difference
-	Q.camera.set(0,0,0, 0,-2,2).now();
-	
-	
-
     var x2 = Q.layout.hudxmax;    
     var y2 = Q.layout.hudymax;
     
@@ -89,9 +54,9 @@ function setuplayout()
 	areaExit.onclick = 'js:coords_exit';
     areas.push(areaExit);
     
-	Q.layout.add("worldhud", areas).now();
+	Q.layout.add("anims", areas).now();
 	// show page
-	Q.layout.show("worldhud").now();	
+	Q.layout.show("anims").now();	
 	
 	
 }
@@ -100,14 +65,44 @@ function setuplayout()
 function coords_exit(area,index)
 {
 	Q.startUpdate();
-	Q.layout.clear("worldhud");
-	// go to default
-	Q.camera.fit( "4.0,0");
-	Q.camera.fitHud( "4.0,0");
+	Q.layout.clear("anims");
 	Q.layout.show('mainmenu');
 	Q.sendUpdate();
 }
 
+// simulate press by scaling area
+function menu_focusgain(area,index)
+{
+	/*
+	Q.startUpdate();
+	Q.layout.areaSetScale(area,'0.9,0.9');
+	Q.sendUpdate();
+	*/
+}
+
+//simulate release by scaling back area
+function menu_focuslost(area,index)
+{
+	/*
+	Q.startUpdate();
+	Q.layout.areaSetScale(area,'1.0,1.0');
+	Q.sendUpdate();
+	*/
+}
+var vals = ["-0.6,0.8,0.0" , "0.6,0.8,0.5" , "0.6,0.6,-0.5" , "-0.6,0.6,0.0"];
+var acount = 0;
+function menu_clicked(area,index)
+{
+	if (area == "area1")
+	{
+		Q.layout.areaAnim(area, "move" , "1000", vals[acount++]).now();
+		if (acount >= vals.length)
+		{
+			acount = 0;
+		}
+		
+	}
+}
 
 
 setuplayout();

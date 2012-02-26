@@ -30,8 +30,6 @@ public class LayoutField {
     protected float mZ;
     protected float mW;
     protected float mH;
-    protected float mMarginX;
-    protected float mMarginY;
     protected float mRandX;
     protected float mRandY;
     protected float mRandRotZ;
@@ -49,7 +47,8 @@ public class LayoutField {
     protected GameonModelRef	mRef;
     protected FieldType mFieldType = FieldType.NONE;
     protected int mOwner = 0;
-
+    protected LayoutArea.State mState = LayoutArea.State.VISIBLE;
+    protected boolean mActive = true;
     public enum FieldType {
 
         NONE,
@@ -127,8 +126,8 @@ public class LayoutField {
 		mItem = item;
         if (mItem != null){
 
-        	float w = mW * mParent.mBounds[0];
-        	float h = mH * mParent.mBounds[1];        	
+        	float w = mW;
+        	float h = mH;        	
 			if (w == 0 || h == 0)
 				return;
 			else
@@ -138,7 +137,7 @@ public class LayoutField {
 		        mItem.setParentLoc(mParent);
 				mItem.addRotation(mItemRotX,mItemRotY , mItemRotZ);		        
 				mItem.mModelRef.set();
-				setState(mParent.mState);
+				setState(mState);
 			}
 
         }
@@ -162,7 +161,6 @@ public class LayoutField {
     	}
     	//System.out.println( "settext " + data + " " + mParent.mLocation.toString() + " " + mParent.mID);
 		if (mText != null) {
-			//mText.setPosition(x,y,mZ+0.001f,w-mMarginX,h-mMarginY);
 			mText.updateText(data , mParent.mDisplay);
 			mText.setRef();
 		}else {
@@ -171,25 +169,25 @@ public class LayoutField {
         	if (mParent.mDisplay == GameonWorld.Display.HUD)
         	{
 	        	if (num > 0) {
-	        		mText = new TextItem(mApp,x,y,w-mMarginX,h-mMarginY,mZ+0.002f, data, 
+	        		mText = new TextItem(mApp,x,y,w,h,mZ+0.002f, data, 
 	        				(float)num, mOwner , mParent.mDisplay, mParent.mLayout,
 	        				mParent.mColors);
 	        	}else{
-	        		mText = new TextItem(mApp,x,y,w-mMarginX,h-mMarginY,mZ+0.002f, data, 
+	        		mText = new TextItem(mApp,x,y,w,h,mZ+0.002f, data, 
 	        				mOwner , mParent.mDisplay , mParent.mLayout,mParent.mColors);
 	        	}
-        		mApp.world().textshud().add(mText, mParent.mState == LayoutArea.State.VISIBLE&& mParent.mPageVisible);
+        		mApp.world().textshud().add(mText, mState == LayoutArea.State.VISIBLE&& mParent.mPageVisible);
         		mText.setParent(mApp.world().textshud());
         	}else
         	{
 	        	if (num > 0) {
-	        		mText = new TextItem(mApp,x,y,w-mMarginX,h-mMarginY,mZ+0.002f, data, (float)num, 
+	        		mText = new TextItem(mApp,x,y,w,h,mZ+0.002f, data, (float)num, 
 	        				mOwner , mParent.mDisplay , mParent.mLayout,mParent.mColors);
 	        	}else{
-	        		mText = new TextItem(mApp,x,y,w-mMarginX,h-mMarginY,mZ+0.002f, data, 
+	        		mText = new TextItem(mApp,x,y,w,h,mZ+0.002f, data, 
 	        				mOwner , mParent.mDisplay , mParent.mLayout,mParent.mColors);
 	        	}
-	        	mApp.world().texts().add(mText , mParent.mState == LayoutArea.State.VISIBLE&& mParent.mPageVisible);
+	        	mApp.world().texts().add(mText , mState == LayoutArea.State.VISIBLE&& mParent.mPageVisible);
         		mText.setParent(mApp.world().texts());
         	}
     	
@@ -202,9 +200,11 @@ public class LayoutField {
 		}
 
 	public void setState(State state) {
+		if (!mActive)
+			return;
 	    if (!mParent.mPageVisible)
 	        state = State.HIDDEN;
-	    
+	    mState = state;
 		if (state == State.VISIBLE)
 		{
 			if (mText != null) {
@@ -255,7 +255,6 @@ public class LayoutField {
         float w = mW;
         float h = mH;
 	        
-	        
 	        if (w == 0 || h == 0)
 	            return;
 		
@@ -269,7 +268,9 @@ public class LayoutField {
 	    
 	    if (this.mText != null)
 	    {
-	    	mText.setPosition(mX,mY,mZ+0.001f,w-mMarginX ,h-mMarginY);
+	    	mText.setPosition(mX,mY,mZ+0.002f,w ,h);
+	    	mText.setParentLoc(mParent);
+	    	mText.ref().set();
 	        }
 	    
 	    
@@ -301,5 +302,17 @@ public class LayoutField {
 		{
 			mRef.setScale(mW,mH,1);
 		}
+	}
+
+	public void createAnim(String type, String delay, String data) {
+		if (mText != null && mText.mModel != null)
+		{
+			mText.mModel.createAnim(type , 0 , delay, data);
+		}
+		if (mItem != null)
+		{
+			int index = mItem.mModel.findRef( mItem.mModelRef);
+			mItem.mModel.createAnim(type , index ,delay, data);
+		}		
 	}
 }

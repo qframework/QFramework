@@ -159,6 +159,31 @@ public class ObjectsFactory {
         } catch (NoSuchElementException e) {
         }		
 	}
+	
+	public void rotate(String name, String data) {
+		LayoutItem item = mItems.get(name);
+		if (item == null)
+		{
+			return;
+		}
+		GameonModel model = item.mModel;
+	
+		
+		// TODO submodels
+		if (model.ref(0) == null)
+		{
+			GameonModelRef ref = new GameonModelRef(model);
+			model.addref(ref);
+		}
+		
+		float[] vals = new float[3];
+		ServerkoParse.parseFloatArray(vals , data );
+        GameonModelRef r = model.ref(0);
+        r.setRotate(vals);
+        r.set();
+	}
+
+	
 	public void texture(String name, String data) {
 		LayoutItem item = mItems.get(name);
 		if (item == null)

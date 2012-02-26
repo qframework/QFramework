@@ -145,7 +145,40 @@ public class GMath {
     }
     
     
+public static void frustrum(float left, float right,
+		float bottom, float top,
+		float znear, float zfar , float[] projection)
+{
+	float X = 2*znear/(right-left);
+	float Y = 2*znear/(top-bottom);
+	float A = (right+left)/(right-left);
+	float B = (top+bottom)/(top-bottom);
+	float C = -(zfar+znear)/(zfar-znear);
+	float D = -2*zfar*znear/(zfar-znear);
 
+	projection[0] = X;
+	projection[1] = 0;
+	projection[2] = A;
+	projection[3] = 0;
+	
+	projection[4] = 0;
+	projection[5] = Y;
+	projection[6] = B;
+	projection[7] = 0;
+	
+	projection[8] = 0;
+	projection[9] = 0;
+	projection[10] = C;
+	projection[11] = -1;
+	
+	projection[12] = 0;
+	projection[13] = 0;
+	projection[14] = D;
+	projection[15] = 0;
+
+}
+
+    
     public static void lookAtf(float matrix[], float eyePosition[], float center[], float upVector[])
     {
        float forward[] = { 0,0,0};
@@ -414,10 +447,10 @@ public class GMath {
         // get and test parametric coords
         float s, t;
         s = (uv * wv - vv * wu) / D;
-        if (s < 0.0 || s > 1.0)        // I is outside T
+        if (s < -0.05 || s > 1.05)        // I is outside T
             return -1;
         t = (uv * wu - uu * wv) / D;
-        if (t < 0.0 || (s + t) > 1.0)  // I is outside T
+        if (t < -0.05 || (s + t) > 1.05)  // I is outside T
             return -1;
 
         // calculate dist

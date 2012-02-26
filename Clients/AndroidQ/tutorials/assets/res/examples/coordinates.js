@@ -81,9 +81,9 @@ function setuplayout()
 	areaExit.onclick = 'js:coords_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("coordareas", areas);
+	Q.layout.add("coordareas", areas).now();
 	// show page
-	Q.layout.show_("coordareas");	
+	Q.layout.show("coordareas").now();	
 	
 	
 }

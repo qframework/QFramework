@@ -134,6 +134,13 @@ public class GameonModelRef {
     	mRotation[2] = z;  
     }
 
+    public void setRotate(float[] vals) {
+    	mRotation[0] = vals[0];
+    	mRotation[1] = vals[1];
+    	mRotation[2] = vals[2];  
+    }
+
+    
     public void setAreaRotate(float x, float y, float z) {
     	mAreaRotation[0] = x;
     	mAreaRotation[1] = y;
@@ -352,10 +359,9 @@ public class GameonModelRef {
 	}
 	
 	
-	public float intersectsRay(float[] eye , float[] ray)
+	public float intersectsRay(float[] eye , float[] ray, float[] loc)
 	{
 		// transform bounds!
-		float loc[] = new float[3];
 		float dist = GMath.rayIntersectsBounds(eye, ray, mBounds , loc);
 		if (dist >=0)
 		{

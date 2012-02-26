@@ -28,4 +28,5 @@ public class AreaIndexPair {
 	public String mOnFocusGain;
 	public float  mDist;
 	public int	  mIntData;
+	public float[] mLoc = new float[3];
 }

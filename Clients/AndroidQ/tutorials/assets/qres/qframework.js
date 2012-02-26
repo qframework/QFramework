@@ -20,64 +20,43 @@
 function Camera(qapp)
 {
 	this.qapp = qapp;
-    this.fit_ = function (xsz, ysz)
-    {
-        this.qapp.appendEvent_( 2500 , "fit" , xsz + "," + ysz );
-    }
-    
+
     this.fit = function (xsz, ysz)
     {
         this.qapp.appendEvent( 2500 , "fit" , xsz + "," + ysz );
-    }
-    
-    this.set_ = function (x1, y1,z1 , x2,y2,z2)
-    {
-        this.qapp.appendEvent_( 2501 , x1+","+y1+","+z1 , x2+","+y2+","+z2);
+        return this.qapp.serverko;
     }
 
-    
     this.set = function (x1, y1,z1 , x2,y2,z2)
     {
         this.qapp.appendEvent( 2501 , x1+","+y1+","+z1 , x2+","+y2+","+z2);
+        return this.qapp.serverko;
     }
     
-    this.proj_ = function (fov, near, far)
-    {
-        this.qapp.appendEvent_( 2502 , fov , near+","+far);
-    }
-    
+
     this.proj = function (fov, near, far)
     {
-        this.qapp.appendEvent( 2502 , fov , near+","+far);
-    }
-
-    this.projHud_ = function (fov, near, far)
-    {
-        this.qapp.appendEvent_( 2512 , fov , near+","+far);
+        this.qapp.appendEvent( 2502 , fov , near ,far);
+        return this.qapp.serverko;
     }
 
     this.projHud = function (fov, near, far)
     {
-        this.qapp.appendEvent( 2512 , fov , near+","+far);
+        this.qapp.appendEvent( 2512 , fov , near ,far);
+        return this.qapp.serverko;
     }
-    
-    this.fitHud_ = function (xsz, ysz)
-    {
-        this.qapp.appendEvent_( 2510 , "fit" , xsz + "," + ysz );
-    }    
+
     this.fitHud = function (xsz, ysz)
     {
         this.qapp.appendEvent( 2510 , "fit" , xsz + "," + ysz );
+        return this.qapp.serverko;
     }
-    
-    this.setHud_ = function (x1, y1,z1 , x2,y2,z2)
-    {
-        this.qapp.appendEvent_( 2511 , x1+","+y1+","+z1 , x2+","+y2+","+z2);
-    }
+
 
     this.setHud = function (x1, y1,z1 , x2,y2,z2)
     {
         this.qapp.appendEvent( 2511 , x1+","+y1+","+z1 , x2+","+y2+","+z2);
+        return this.qapp.serverko;
     }
 
 }
@@ -88,44 +67,27 @@ function Connect(qapp)
 	this.qapp = qapp;
     this.connect =  function (ip, callback)
     {
-        this.qapp.appendEvent( 7000 , ip ,callback);    
+        this.qapp.appendEvent( 7000 , ip ,callback);
+        return this.qapp.serverko;
     }
 
-    this.connect_ =  function (ip, callback)
-    {
-        this.qapp.appendEvent_( 7000 , ip ,callback);    
-    }
-
-
-    
-    this.disconnect_ =  function ()
-    {
-        this.qapp.appendEvent_( 7003 , "" , "" );    
-    }
 
     this.disconnect =  function ()
     {
-        this.qapp.appendEvent( 7003 , "" , "" );    
-    }
-
-    this.join_ = function (roomid, user, callback)
-    {
-        this.qapp.appendEvent_( 7001 , roomid+"|"+user ,callback);    
+        this.qapp.appendEvent( 7003 , "" , "" );
+        return this.qapp.serverko;
     }
 
     this.join = function (roomid, user, callback)
     {
-        this.qapp.appendEvent( 7001 , roomid+"|"+user ,callback);    
+        this.qapp.appendEvent( 7001 , roomid+"|"+user ,callback);
+        return this.qapp.serverko;
     }
 
-    this.send_ = function (data)
-    {
-        this.qapp.appendEvent_( 7002 , data,"");    
-    }
-    
     this.send = function (data)
     {
-        this.qapp.appendEvent( 7002 , data,"" );    
+        this.qapp.appendEvent( 7002 , data,"" );
+        return this.qapp.serverko;
     }
 
 
@@ -137,11 +99,7 @@ function Env(qapp)
     this.set =  function (name, value)
     {
         this.qapp.appendEvent( 200 , name ,value);    
-    }
-
-    this.set_ =  function (name, value)
-    {
-        this.qapp.appendEvent_( 200 , name ,value);    
+        return this.qapp.serverko;
     }
 
 }
@@ -153,67 +111,46 @@ function Settings(qapp)
     this.open = function ()
 	{
 	    this.qapp.appendEvent( 2600 , "" ,"");
+	    return this.qapp.serverko;
 	}
-    this.open_ = function ()
-	{
-	    this.qapp.appendEvent_( 2600 , "" ,"");
-	}
-    
     
 	this.save = function ()
 	{
 	    this.qapp.appendEvent( 2601 , "" ,"");
+	    return this.qapp.serverko;
 	}
-	this.save_ = function ()
-	{
-	    this.qapp.appendEvent_( 2601 , "" ,"");
-	}
-	
+
 	this.writeInt = function (name, value)
 	{
 	    this.qapp.appendEvent( 2610 , name ,value);
+	    return this.qapp.serverko;
 	}
-	this.writeInt_ = function (name, value)
-	{
-	    this.qapp.appendEvent_( 2610 , name ,value);
-	}
+
 	
 	this.writeString = function (name, value)
 	{
 	    this.qapp.appendEvent( 2611 , name ,value);
+	    return this.qapp.serverko;
 	}
-	this.writeString_ = function (name, value)
-	{
-	    this.qapp.appendEvent_( 2611 , name ,value);
-	}
-	
+
 	this.loadInt = function (name, value)
 	{
 	    this.qapp.appendEvent( 2620 , name , value );
-	}
-	this.loadInt_ = function (name, value)
-	{
-	    this.qapp.appendEvent_( 2620 , name , value );
+	    return this.qapp.serverko;
 	}
 	
 	this.loadString = function (name, value)
 	{
 	    this.qapp.appendEvent( 2621 , name ,value);
+	    return this.qapp.serverko;
 	}
-	this.loadString_ = function (name, value)
-	{
-	    this.qapp.appendEvent_( 2621 , name ,value);
-	}
-	
+
 	this.loadArray = function (name, value)
 	{
 	    this.qapp.appendEvent( 2622 , name ,value);
+	    return this.qapp.serverko;
 	}
-	this.loadArray_ = function (name, value)
-	{
-	    this.qapp.appendEvent_( 2622 , name ,value);
-	}	
-	
+
 }
 
 
@@ -222,42 +159,19 @@ function Settings(qapp)
 function Client(qapp)
 {
 	this.qapp = qapp;
-    this.allexec_ = function (delay, script)
-    {
-        this.qapp.appendEvent_( 101 , delay , script);
-    }
     
-    this.allexec = function ( delay, script)
+    this.allevals = function ( delay, script)
     {
         this.qapp.appendEvent( 101 , delay , script);
-    }
-    
-    this.exec_ = function (userID , delay, script)
-    {
-        this.qapp.clientAppendEvent_( userID, 101 , delay , script);
+        return this.qapp.serverko;
     }
 
-    this.exec = function (userID , delay, script)
+    this.evals = function (userID , delay, script)
     {
         this.qapp.clientAppendEvent( userID, 101 , delay , script);
+        return this.qapp.serverko;
     }
     
-}
-
-
-function Env(qapp)
-{
-	this.qapp = qapp;
-    this.set =  function (name, value)
-    {
-        this.qapp.appendEvent( 200 , name ,value);    
-    }
-
-    this.set_ =  function (name, value)
-    {
-        this.qapp.appendEvent_(200 , name ,value);    
-    }
-
 }
 
 function Util(qapp)
@@ -269,7 +183,7 @@ function Util(qapp)
             delay = 1000;
         
         this.qapp.env.set('touch','off');
-        this.qapp.exec(delay,"Q.env.set_('touch','on');");        
+        this.qapp.evals(delay,"Q.env.set_('touch','on');");        
 
     }
     
@@ -279,7 +193,7 @@ function Util(qapp)
             delay = 1000;
         
         this.qapp.env.set_('touch','off');
-        this.qapp.exec_(delay,"Q.env.set_('touch','on');");        
+        this.qapp.evals_(delay,"Q.env.set_('touch','on');");        
 
     } 
     
@@ -317,26 +231,22 @@ function Anim(qapp)
 	this.move = function( name, path, type, callback)
 	{
 		this.qapp.appendEvent( 4200 , name ,path,type,callback);
+		return this.qapp.serverko;
 	}
 	
-	this.move_ = function( name, path, type, callback)
-	{
-		this.qapp.appendEvent_( 4200 , name ,path,type,callback);
-	}
-	
+
 	this.rotate = function( name, path, type, callback)
 	{
 		this.qapp.appendEvent( 4210 , name ,path,type,callback);
+		return this.qapp.serverko;
 	}
 	
-	this.rotate_ = function( name, path, type, callback)
-	{
-		this.qapp.appendEvent_( 4210 , name ,path,type,callback);
-	}
+
 
 	this.object = function(id,name,delay,coords)
 	{
 		this.qapp.appendEvent3( 4300 , id , name ,delay,coords);
+		return this.qapp.serverko;
 	}
 	
 }
@@ -358,57 +268,49 @@ function Objects(qapp)
 	this.create = function ( name ,value)
 	{
 		this.qapp.appendEvent( 4100 , name ,value);
+		return this.qapp.serverko;
 	}
-	this.create_ = function (name,value)
-	{
-		this.qapp.appendEvent_( 4100 , name ,value);
-	}	
+
 	
 	this.place = function (name,value)
 	{
 		this.qapp.appendEvent( 4110 , name ,value);
+		return this.qapp.serverko;
 	}
-	this.place_ = function (name,value)
-	{
-		this.qapp.appendEvent_( 4110 , name ,value);
-	}
+
 	
 	this.remove = function (name,value)
 	{
 		this.qapp.appendEvent( 4150 , name ,value);
+		return this.qapp.serverko;
 	}
-	this.remove_ = function (name,value)
-	{
-		this.qapp.appendEvent_( 4150 , name ,value);
-	}	
-	
+
 
 	this.scale = function (name,value)
 	{
 		this.qapp.appendEvent( 4120 , name ,value);
+		return this.qapp.serverko;
 	}
-	this.scale_ = function (name,value)
+
+	this.rotate = function (name,value)
 	{
-		this.qapp.appendEvent_( 4120 , name ,value);
-	}	
+		this.qapp.appendEvent( 4160 , name ,value);
+		return this.qapp.serverko;
+	}
 
 	this.texture = function (name,value)
 	{
 		this.qapp.appendEvent( 4130 , name ,value);
+		return this.qapp.serverko;
 	}
-	this.texture_ = function (name,value)
-	{
-		this.qapp.appendEvent_( 4130 , name ,value);
-	}	
+
 	
 	this.state = function (name,value)
 	{
 		this.qapp.appendEvent( 4140 , name ,value);
+		return this.qapp.serverko;
 	}
-	this.state_ = function (name,value)
-	{
-		this.qapp.appendEvent_( 4140 , name ,value);
-	}	
+
 	
     this.createObjects = function(objs, send)
     {
@@ -418,6 +320,7 @@ function Objects(qapp)
         if (send == 1)
         	this.qapp.serverko.startData();
 
+        this.qapp.serverko.reserveSpace();
         this.qapp.serverko.startTag();
         this.qapp.serverko.appendTag( "res", "objs");
         this.qapp.serverko.addSeparator()      
@@ -475,23 +378,9 @@ function Objects(qapp)
     this.add = function (objs)
     {
         this.createObjects(objs , 0);
+        return this.qapp.serverko;
     }
 
-    this.clientAdd = function (userID , objs)
-    {
-    	this.createObjects(objs , 0);
-    }
-    
-    this.add_ = function (objs)
-    {
-        this.createObjects(objs , 1);
-    }
-
-    this.clientAdd_ = function (userID , objs)
-    {
-    	this.createObjects(objs , 1);
-    }
-    
     
 }
 
@@ -529,12 +418,9 @@ function Animations(qapp)
     this.add = function (adata)
     {
         this.createAnim(adata , 0);
+        return this.qapp.serverko;
     }
-    
-    this.add_ = function (adata)
-    {
-        this.createAnim(adata , 1);
-    }    
+  
     this.createAnim = function(adata, send)
     {
         
@@ -546,6 +432,7 @@ function Animations(qapp)
         if (send == 1)
         	this.qapp.serverko.startData();
 
+        this.qapp.serverko.reserveSpace();
         this.qapp.serverko.startTag();
         this.qapp.serverko.appendTag( "res", "animation");
         this.qapp.serverko.addSeparator()  
@@ -632,70 +519,48 @@ function Scores(qapp)
 {
     this.login = function(callback)
     {
-        serverko.appendEvent(500, ""  ,callback);    
-    }
-
-    this.login_ = function(callback)
-    {
-        serverko.appendEvent_(500  , "" , callback);    
+        serverko.appendEvent(500, ""  ,callback);
+        return this.qapp.serverko;
     }
 
     this.submit = function(value, callback)
     {
-        serverko.appendEvent(510 , value , callback);       
-    }
-            
-    this.submit_ = function(value, callback)
-    {
-        serverko.appendEvent_(510 , value , callback);    
+        serverko.appendEvent(510 , value , callback);
+        return this.qapp.serverko;
     }
 
     this.showscores = function(value , callback)
     {
-        serverko.appendEvent(520 , value , callback);       
-    }
-
-    this.showscores_ = function(value , callback)
-    {
-        serverko.appendEvent_(520 , value , callback);    
+        serverko.appendEvent(520 , value , callback);
+        return this.qapp.serverko;
     }
 
     this.reload = function(value , callback)
     {
-        serverko.appendEvent(521 , value , callback);       
+        serverko.appendEvent(521 , value , callback);
+        return this.qapp.serverko;
     }
-    
-    this.reload_ = function(value , callback)
-    {
-        serverko.appendEvent_(521 , value , callback);    
-    }    
+
     
 }
 function QApp()
 {
-	
-    this.exec = function ( delay, script)   
+
+    this.evals = function ( delay, script)   
     {
         this.appendEvent( 101 , delay , script );
+        return this.serverko;
     }
     
-    this.exec_ = function ( delay, script)   
-    {
-    	this.appendEvent_( 101 , delay , script );
-    }
-    
+
 
     this.goUrl = function (type, url)
     {
         this.appendEvent( 1200 , type, url );
+        return this.serverko;
     }
 
-    
-    this.goUrl_ = function (type, url)
-    {
-        this.appendEvent_( 1200 , type, url );
-    }
-    
+
     this.serverko = new Serverko();
     this.layout = new Layout(this);
     this.textures = new Textures(this);
@@ -721,6 +586,15 @@ function QApp()
     {
     	this.serverko.sendData();
     }
+    this.clientStartUpdate = function(userID)
+    {
+    	this.serverko.clientStartData(userID);
+    }
+    this.clientSendUpdate = function(userID) 
+    {
+    	this.serverko.clientSendData(userID);
+    }
+
     this.appendEvent = function(id, area, data, data2, data3, data4)
     {
     	this.serverko.appendEvent(id, area, data, data2, data3, data4);
@@ -729,71 +603,35 @@ function QApp()
     {
     	this.serverko.clientAppendEvent(userID , id, area, data, data2, data3, data4);
     }
-    this.appendEvent_ = function(id, area, data, data2, data3, data4)
-    {
-    	this.serverko.appendEvent_(id, area, data, data2, data3, data4);
-    }
-    this.clientAppendEvent_ = function (userID , id, area, data, data2, data3, data4)
-    {
-    	this.serverko.clientAppendEvent_(userID , id, area, data, data2, data3, data4);
-    }
-   
+
     
-    this.clientStartUpdate = function(userID)
-    {
-    	this.serverko.clientStartData(userID);
-    }
-    this.clientSendUpdate = function (userID)
-    {
-    	this.serverko.clientSendData(userID);
-    
-    }
-    
-    this.print = function (data)
+    this.println = function (data)
     {
     	this.layout.print(data);
-    }
-    
-    this.print_ = function (data)
-    {
-    	this.layout.print_(data);
+    	return this.serverko;
     }
     
     this.event = function (id, delay, data) 
     {
     	this.serverko.sendEvent(id, delay, data) ;
+    	return this.serverko;
     }
-    this.event_ = function (id, delay, data) 
-    {
-    	this.startUpdate(); 
-    	this.serverko.sendEvent(id, delay, data) ;
-		this.sendUpdate();
-    }
+
     
     this.include = function (id)
     {
     	this.serverko.loadModule(id);
+    	return this.serverko;
     }
-    this.include_ = function (id)
-    {
-		this.startUpdate(); 
-    	this.serverko.loadModule(id);
-		this.sendUpdate();
-    }
-
-    
+   
     this.load = function (id)
     {
-    	this.serverko.loadModule2(id); 
+    	this.serverko.loadModule2(id);
+    	return this.serverko;
     }
     
-	this.load_ = function (id)
-    {
-		this.startUpdate(); 
-    	this.serverko.loadModule2(id); 
-		this.sendUpdate();
-	}
 
+    
 }
 
 var Q = new QApp();
@@ -802,30 +640,29 @@ console.log(" q ok");
 var sysareas = new Array();
 
 areaStdOut = new LayoutArea();
-areaStdOut.type = "text.mline";
+areaStdOut.type = "table.list";
 areaStdOut.id = "stdout";
 areaStdOut.location="0,0,2,2";
-areaStdOut.size = "10,10,10";
-areaStdOut.text = "";
+areaStdOut.size = "20,10,1";
 areaStdOut.display = "hud";
 sysareas.push(areaStdOut);
-Q.layout.add_("*", sysareas);
+Q.layout.add("*", sysareas).now();
 
 
 // create animations
 var frame = new AnimFrame();
-frame.translate = "0,0,0";
+frame.translate2 = "0,0,0";
 var anim = new AnimType();
 anim.id = "move";
 anim.frames.push(frame);
-Q.animations.add_(anim);
+Q.animations.add(anim).now();
 
 var frame = new AnimFrame();
 frame.rotate = "0,0,0";
 var anim = new AnimType();
 anim.id = "rotate";
 anim.frames.push(frame);
-Q.animations.add_(anim);
+Q.animations.add(anim).now();
 
 var frame1 = new AnimFrame();
 frame1.scale = "0.001,0.001,0.001";
@@ -835,18 +672,17 @@ var anim = new AnimType();
 anim.id = "spawn";
 anim.frames.push(frame1);
 anim.frames.push(frame2);
-Q.animations.add_(anim);
+Q.animations.add(anim).now();
 
 var frame1 = new AnimFrame();
 frame1.scale = "1.0,1.0,1.0";
 var frame2 = new AnimFrame();
 frame2.scale = "1000.0,1000.0,1000.0";
-frame2.scale = "0.0,100.0,0.0";
 var anim = new AnimType();
 anim.id = "away";
 anim.frames.push(frame1);
 anim.frames.push(frame2);
-Q.animations.add_(anim);
+Q.animations.add(anim).now();
 
 
 
@@ -860,12 +696,12 @@ frame.scale2 = "0,0,0";
 var anim = new AnimType();
 anim.id = "transform";
 anim.frames.push(frame);
-Q.animations.add_(anim);
+Q.animations.add(anim).now();
 
 var anim = new AnimType();
 anim.id = "walk";
 anim.frames.push(frame);
-Q.animations.add_(anim);
+Q.animations.add(anim).now();
 
 
 var frame1 = new AnimFrame();
@@ -876,7 +712,7 @@ frame2.scale = "0.0,100.0,0.0";
 var anim = new AnimType();
 anim.frames.push(frame1);
 anim.frames.push(frame2);
-Q.animations.add_(anim);
+Q.animations.add(anim).now();
 
 
 var anim = new AnimType();
@@ -889,7 +725,7 @@ for (var a=0; a< 6;a++)
 	frame.operation = "pdist";
 	anim.frames.push(frame);
 }
-Q.animations.add_(anim);
+Q.animations.add(anim).now();
 
 
  
@@ -1029,34 +865,4 @@ var Base64 = {
  
 }
 
-
-
-// backward compatibility
-if (qsupportold == 1)
-{
-	serverko = Q.serverko;
-    serverko.sendEvent = function (id, delay, data) 
-    {
-    	Q.serverko.startData();
-    	Q.serverko.appendEvent( 100 , delay , "Q.handlers.script_onEvent(" + id + ","  + "'" + data + "'" + ");"  );
-    	Q.serverko.sendData();
-    }
-
-    Q.layout.areaSetOwner = function ( area, owner)   // 3120
-    {
-    	Q.serverko.appendEvent( 3120 , area , owner  );
-	}
-    	
-	Q.layout.clientAreaSetOwner = function ( userID, area, owner)   // 3120
-	{
-		Q.serverko.clientAppendEvent( userID, 3120 , area , owner  );
-    }
-
-    Q.layout.add = Q.layout.add_;
-    Q.layout.clientAdd = Q.layout.clientAdd_;
-    Q.event = Q.event_;
-    Q.load = Q.load_;
-    Q.include = Q.include_;
-	layout = Q.layout;
-}
 

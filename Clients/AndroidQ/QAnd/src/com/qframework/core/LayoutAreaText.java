@@ -236,7 +236,7 @@ public class LayoutAreaText extends LayoutArea {
 	
     public void initLayout() {
         super.initLayout();
-
+        mSizeText = mSize;
         if (mSubType == SubType.LABEL) {
             initLabel();
         } else if (mSubType == SubType.MLINE) {
@@ -248,8 +248,12 @@ public class LayoutAreaText extends LayoutArea {
         } 
 
     }	
+    
 	public void setText(String strData) 
 	{
+		if (strData == null)
+			return;
+		
 		super.setText(strData);
 	    if (strData.length() == 0 && mItemFields.size() > 0)
 	    {

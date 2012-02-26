@@ -50,11 +50,12 @@ public class AnimData {
 	public enum Type 
 	{
 		REF,
-		COLOR
+		COLOR,
+		SCROLLER
 	};
 	
 	private long mDifftime;
-	private long mAnimDelay = 1;
+	private long mAnimDelay = 0;
 	private int mRepeatDir = 0;
 	private int mAnimRepeat = 1;
 	private int	mActiveFrames = 0;
@@ -78,6 +79,11 @@ public class AnimData {
 	private AnimFrame mStart;
 	private AnimFrame mEnd;
 	private Vector<AnimFrame>	mFrames;
+	float mPerctVal;
+	float mPerctMin;
+	float mPerctMax;
+	float mPerctDiff;
+	LayoutArea	mAreaOwner;
 	
 	private void reset(){
 		
@@ -92,6 +98,15 @@ public class AnimData {
 		restore();
 		mApp.anims().decCount();
 		
+		mPerctVal = -1;
+		mPerctMin = 0;
+		mPerctMax = 0;
+		mPerctDiff = 0;
+		if (mAreaOwner != null)
+		{
+			mAreaOwner.mScollerAnim = null;
+			mAreaOwner = null; 
+		}
 	}
 		
 	private void restore()
@@ -763,7 +778,7 @@ public class AnimData {
 			ref.mEnabled = false;
 		}
 		
-		mAnimDelay = -1;
+		mAnimDelay = 0;
 		mRepeatDir = 0;
 		mAnimRepeat = 1;		
 		mCallback = "";
@@ -825,7 +840,7 @@ public class AnimData {
 	
 	public void setDelay(int delay, int repeat)
 	{
-		mAnimDelay = delay;
+		mAnimDelay += delay;
 		if (repeat < 0)
 		{
 			mAnimRepeat = repeat  * -1 ;
@@ -908,6 +923,10 @@ public class AnimData {
 		if (mType == Type.COLOR)
 		{
 			calcLinearColor(gl, mCurrSourceCol, mCurrDestCol, perct);
+		}else 
+		if (mType == Type.SCROLLER)
+		{
+			calcLinearScroller(perct);
 		}
 		return true;
 	}
@@ -935,7 +954,7 @@ public class AnimData {
 		StringTokenizer tok = new StringTokenizer(type, ",");
 		long delay = Integer.parseInt( tok.nextToken() );
 		
-		mAnimDelay = delay;
+		mAnimDelay += delay;
 		mDifftime = 0;
 	}
 	
@@ -947,8 +966,11 @@ public class AnimData {
 		if (mEnd == null)
 			mEnd = new AnimFrame();
 
+		
 		maskFrames2(mStart,atype.frames.get(0));
 		maskFrames2(mEnd,atype.frames.lastElement());
+		clearArrays(mStart,atype.frames.get(0) );
+		clearArrays(mEnd,atype.frames.lastElement() );
 		fillFrameStart(mStart, atype,ref);
 		fillFrameEnd(mEnd, atype,values,count , ref);
 	}
@@ -962,6 +984,10 @@ public class AnimData {
 			mEnd = new AnimFrame();
 
 		
+		if (atype.frames.size() == 1)
+		{
+			addFrame(atype.frames.get(0),end);
+		}
 		maskFrames(mStart,mEnd,start,end);
 		maskFrame(mStart,start,end);
 		fillFrameStart(mStart, atype,start);
@@ -974,9 +1000,52 @@ public class AnimData {
 		}
 	}
 	
+
+	private void addFrame(AnimFactory.AnimFrame animFrame,
+			GameonModelRef ref) {
+		
+		if (animFrame.rotateActive && animFrame.rotate != null)
+		{
+			ref.mRotation[0] += animFrame.rotate[0];
+			ref.mRotation[1] += animFrame.rotate[1];
+			ref.mRotation[2] += animFrame.rotate[2];
+		}
+		
+		if (animFrame.rotate2Active && animFrame.rotate2 != null)
+		{
+			ref.mAreaRotation[0] += animFrame.rotate2[0];
+			ref.mAreaRotation[1] += animFrame.rotate2[1];
+			ref.mAreaRotation[2] += animFrame.rotate2[2];
+		}
+		
+		if (animFrame.translate2Active && animFrame.translate2 != null)
+		{
+			ref.mAreaPosition[0] += animFrame.translate2[0];
+			ref.mAreaPosition[1] += animFrame.translate2[1];
+			ref.mAreaPosition[2] += animFrame.translate2[2];
+		}		
+		
+		if (animFrame.translateActive && animFrame.translate != null)
+		{
+			ref.mPosition[0] += animFrame.translate[0];
+			ref.mPosition[1] += animFrame.translate[1];
+			ref.mPosition[2] += animFrame.translate[2];
+		}		
+
+		if (animFrame.scaleActive && animFrame.scale != null)
+		{
+			ref.mScale[0] += animFrame.scale[0];
+			ref.mScale[1] += animFrame.scale[1];
+			ref.mScale[2] += animFrame.scale[2];
+		}		
+
+		
+	}
+
 	public void activate() {
 		mDifftime = 0;
 		mApp.anims().incCount();
+		
 	}
 
 	public boolean process2(GameonModelRef ref, long delta)
@@ -1043,9 +1112,54 @@ public class AnimData {
 		return false;
 	}
 	
+	protected void calcLinearScroller(float perct)
+	{
+		if (mAreaOwner != null)
+		{
+			float currval = mAreaOwner.mScrollers[0];
+			float newval = currval + (mPerctVal - currval)*perct;
+			if (newval < mPerctMin)
+			{
+				newval = mPerctMin;
+			}else 
+			if (newval > mPerctMax)
+			{
+				newval = mPerctMax;
+			}
+			//System.out.println(" scrollval " + newval);
+			mAreaOwner.setScrollerVal(newval);
+		}
+	}
+	
 	public void cancelAnimation(GameonModelRef ref)
 	{
 		this.endAnimation(ref);
+	}
+	
+	public void addScrollerData(float add, int delay, float min, float max)
+	{
+		mType = AnimData.Type.SCROLLER;
+		mPerctDiff = -add;
+		if (mPerctVal == -1)
+		{
+			mPerctVal = mAreaOwner.mScrollers[0];
+		}else
+		{
+			mPerctVal -= add;
+		}
+		mDifftime = 0;
+		mAnimDelay = delay;
+		mPerctMin = min;
+		mPerctMax = max;
+		mSteps = 1 ;
+		mActive = true;
+		mTimeStep = mAnimDelay; 
+	}
+
+	public void cancel() 
+	{
+		this.reset();
+		
 	}
 }
 

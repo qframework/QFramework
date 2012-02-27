@@ -29,54 +29,42 @@ function setuplayout()
 	// add text labels
 	var item = new LayoutArea();
 	item.type = "text.button";
-	item.id = "menu1";
-	item.background="FF331133";
+	item.id = "menutext1";
+	item.background="55331133";
 	item.location= "0.0,-0.6,0.0";
 	item.bounds="2.2,0.3";
 	item.display = "hud";
-	item.text = "Menu Item 1";
-	item.onclick = "js:menu_clicked";
+	item.text = "Delete texture 1";
+	item.onclick = "js:delete_texture('text1');";
 	item.onfocuslost = "js:menu_focuslost";
 	item.onfocusgain = "js:menu_focusgain";	
 	areas.push(item);
 	
 	var item = new LayoutArea();
 	item.type = "text.button";
-	item.id = "menu2";
-	item.background="FF331133";
+	item.id = "menutext2";
+	item.background="55331133";
 	item.location= "0.0,0.0,0.0";
 	item.bounds="2.2,0.3";
 	item.display = "hud";
-	item.text = "Menu Item 2";
-	item.onclick = "js:menu_clicked";
+	item.text = "Delete texture 2";
+	item.onclick = "js:delete_texture('text2');";
 	item.onfocuslost = "js:menu_focuslost";
 	item.onfocusgain = "js:menu_focusgain";	
 	areas.push(item);
 	
 	var item = new LayoutArea();
 	item.type = "text.button";
-	item.id = "menu3";
-	item.background="FF331133";
+	item.id = "menutext3";
+	item.background="55331133";
 	item.location= "0.0,0.6,0.0";
 	item.bounds="2.2,0.3";
 	item.display = "hud";
-	item.text = "Menu Item 3";
-	item.onclick = "js:menu_clicked";
+	item.text = "Reload textures";
+	item.onclick = "js:reload_textures();";
 	item.onfocuslost = "js:menu_focuslost";
 	item.onfocusgain = "js:menu_focusgain";
 	areas.push(item);
-	
-	
-	var item = new LayoutArea();
-	item.type = "text.label";
-	item.location= "0.0,1.2,0.0";
-	item.bounds="2.2,0.3";
-	item.id = "menutext";	
-	item.display = "hud";
-	item.text = "(........)";
-	areas.push(item);
-	
-	
 	
     var x2 = Q.layout.hudxmax;    
     var y2 = Q.layout.hudymax;
@@ -89,21 +77,25 @@ function setuplayout()
 	areaExit.location= (x2- 0.11) +','+(y2-0.11);
 	areaExit.bounds = '0.20,0.20';
 	areaExit.display = 'hud';
-	areaExit.onclick = 'js:coords_exit';
+	areaExit.onclick = 'js:textures_exit';
     areas.push(areaExit);
     
-	Q.layout.add("worldhud", areas).now();
+	Q.layout.add("textures", areas).now();
 	// show page
-	Q.layout.show("worldhud").now();	
+	Q.layout.show("textures").now();	
 	
 	
 }
 
 
-function coords_exit(area,index)
+function textures_exit(area,index)
 {
 	Q.startUpdate();
-	Q.layout.clear("worldhud");
+	Q.textures.remove("text1");
+	Q.textures.remove("text2");
+	Q.objects.remove("cube1");
+
+	Q.layout.clear("textures");
 	// go to default
 	Q.camera.fit( "4.0,0");
 	Q.camera.fitHud( "4.0,0");
@@ -135,4 +127,66 @@ function menu_clicked(area,index)
 }
 
 
+// load textures 
+function loadObjects()
+{
+	
+	Q.startUpdate();
+	// load texture
+	Q.textures.newFromFile("text1","textures/text1.png");
+	Q.textures.newFromFile("text2","textures/text2.png");
+	// create cube
+	Q.objects.create("cube1","cube");
+	//set its texture
+	Q.objects.texture("cube1","text2");
+	//show it on screen
+	Q.objects.place("cube1","0,0,0.5");
+	Q.objects.scale("cube1","0.5,0.5,0.5");
+	Q.objects.state("cube1","visible");
+	Q.anim.rotate("cube1","360,360,0","5000,inf","");	
+	Q.sendUpdate();
+	
+	var areas = new Array();
+	var backArea = new LayoutArea();
+	backArea.type = "layout.back";
+	backArea.id = "texturesback";
+	backArea.location = "0,1.4,0";
+	backArea.bounds = "6,6";
+	backArea.background = "FFFFFFFF,text1";
+	areas.push(backArea);
+	Q.layout.add("textures", areas).now();
+	
+}
+
+function delete_texture(name)
+{
+	Q.textures.remove(name).now();
+}
+
+
+var swap = 0;
+function reload_textures()
+{
+	Q.startUpdate();
+	// load texture
+	if (swap % 2 == 0)
+	{
+		Q.textures.newFromFile("text2","textures/text1.png");
+		Q.textures.newFromFile("text1","textures/text2.png");
+	}else
+	{
+		Q.textures.newFromFile("text1","textures/text1.png");
+		Q.textures.newFromFile("text2","textures/text2.png");
+	}
+	
+	swap ++;
+	
+	Q.objects.texture("cube1","text2");
+	Q.layout.areaSetBackground("texturesback" ,"FFFFFFFF,text1" );
+	Q.sendUpdate();
+}
+
+loadObjects();
 setuplayout();
+
+Q.camera.set(0,0,0 , 0,-4.5,4.0).now();

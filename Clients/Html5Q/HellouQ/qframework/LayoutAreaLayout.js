@@ -73,6 +73,14 @@ this.mApp = app;
 	}
 	this.mType = LayoutArea_Type.LAYOUT;
 	this.mPageVisible = false;
+	this.mActive = true;
+	this.mSizeText = -1;
+	this.mScrollers = [0,-0.5,0.5,0,0,0];
+	this.mHasScrollH = false;
+	this.mHasScrollV = false;
+	this.mScollerAnim = undefined;
+	this.mActiveItems = 1;
+	
 }
 
 LayoutAreaLayout.prototype = new LayoutArea();

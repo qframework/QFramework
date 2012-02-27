@@ -93,7 +93,7 @@ function QStarter()
 	}
 	this.handleMouseMove = function (event) {
 		if (qstart.dragging) {
-			qstart.mApp.mouseDragged(getPositionX(event), getPositionY(event));
+			qstart.mApp.mouseDragged(getPositionX(event), getPositionY(event) , false);
 		}		
 	}
 	this.reshape = function (gl)

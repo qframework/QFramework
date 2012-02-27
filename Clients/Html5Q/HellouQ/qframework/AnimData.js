@@ -34,7 +34,8 @@ AnimData_Type =
 {
 	NONE:0,
 	REF:1,
-	COLOR:2
+	COLOR:2,
+	SCROLLER:3
 }
 
 
@@ -59,6 +60,15 @@ AnimData.prototype.reset = function()
 	
 	
 	this.mApp.anims().decCount();
+	this.mPerctVal = -1;
+	this.mPerctMin = 0;
+	this.mPerctMax = 0;
+	this.mPerctDiff = 0;
+	if (this.mAreaOwner != undefined)
+	{
+		this.mAreaOwner.mScollerAnim = undefined;
+		this.mAreaOwner = undefined; 
+	}	
 	//Log.d("model", "afinish " + mId);
 	
 }
@@ -531,6 +541,9 @@ AnimData.prototype.setup = function(atype, values, count, ref) {
 	
 	this.maskFrames2(this.mStart,atype.frames[0]);
 	this.maskFrames2(this.mEnd,atype.frames[ atype.frames.length-1]);	
+	this.clearArrays(this.mStart,atype.frames[0] );
+	this.clearArrays(this.mEnd,atype.frames[ atype.frames.length-1] );
+	
 	this.fillFrameStart(this.mStart, atype,ref);
 	this.fillFrameEnd(this.mEnd, atype,values,count , ref);
 }
@@ -546,6 +559,11 @@ AnimData.prototype.setup2 = function(atype, start, end) {
 	//console.log( "start = " + start.mAreaRotation.toString());
 	//console.log( "end = " + end.mAreaRotation.toString());
 
+	if (atype.frames.length == 1)
+	{
+		this.addFrame(atype.frames[0],end);
+	}
+		
 	this.maskFrames(this.mStart,this.mEnd, start,end);
 	this.maskFrame(this.mStart,start,end);
 	this.fillFrameStart(this.mStart, atype,start);
@@ -555,6 +573,48 @@ AnimData.prototype.setup2 = function(atype, start, end) {
 		this.fillFrames(atype,start,end);
 	}
 }
+
+AnimData.prototype.addFrame = function (animFrame,ref) 
+{
+	
+	if (animFrame.rotateActive == true && animFrame.rotate != undefined)
+	{
+		ref.mRotation[0] += animFrame.rotate[0];
+		ref.mRotation[1] += animFrame.rotate[1];
+		ref.mRotation[2] += animFrame.rotate[2];
+	}
+	
+	if (animFrame.rotate2Active == true && animFrame.rotate2 != undefined)
+	{
+		ref.mAreaRotation[0] += animFrame.rotate2[0];
+		ref.mAreaRotation[1] += animFrame.rotate2[1];
+		ref.mAreaRotation[2] += animFrame.rotate2[2];
+	}
+	
+	if (animFrame.translate2Active == true && animFrame.translate2 != undefined)
+	{
+		ref.mAreaPosition[0] += animFrame.translate2[0];
+		ref.mAreaPosition[1] += animFrame.translate2[1];
+		ref.mAreaPosition[2] += animFrame.translate2[2];
+	}		
+	
+	if (animFrame.translateActive == true && animFrame.translate != undefined)
+	{
+		ref.mPosition[0] += animFrame.translate[0];
+		ref.mPosition[1] += animFrame.translate[1];
+		ref.mPosition[2] += animFrame.translate[2];
+	}		
+
+	if (animFrame.scaleActive == true && animFrame.scale != undefined)
+	{
+		ref.mScale[0] += animFrame.scale[0];
+		ref.mScale[1] += animFrame.scale[1];
+		ref.mScale[2] += animFrame.scale[2];
+	}		
+
+	
+}
+
 
 
 AnimData.prototype.maskFrames2 = function(frame,inframe) 
@@ -884,7 +944,7 @@ AnimData.prototype.endAnimation = function(ref)
 		ref.mEnabled = false;
 	}
 	
-	this.mAnimDelay = -1;
+	this.mAnimDelay = 0;
 	this.mRepeatDir = 0;
 	this.mAnimRepeat = 1;		
 	this.mCallback = "";
@@ -930,7 +990,7 @@ AnimData.prototype.calcLinearData = function(start, end, p, ref)
 		ref.mScale[1] = (end.mScale[1] - start.mScale[1]) * p + start.mScale[1];
 		ref.mScale[2] = (end.mScale[2] - start.mScale[2]) * p + start.mScale[2];
 	}
-
+	
 	//console.log( ref.mAreaRotation.toString() + " "+ end.mRotate2.toString() + " "+ start.mRotate2.toString() );
 	ref.set();
 }
@@ -970,11 +1030,16 @@ function AnimData(id, app)
 	this.mId = id;
 
 	this.mApp = app;
+	this.mPerctVal = 0;
+	this.mPerctMin = 0;
+	this.mPerctMax = 0;
+	this.mPerctDiff = 0;
+	this.mAreaOwner = undefined;	
 	
 }
 AnimData.prototype.setDelay = function(delay, repeat)
 {
-	this.mAnimDelay = delay;
+	this.mAnimDelay += delay;
 	if (repeat < 0)
 	{
 		this.mAnimRepeat = repeat  * -1 ;
@@ -999,7 +1064,12 @@ AnimData.prototype.saveBackup = function(backup, hide)
 	this.mOnEndHide = hide;
 }
 
-AnimData.prototype.setActive = function()
+AnimData.prototype.isActive = function()
+{
+	return this.mActive;
+}
+
+AnimData.prototype.setActive = function(active)
 {
 	this.mActive = active;
 }
@@ -1022,6 +1092,7 @@ AnimData.prototype.apply = function()
 	}
 	
 	diff = this.mAnimDelay / this.mSteps;
+
 	this.mTimeStep = diff;
 	this.mActive = true;
 	this.mDifftime = 0;	
@@ -1053,6 +1124,10 @@ AnimData.prototype.process = function(delta, copyref) {
 	if (this.mType == AnimData_Type.COLOR)
 	{
 		this.calcLinearColor(gl, this.mCurrSourceCol, this.mCurrDestCol, perct);
+	}else 
+	if (this.mType == AnimData_Type.SCROLLER)
+	{
+		this.calcLinearScroller(perct);
 	}
 	return true;
 }
@@ -1076,7 +1151,54 @@ AnimData.prototype.addFrameColor = function(c)
 	this.mType  = AnimData_Type.COLOR;
 }
 
+AnimData.prototype.calcLinearScroller = function(perct)
+{
+	if (this.mAreaOwner != null)
+	{
+		var currval = this.mAreaOwner.mScrollers[0];
+		var newval = currval + (this.mPerctVal - currval)*perct;
+		
+		if (newval < this.mPerctMin)
+		{
+			newval = this.mPerctMin;
+		}else 
+		if (newval > this.mPerctMax)
+		{
+			newval = this.mPerctMax;
+		}
+
+		this.mAreaOwner.setScrollerVal(newval);
+	}
+}
+
+
 AnimData.prototype.cancelAnimation = function(ref)
 {
 	this.endAnimation(ref);
 }
+
+AnimData.prototype.addScrollerData = function(add, delay, min, max)
+{
+	this.mType = AnimData_Type.SCROLLER;
+	this.mPerctDiff = -add;
+	if (this.mPerctVal == -1)
+	{
+		this.mPerctVal = this.mAreaOwner.mScrollers[0];
+	}else
+	{
+		this.mPerctVal -= add;
+	}
+	this.mDifftime = 0;
+	this.mAnimDelay = delay;
+	this.mPerctMin = min;
+	this.mPerctMax = max;
+	this.mSteps = 1 ;
+	this.mActive = true;
+	this.mTimeStep = delay;
+}
+
+AnimData.prototype.cancel = function() 
+{
+	this.reset();
+}
+

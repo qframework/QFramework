@@ -207,6 +207,7 @@ setupRef : function(gl)
 	{
 		//console.log( this.mTextureID.toString() );
 		//if (glModelLastText != this.mTextureID)
+		if (gl.isTexture(this.mTextureID))
 		{
 			gl.bindTexture(gl.TEXTURE_2D, this.mTextureID);
 			glModelLastText = this.mTextureID;

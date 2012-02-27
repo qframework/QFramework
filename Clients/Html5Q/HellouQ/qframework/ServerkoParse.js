@@ -19,8 +19,6 @@
 
 function ServerkoParse( app ) 
 {
-	this.mData = data;
-	
 	this.mApp = app;
 	this.mUsername = "Dembinjo";
 	this.mOptions = "";

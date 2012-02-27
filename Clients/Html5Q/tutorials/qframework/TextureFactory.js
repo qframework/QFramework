@@ -37,6 +37,7 @@ function TextureFactory( app)
 	this.mTextures = {};//new HashMap<String, Integer>();
 	this.mTextureIds = []; //new Vector<Texture>();
 	this.mInfos = []; //new Vector<StringString>();
+	this.mToDelete = []; //new Vector<String>();
 	this.mApp = app;
 	this.mU1 = 0.0;
 	this.mV1 = 0.0;
@@ -108,6 +109,41 @@ TextureFactory.prototype.getTexture = function(strData) {
 		return this.mTextures[strData];
 	}
 	return this.mTextureDefault;
+}
+
+TextureFactory.prototype.deleteTexture = function(gl ,textname)
+{
+	this.mToDelete.push(textname);
+}
+
+TextureFactory.prototype.flushTextures = function(gl)
+{
+	for (var a=0; a< this.mToDelete.length ; a++)
+	{
+		this.clearTexture(gl , this.mToDelete[a]);
+	}
+	
+	this.mToDelete = [];
+}
+
+TextureFactory.prototype.clearTexture = function(gl, textname)
+{
+	if (this.mTextures[textname] != undefined)
+	{
+		var id = this.mTextures[textname];
+		gl.deleteTexture(id);
+		delete this.mTextures[textname];
+		for (var a=0; a < this.mInfos.length; a++)
+		{
+			var info = this.mInfos[a];
+			if (info.b == textname)
+			{
+				this.mInfos.splice(a,1);
+				break;
+			}
+		}
+	}
+	
 }
 
 TextureFactory.prototype.clear = function() {

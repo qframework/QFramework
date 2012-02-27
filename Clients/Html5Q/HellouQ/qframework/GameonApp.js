@@ -59,6 +59,10 @@ function GameonApp(context, appname)
 	this.mDataChange = false;
 	this.mRendering = false;
 
+    this.mLastDrag = [1e07 ,0 , 0];
+    this.mLastDragTime = 0;
+    this.mLastClickTime = 0;	
+	this.mLastDist = 0
 }
 
 GameonApp.prototype.processData = function(gl , time)
@@ -66,6 +70,7 @@ GameonApp.prototype.processData = function(gl , time)
     this.mAnims.process(time);
 	this.execResponses(gl);
     this.mWorld.addModels(gl);    
+	this.mTextures.flushTextures(gl);
 }
 
 
@@ -253,6 +258,8 @@ GameonApp.prototype.start = function(script , preexec)
 
 GameonApp.prototype.onClick = function(vec, vecHud) 
 {
+	var delay = new Date().getTime() - this.mLastClickTime;
+
 	var field = this.mDataGrid.onClickNearest(vec, vecHud);
 	
 	if (field != undefined && field.mOnclick != undefined) {
@@ -267,7 +274,10 @@ GameonApp.prototype.onClick = function(vec, vecHud)
 			}else
 			{
 				var cmd  = datastr.substring(3);
-				cmd += "('" + field.mArea + "',"+ field.mIndex + ");" ;
+				cmd += "('" + field.mArea + "',"+ field.mIndex;
+				cmd += "," + delay + ",[" + field.mLoc[0] + "," + field.mLoc[1] + "," + field.mLoc[2] + "]"; 
+				cmd += ","+ this.mLastDist;
+				cmd += ");" ;
 				this.mScript.execScript(cmd);
 			}
 		}else
@@ -281,7 +291,9 @@ GameonApp.prototype.onClick = function(vec, vecHud)
 	{
 		this.onFocusLost(this.mFocused);
 		this.mFocused = undefined;
-	}   	
+	}   
+	
+	this.mLastDist = 0;
 }
 
 GameonApp.prototype.endScript = function() 
@@ -435,8 +447,19 @@ GameonApp.prototype.stop = function()
 	
 }
 
-GameonApp.prototype.mouseDragged = function(x, y) {
+GameonApp.prototype.mouseDragged = function(x, y , notimecheck) {
 	// 
+	if (this.mFrameDeltaTime == 0)
+		this.mLastDragTime += 100;
+	else
+		this.mLastDragTime += this.mFrameDeltaTime;
+	
+	if (!notimecheck && this.mLastDragTime < 100)
+	{
+		//return;
+	}
+	this.mLastDragTime = 0;
+	
 	var rayVec = [0.0,0.0,0.0];
 	var rayVecHud = [0.0,0.0,0.0];
 
@@ -448,6 +471,35 @@ GameonApp.prototype.mouseDragged = function(x, y) {
 	
 	if (field != undefined && this.mFocused != undefined)
 	{
+		if (field.mArea == this.mFocused.mArea )
+		{
+			if (this.mLastDrag[0] == 1e07)
+			{
+				this.mLastDrag[0] = field.mLoc[0];
+				this.mLastDrag[1] = field.mLoc[1];
+				this.mLastDrag[2] = field.mLoc[2];
+				return;
+			}else
+			{
+				var delta0 = field.mLoc[0]- this.mLastDrag[0];
+				var delta1 = field.mLoc[1]- this.mLastDrag[1];
+				var delta2 = field.mLoc[2]- this.mLastDrag[2];
+				
+				this.mLastDist = Math.sqrt( (delta0*delta0)+(delta1*delta1)+(delta2*delta2) );			
+				
+				var area = this.mDataGrid.getArea(field.mArea);
+				if (area != undefined)
+				{
+					area.onDragg(field.mLoc[0] -this.mLastDrag[0],
+									field.mLoc[1] -this.mLastDrag[1],
+									field.mLoc[2] -this.mLastDrag[2]);
+				}
+			}
+			
+			this.mLastDrag[0] = field.mLoc[0];
+			this.mLastDrag[1] = field.mLoc[1];
+			this.mLastDrag[2] = field.mLoc[2];
+		}	
 		if (field.mArea ==  this.mFocused.mArea && 
 			field.mIndex == this.mFocused.mIndex)
 		{
@@ -456,6 +508,7 @@ GameonApp.prototype.mouseDragged = function(x, y) {
 		{
 			this.onFocusLost(this.mFocused);
 			this.mFocused = undefined;
+			this.mLastDrag[0] = 1e07;
 		}
 	}else if (this.mFocused != undefined)
 	{
@@ -469,6 +522,7 @@ GameonApp.prototype.mouseDragged = function(x, y) {
 		this.onFocusGain(field);
 	}
 
+	this.mLastDrag[0] = 1e07;
 }
 
 
@@ -528,7 +582,8 @@ GameonApp.prototype.onFocusLost = function(field)
 
 GameonApp.prototype.onFocusProbe = function(x, y)
 {
-	this.mouseDragged(x, y);
+	this.mLastClickTime = new Date().getTime();
+	this.mouseDragged(x, y , true);
 }
 
 GameonApp.prototype.setSplash  = function( splash, delay)
@@ -614,6 +669,9 @@ GameonApp.prototype.onEvent2 = function(gl, response)
 		case 4000:
 			this.mTextures.newTexture(gl ,resptype  , respdata, true);
 		break; 
+		case 4001:
+			this.mTextures.deleteTexture(gl ,resptype );
+		break;			
 		case 4100:
 			this.mObjectsFact.create(resptype , respdata);
 			break;

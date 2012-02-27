@@ -84,15 +84,17 @@ LayoutGrid.prototype.processAreaData2 = function(areaData) {
 			area.updateBounds(bounds);
 		}
 		
+		if (areaData["scrollers"] != undefined)
+		{
+			var bounds = areaData["scrollers"];
+			area.setScrollers(bounds);
+		}
 
 		if (areaData["state"] != undefined)
 		{
 			var state = areaData["state"];
 			area.updateState(state , true );
 		}
-		/*else {
-			this.setVisibleArea( area , true);
-		}*/
 
 		if (areaData["display"] != undefined)
 		{	        
@@ -261,12 +263,27 @@ LayoutGrid.prototype.setAreaRotation = function(areaid , strData) {
 	}
 }
 
+LayoutGrid.prototype.setAreaScrollers = function(areaid , strData) {
+	var area = this.getArea(areaid);
+	if (area != undefined) {
+		area.setScrollers(strData);
+	}
+}
+
 LayoutGrid.prototype.setAreaScale = function(areaid , strData) {
 	var area = this.getArea(areaid);
 	if (area != undefined) {
 		area.setScale(strData);
 	}
 }
+
+LayoutGrid.prototype.setAreaItemScale = function(areaid , strData) {
+	var area = this.getArea(areaid);
+	if (area != undefined) {
+		area.setItemScale(strData);
+	}
+}
+
 
 LayoutGrid.prototype.setAreaSize = function(areaid , strData) {
 	var area = this.getArea(areaid);
@@ -467,6 +484,10 @@ LayoutGrid.prototype.onEvent2 = function(response)
 	var respid = response["id"];
 	var respdata = response["data"];
 	var resptype = response["type"];
+	var respdata2 = response["data2"];
+	var respdata3 = response["data3"];
+	var respdata4 = response["data4"];
+	
 	var eventid = parseInt( respid);
 	switch (eventid) 
 	{
@@ -504,7 +525,7 @@ LayoutGrid.prototype.onEvent2 = function(response)
 			this.onCameraSet(resptype , respdata);
 			break;
 		case 2502:
-			this.onCameraProj(resptype , respdata);
+			this.onCameraProj(resptype , respdata ,respdata2);
 			break;         
 		case 2510:
 			this.onCameraFitHud(resptype , respdata);
@@ -513,7 +534,7 @@ LayoutGrid.prototype.onEvent2 = function(response)
 			this.onCameraSetHud(resptype , respdata);
 		break;
 		case 2512:
-			this.onCameraProjHud(resptype , respdata);
+			this.onCameraProjHud(resptype , respdata , respdata2);
 		break;		  
 		 case 3001:
 			  this.onAreaDelete(resptype, respdata);
@@ -607,11 +628,25 @@ LayoutGrid.prototype.onEvent2 = function(response)
 		case 3120:
 			this.areaUpdateTextColor(resptype, respdata);
 		break;			
+		case 3400:
+			this.areaSetScrollers(resptype, respdata);
+		break;
+		case 3210:
+			this.areaAnim(resptype, respdata  , respdata2 , respdata3);
+		break;		
 	}		  
 	
 
 }
 
+LayoutGrid.prototype.areaAnim = function(areaid, type, delay, data)
+{
+	var area = this.getArea(areaid);
+	if (area != undefined) {
+		area.anim(type, delay , data);
+	}
+	
+}
 
 LayoutGrid.prototype.onAreaClear = function(type , strData) {
 	var area = this.getArea(type);
@@ -825,15 +860,25 @@ LayoutGrid.prototype.findNearest = function(vec, vecHud , click)
 	for (var a=this.mVisibleAreas.length-1; a>=0 ; a--)
 	{
 		var ahud = this.mVisibleAreas[a];
+		
+		if (ahud.mActiveItems == 0)
+		{
+			continue;
+		}		
+		
 		if (click == true)
 		{
 			if ( ahud.mOnclick == undefined || ahud.mOnclick.length == 0 )
 				continue;
 		}else
 		{
-			if ( (ahud.mOnFocusGain== undefined || ahud.mOnFocusGain.length == 0) &&  
-				(ahud.mOnFocusLost== undefined || ahud.mOnFocusLost.length == 0))
-				continue;
+        		if (!ahud.mHasScrollV && !ahud.mHasScrollH)
+        		{
+		
+					if ( (ahud.mOnFocusGain== undefined || ahud.mOnFocusGain.length == 0) &&  
+						(ahud.mOnFocusLost== undefined || ahud.mOnFocusLost.length == 0))
+						continue;
+				}
 		}
 		
 		if (ahud.mDisplay != GameonWorld_Display.HUD)
@@ -856,15 +901,23 @@ LayoutGrid.prototype.findNearest = function(vec, vecHud , click)
 	for (var a= this.mVisibleAreas.length-1; a>=0 ; a--)
 	{
 		var ahud = this.mVisibleAreas[a];
+		if (ahud.mActiveItems == 0)
+		{
+			continue;
+		}
+		
 		if (click == true)
 		{
 			if ( ahud.mOnclick == undefined || ahud.mOnclick.length == 0 )
 				continue;
 		}else
 		{
-			if ( (ahud.mOnFocusGain== undefined || ahud.mOnFocusGain.length == 0) &&  
-				(ahud.mOnFocusLost== undefined || ahud.mOnFocusLost.length == 0))
-				continue;
+			if (!ahud.mHasScrollV && !ahud.mHasScrollH)
+			{		
+				if ( (ahud.mOnFocusGain== undefined || ahud.mOnFocusGain.length == 0) &&  
+					(ahud.mOnFocusLost== undefined || ahud.mOnFocusLost.length == 0))
+					continue;
+			}
 		}
 		
 		if (ahud.mDisplay == GameonWorld_Display.HUD)
@@ -1073,28 +1126,24 @@ LayoutGrid.prototype.onCameraSetHud = function(lookAt , eyeStr)
 }
 
 
-LayoutGrid.prototype.onCameraProjHud = function(fov , farnear)
+LayoutGrid.prototype.onCameraProjHud = function(fov , far , near )
 {
 	var fovf = parseFloat(fov);
-	var tok = farnear.split( ","); 
-	var far = 0.0;
-	var near = 0.0;
-	if (tok.length > 0) near = parseFloat( tok[0]);
-	if (tok.length > 1) far = parseFloat( tok[1]);
+	var farf = parseFloat(far);
+	var nearf = parseFloat(near);
 	
-	this.mApp.view().setFovHud( fovf, far, near);
+	this.mApp.view().setFovHud( fovf, farf, nearf);
+	this.mApp.setScreenBounds();
 }
 
-LayoutGrid.prototype.onCameraProj = function(fov , farnear)
+LayoutGrid.prototype.onCameraProj = function(fov , far , near)
 {
 	var fovf = parseFloat(fov);
-	var tok = farnear.split( ","); 
-	var far = 0.0;
-	var near = 0.0;
-	if (tok.length > 0) near = parseFloat( tok[0]);
-	if (tok.length > 1) far = parseFloat( tok[1]);
+	var farf = parseFloat(far);
+	var nearf = parseFloat(near);
 	
-	this.mApp.view().setFov( fovf, far, near);
+	this.mApp.view().setFov( fovf, farf, nearf);
+	this.mApp.setScreenBounds();
 }
 
 
@@ -1134,6 +1183,11 @@ LayoutGrid.prototype.addToPage = function(area , pageid)
 	if (areas == undefined)
 	{
 		areas = new Areas();
+		if (pageid == "*")
+		{
+			areas.mVisible = true;
+		}		
+		
 		this.mPageIds[pageid] = areas;
 	}
 	area.mPageId = pageid;

@@ -98,6 +98,15 @@ function LayoutAreaText(subtype , app)
 	
 	this.mType = LayoutArea_Type.TEXT;	
 	this.mPageVisible = false;
+	
+	this.mActive = true;
+	this.mSizeText = -1;
+	this.mScrollers = [0,-0.5,0.5,0,0,0];
+	this.mHasScrollH = false;
+	this.mHasScrollV = false;
+	this.mScollerAnim = undefined;
+	this.mActiveItems = 1;
+	
 }
 
 LayoutAreaText.prototype = new LayoutArea();
@@ -268,6 +277,7 @@ LayoutAreaText.prototype.initButton = function()
 
 LayoutAreaText.prototype.initLayout = function() 
 {
+	this.mSizeText = this.mSize;
 	if (this.mSubType == LayoutAreaText_SubType.LABEL) {
 		this.initLabel();
 	} else if (this.mSubType == LayoutAreaText_SubType.MLINE) {

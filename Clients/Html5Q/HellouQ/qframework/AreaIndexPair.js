@@ -23,6 +23,7 @@ function AreaIndexPair()
 	this.mOnFocusGain = "";
 	this.mDist = 0.0;
 	this.mIntData = 0;
+	this.mLoc = [0,0,0];
 }
 
 

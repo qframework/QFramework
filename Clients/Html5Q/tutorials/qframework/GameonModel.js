@@ -62,6 +62,7 @@ function GameonModel(name , app)
     this.mVertexOffset = 0;
     this.mColorOffset = 0;
 	this.mGenerated = false;
+	this.mActive = true;
 	
 }
 
@@ -585,6 +586,9 @@ GameonModel.prototype.createCard2 = function(left, bottom, back, right, top, fro
 }
 
 GameonModel.prototype.setState = function(state) {
+	if (!this.mActive)
+		return;
+
 	for (var a=0; a< this.mRefs.length; a++)
 	{
 		var ref = this.mRefs[a];
@@ -850,3 +854,19 @@ GameonModel.prototype.unsetWorld = function()
 	this.mWorld = undefined;
 }    
 
+GameonModel.prototype.createAnim = function(type, refid , delay, data)
+{
+	if (refid < 0 && refid >= mRefs.length)
+	{
+		return;
+	}
+	
+	var ref = this.mRefs[refid];
+	this.mApp.anims().animModelRef(type , ref, delay , data);
+	
+}
+
+GameonModel.prototype.setActive = function(active)
+{
+	this.mActive = active;
+}

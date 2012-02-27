@@ -351,7 +351,7 @@ TextItem.prototype.setPosition = function(x, y, z, w, h) {
 	this.mW = w;
 	this.mH = h;
 	//System.out.println(" set pos " + mText + " " + mX + " " + mY+  " " + mZ + " " + mW + " " + mH);
-	this.set(true);
+	this.setRef();
 }
 
 
@@ -390,4 +390,22 @@ TextItem.prototype.setRef = function()
 			
 		}
 	}
+}
+
+TextItem.prototype.ref = function()
+{
+	return this.mRef;
+}
+
+TextItem.prototype.setParentLoc = function(area) 
+{
+	if (this.mRef != undefined)
+	{
+		this.mRef.setAreaPosition(area.mLocation);
+		this.mRef.setAreaRotate(area.mRotation);
+		this.mRef.mulScale(area.mBounds);
+		this.mRef.setAddScale(area.mScale);			
+		this.mRef.set();
+	}
+	
 }

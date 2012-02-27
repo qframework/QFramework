@@ -22,13 +22,6 @@
 
 // this resource is defined in main.js
 // 
-/*
-	var model1 = new Model();
-	model1.name = 'cards';
-	model1.template = 'card52';
-	model1.texture = 'icons;8,8';
-	model1.submodels = '64,24';
-	*/
 
 // setup layout
 function setuplayout()
@@ -45,7 +38,7 @@ function setuplayout()
 
 	
 	// change camera to see difference
-	Q.camera.set_(0,0,0, 0,-0.8,2);
+	Q.camera.set(0,0,0, 0,-0.8,2).now();
 	
 
 	// add cards that are on table
@@ -156,9 +149,9 @@ function setuplayout()
 	areaExit.onclick = 'js:cards_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("cards", areas);
+	Q.layout.add("cards", areas).now();
 	// show page
-	Q.layout.show_("cards");	
+	Q.layout.show("cards").now();	
 	
 	
 }
@@ -246,7 +239,7 @@ function move_card41(area, index)
 
 
 setuplayout();
-//Q.exec_(200,"setRotation();");
+
 var c = 0;
 function setRotation()
 {
@@ -254,6 +247,6 @@ function setRotation()
 	Q.layout.areaSetRotation('cards2','70,'+(c*10)+',0');
 	c++;
 	Q.sendUpdate();
-	Q.exec_(200,"setRotation();");
+	Q.evals(200,"setRotation();").now();
 }
 

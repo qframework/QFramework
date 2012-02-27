@@ -92,6 +92,14 @@ function LayoutAreaCards(subtype , app)
 	this.mType = LayoutArea_Type.CARDS;
 	this.mPageVisible = false;
 	this.mThickness = 0.0005;
+	this.mActive = true;
+	this.mSizeText = -1;
+	this.mScrollers = [0,-0.5,0.5,0,0,0];
+	this.mHasScrollH = false;
+	this.mHasScrollV = false;
+	this.mScollerAnim = undefined;
+	this.mActiveItems = 1;
+	
 }
 
 LayoutAreaCards.prototype = new LayoutArea();
@@ -159,19 +167,19 @@ LayoutAreaCards.prototype.initDeck = function(turnback)
 		fieldc++;
 	}
 	
-        if (this.mLayout == LayoutArea_Layout.WEST_EAST)
-        {
-        	this.mRotation[2] = 90;	
-        }else if (this.mLayout == LayoutArea_Layout.EAST_WEST)
-        {
-        	this.mRotation[2] = 270;	
-        }else if (this.mLayout == LayoutArea_Layout.NORTH_SOUTH)
-        {
-        	this.mRotation[2] = 0;	
-        }else if (this.mLayout == LayoutArea_Layout.SOUTH_NORTH)
-        {
-        	this.mRotation[2] = 180;	
-        }   
+	if (this.mLayout == LayoutArea_Layout.WEST_EAST)
+	{
+		this.mRotation[2] = 90;	
+	}else if (this.mLayout == LayoutArea_Layout.EAST_WEST)
+	{
+		this.mRotation[2] = 270;	
+	}else if (this.mLayout == LayoutArea_Layout.NORTH_SOUTH)
+	{
+		this.mRotation[2] = 0;	
+	}else if (this.mLayout == LayoutArea_Layout.SOUTH_NORTH)
+	{
+		this.mRotation[2] = 180;	
+	}   
 	
 }
 

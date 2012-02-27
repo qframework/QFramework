@@ -403,10 +403,9 @@ GameonModelRef.prototype.mulScale = function(x, y, z)
 }
 
 
-GameonModelRef.prototype.intersectsRay = function(eye , ray)
+GameonModelRef.prototype.intersectsRay = function(eye , ray , loc)
 {
 	// transform bounds!
-	var loc = [0,0,0];
 	var dist = GMath.rayIntersectsBounds(eye, ray, this.mBounds , loc);
 	if (dist >= 0)
 	{

@@ -115,7 +115,7 @@ function AnimFactory(app)
 	this.mApp = app;
 	this.mFallback= new AnimData(255, app);
 	this.mAnimPool = [];
-	for (var a=0; a<4 ; a++ ) {
+	for (var a=0; a<16 ; a++ ) {
 		this.mAnimPool.push( new AnimData(a, this.mApp) );
 	}
 	this.mCount = 0;
@@ -155,7 +155,7 @@ AnimFactory.prototype.process = function(framedelta)
 		if (this.mAnimPool[a].mActive == true) 
 		{
 			if (this.mAnimPool[a].process(framedelta , true) == false)
-	{
+			{
 				//console.log("anim cnt = " + this.mCount);
 			}
 		}
@@ -305,4 +305,50 @@ AnimFactory.prototype.incCount = function()
     this.mCount++;
 }
 
+AnimFactory.prototype.getScollerAnim = function(owner)
+{
+	var adata = undefined;
+	for (var a=0; a< this.mAnimPool.length; a++) 
+	{
+		var data = this.mAnimPool[a]; 
+		if (data.isActive() == false) 
+		{
+			if (data.mAreaOwner != undefined && data.mAreaOwner == owner)
+			{
+				adata = data;
+				break;
+			}
+			if (adata == undefined)
+			{
+				adata = data;
+			}
+		}
+	}
+	return adata;
+}
 
+ AnimFactory.prototype.animModelRef = function(animid,ref, delaydata , data)
+{
+	// find AnimType
+	if (this.mAnimations[animid] == undefined)
+	{
+		return;
+	}
+	
+	var intdata = [0,0];
+	var count = ServerkoParse.parseIntArray(intdata, delaydata);
+	
+	var atype = this.mAnimations[animid];
+	
+	// find ref
+	// generate AnimData from AnimType
+	// configure AnimData with ref!
+	
+	var repeat = atype.repeat;
+	var delay = atype.delay;
+	if (count >= 1)
+		delay = intdata[0];    	
+	if (count == 2)
+		repeat = intdata[1];
+	this.buildObjectAdata(ref, atype, delay, repeat , data , undefined);
+}	

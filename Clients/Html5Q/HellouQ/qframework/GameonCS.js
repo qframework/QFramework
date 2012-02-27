@@ -41,6 +41,9 @@ function GameonCS( )
 	this.mHudBBox = new Array(0,0,0,0 , 0,0,0,0);
 	this.mWorldBBox = new Array(0,0,0,0 , 0,0,0,0);
 
+	this.mUpZ = new Array(0,1,0);
+	this.mUpZHud = new Array(0,1,0);
+	
 }	
 
 GameonCS.prototype.setGlu = function(g)
@@ -62,6 +65,11 @@ GameonCS.prototype.saveProjection = function( left, right, top, bottom, near,  f
 	
 	this.mProjection = GMath.frustrum( left, right
 			, top, bottom, near , far);
+
+}
+
+GameonCS.prototype.saveProjectionHud = function( left, right, top, bottom, near,  far )
+{
 			
 	this.mProjectionHud = GMath.frustrum( left, right
 			, top, bottom, near , far);
@@ -177,7 +185,7 @@ GameonCS.prototype.screen2spaceVecHud = function(x,y, vec)
 	var c = [0.0, 0.0,0.0];
 	y = this.mViewport[3] - y;
 	GMath.unProject(x,y, 1.0, this.mLookAtHud, 
-			this.mProjection, 
+			this.mProjectionHud, 
 			this.mViewport, 
 			c );
 	vec[0] = c[0] - this.mCameraEyeHud[0];
@@ -193,12 +201,12 @@ GameonCS.prototype.screen2spaceHud = function(x, y, spacecoords) {
 
 	GMath.unProject(x,y, 1.0,
 			this.mLookAtHud, 
-			this.mProjection, 
+			this.mProjectionHud, 
 			this.mViewport, 
 			f );
 	GMath.unProject(x,y, 0.0,
 			this.mLookAtHud, 
-			this.mProjection, 
+			this.mProjectionHud, 
 			this.mViewport, 
 			c );    		
 	
@@ -268,8 +276,7 @@ GameonCS.prototype.snap_cam_z = function(eye,  center,  up)
 			this.mCameraEye[0] = 0;
 			this.mCameraEye[1] = 0;		
 			this.mCameraEye[2] = ez;
-			var upz = new Array(0,1,0);
-			this.saveLookAt(this.mCameraEye , this.mCameraLookAt , upz);         	        	
+			this.saveLookAt(this.mCameraEye , this.mCameraLookAt , this.mUpZ);         	        	
 			return ez;
 		}
 		 
@@ -298,15 +305,14 @@ GameonCS.prototype.snap_cam_z_hud = function(eye,  center,  up)
 		GMath.lookAt(lookAt,eye2,center,up);
 		if (GMath.project(cordx, cordy, 0.0, 
 					lookAt,
-					 this.mProjection,
+					 this.mProjectionHud,
 					 this.mViewport,
 					 win,0) &&  win[0]> 0 && win[0] < this.mViewport[2] )
 		{
 			this.mCameraEyeHud[0] = 0;
 			this.mCameraEyeHud[1] = 0;		
 			this.mCameraEyeHud[2] = ez;
-			var upz = new Array(0,1,0);
-			this.saveLookAtHud(this.mCameraEyeHud , this.mCameraLookAtHud , upz);         	        	
+			this.saveLookAtHud(this.mCameraEyeHud , this.mCameraLookAtHud , this.mUpZ);         	        	
 			return ez;
 		}
 		 
@@ -325,8 +331,7 @@ GameonCS.prototype.setCamera = function(lookat ,eye)
 	this.mCameraLookAt[1] = lookat[1];
 	this.mCameraLookAt[2] = lookat[2];    
 	
-	var up = new Array(0,1,0);
-	this.saveLookAt(this.mCameraEye , this.mCameraLookAt , up);
+	this.saveLookAt(this.mCameraEye , this.mCameraLookAt , this.mUpZ);
 	
 }
 
@@ -335,16 +340,12 @@ GameonCS.prototype.applyCamera = function(gl)
 	if (!this.mSpaceInit)
 	{
 		this.mSpaceInit = true;
-		var up = new Array(0,1,0);
-		this.saveLookAt(this.mCameraEye ,  this.mCameraLookAt , up);
+		this.saveLookAt(this.mCameraEye ,  this.mCameraLookAt , this.mUpZ);
 		
 	}
 
 	gl.perspectiveMatrix.makeIdentity();
-	gl.perspectiveMatrix.perspective(this.mProjData[0] , 
-		this.mProjData[1] , 
-		this.mProjData[2] , 
-		this.mProjData[3]);
+	gl.perspectiveMatrix.perspective(this.mProjData[0] , this.mProjData[1] , this.mProjData[2] , this.mProjData[3]);
 	
 	var lookat = new J3DIMatrix4();
 	lookat.load(this.mLookAt);
@@ -363,8 +364,7 @@ GameonCS.prototype.setCameraHud = function(lookat , eye)
 	this.mCameraLookAtHud[1] = lookat[1];
 	this.mCameraLookAtHud[2] = lookat[2];    
 
-	var up = new Array(0,1,0);
-	this.saveLookAtHud(this.mCameraEyeHud , this.mCameraLookAtHud , up);
+	this.saveLookAtHud(this.mCameraEyeHud , this.mCameraLookAtHud , this.mUpZ);
 	
 	
 	
@@ -373,10 +373,7 @@ GameonCS.prototype.setCameraHud = function(lookat , eye)
 GameonCS.prototype.applyCameraHud = function(gl)
 {
 	gl.perspectiveMatrix.makeIdentity();
-	gl.perspectiveMatrix.perspective(this.mProjData[0] , 
-		this.mProjData[1] , 
-		this.mProjData[2] , 
-		this.mProjData[3]);
+	gl.perspectiveMatrix.perspective(this.mProjDataHud[0] , this.mProjDataHud[1] , this.mProjDataHud[2] , this.mProjDataHud[3]);
 	
 	var lookat = new J3DIMatrix4();
 	lookat.load(this.mLookAtHud);
@@ -386,8 +383,7 @@ GameonCS.prototype.applyCameraHud = function(gl)
 	if (!this.mHudInit)
 	{
 		this.mHudInit = true;
-		var up = new Array(0,1,0);
-		this.saveLookAtHud(this.mCameraEyeHud  , this.mCameraLookAtHud , up);
+		this.saveLookAtHud(this.mCameraEyeHud  , this.mCameraLookAtHud , this.mUpZ);
 		
 	}
 	

@@ -31,71 +31,80 @@ function Serverko()
 	
 	this.startData = function ()
 	{
-		// add to array
+		
 		if (this.databuffer.length >  300)
 		{
-			console.log("ERROR: data push large " + this.databuffer[3]);
+			console.log("ERROR: data push large " + this.databuffer[300]);
+		}
+		this.databuffer.push(new Array())
+	}
+
+	this.appendEvent = 	function (id, area, data , data2, data3, data4, data5)
+	{
+		if (this.databuffer.length == 0)
+		{
+			this.databuffer.push(new Array());
 		}
 		
-		this.databuffer.push("");
+		var str = "";
+		
+		str += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area;
+        
+        if (data != undefined)
+        	str += "\",\"data\":\""+data;
+        if (data2 != undefined)
+        	str += "\",\"data2\":\""+data2;
+        if (data3 != undefined)
+        	str += "\",\"data3\":\""+data3;
+        if (data4 != undefined)
+        	str += "\",\"data4\":\""+data4;	        
+        str += "\"}";
+        
+        this.databuffer[ this.databuffer.length -1 ].push( str );
 	}
 
 	this.appendEvent_ = 	function (id, area, data , data2, data3, data4, data5)
 	{
 		this.startData();
-	        if ( this.databuffer[ this.databuffer.length -1 ].length != 0)
-	        	this.databuffer[ this.databuffer.length -1 ] += ",";
-	        this.databuffer[ this.databuffer.length -1 ] += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area;
-	        
-	        if (data != undefined)
-	        	this.databuffer[ this.databuffer.length -1 ] += "\",\"data\":\""+data;
-	        if (data2 != undefined)
-	        	this.databuffer[ this.databuffer.length -1 ] += "\",\"data2\":\""+data2;
-	        if (data3 != undefined)
-	        	this.databuffer[ this.databuffer.length -1 ] += "\",\"data3\":\""+data3;
-	        if (data4 != undefined)
-	        	this.databuffer[ this.databuffer.length -1 ] += "\",\"data4\":\""+data4;	        
-	        this.databuffer[ this.databuffer.length -1 ] += "\"}";
+		var str = "";
+		str += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area;
         
+        if (data != undefined)
+        	str += "\",\"data\":\""+data;
+        if (data2 != undefined)
+        	str += "\",\"data2\":\""+data2;
+        if (data3 != undefined)
+        	str += "\",\"data3\":\""+data3;
+        if (data4 != undefined)
+        	str += "\",\"data4\":\""+data4;	        
+        str += "\"}";
+        
+        this.databuffer[ this.databuffer.length -1 ].push( str );
         this.sendData();
-	}
-	
-	this.appendEvent = 	function (id, area, data , data2, data3, data4, data5)
-	{
-		if (this.databuffer.length == 0)
-		{
-			console.log("ERROR: data append " + id + " " + area + " "+ data);
-			return;
-		}		
-		
-	        if ( this.databuffer[ this.databuffer.length -1 ].length != 0)
-	        	this.databuffer[ this.databuffer.length -1 ] += ",";
-	        this.databuffer[ this.databuffer.length -1 ] += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area;
-	        
-	        if (data != undefined)
-	        	this.databuffer[ this.databuffer.length -1 ] += "\",\"data\":\""+data;
-	        if (data2 != undefined)
-	        	this.databuffer[ this.databuffer.length -1 ] += "\",\"data2\":\""+data2;
-	        if (data3 != undefined)
-	        	this.databuffer[ this.databuffer.length -1 ] += "\",\"data3\":\""+data3;
-	        if (data4 != undefined)
-	        	this.databuffer[ this.databuffer.length -1 ] += "\",\"data4\":\""+data4;	        
-	        
-	        
-	        this.databuffer[ this.databuffer.length -1 ] += "\"}";
 	}
 	
 	this.sendData = function ()
 	{
 		// add to buffer array
-		if (this.databuffer.length == 0)
+		if (this.databuffer.length > 0)
 		{
-			console.error("ERROR: data length 0");
-			return;
+			arr = this.databuffer.pop();
+			data = "" 
+			while (arr.length > 0)
+			{
+				data += arr.shift();
+	            if (arr.length > 0)
+	            {
+	                data += ",";
+	            }
+				
+			}
+			
+			if (data.length > 0)
+			{
+			this.sendbuffer.push( "{\"gs\":{\"room\":[" + data  + "]}}\r\n"  );
 		}
-		
-        data = this.databuffer.shift();
-        this.sendbuffer.push( "{\"gs\":{\"room\":[" + data  + "]}}\r\n"  );
+	}
 	}
 
 	this.clientStartData = 	function (userID)
@@ -105,100 +114,123 @@ function Serverko()
 		{
 			console.error("ERROR: client data push large " + this.clientbuffer[3]);
 		}		
-		this.clientbuffer.push("");
+		this.clientbuffer.push(new Array());
 		
 	}
 
 	this.clientAppendEvent = function (userID , id, area, data, data2, data3, data4)
 	{
-		if (this.clientbuffer.length == 0)
-		{
-			console.log("ERROR: client data append " + id + " " + area + " "+ data);
-			return;
-		}		
-		//clientbuffer[ clientbuffer.length -1 ] += "<room><res>event</res><id>"+id+"</id><type>"+area+"</type><data>"+data+"</data></room>";
-        if ( this.clientbuffer[ this.clientbuffer.length -1 ].length != 0)
-        	this.clientbuffer[ this.clientbuffer.length -1 ] += ",";
-
-        
-        this.clientbuffer[ this.clientbuffer.length -1 ] += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area+"\",\"data\":\""+data+"\"}";
+		var str = "";
+		
+        str += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area+"\",\"data\":\""+data+"\"}";
         if (data2 != undefined)
-        	this.clientbuffer[ this.clientbuffer.length -1 ] += "\",\"data2\":\""+data2;
+        	str += "\",\"data2\":\""+data2;
         if (data3 != undefined)
-        	this.clientbuffer[ this.clientbuffer.length -1 ] += "\",\"data3\":\""+data3;
+        	str += "\",\"data3\":\""+data3;
         if (data4 != undefined)
-        	this.clientbuffer[ this.clientbuffer.length -1 ] += "\",\"data4\":\""+data4;	        
-                
+        	str += "\",\"data4\":\""+data4;
+        
+        this.clientbuffer[ this.clientbuffer.length -1 ].push(str)
 	}
-
+	
 	this.clientAppendEvent_ = function (userID , id, area, data, data2, data3, data4)
 	{
 		this.clientStartData(userID);
-		//clientbuffer[ clientbuffer.length -1 ] += "<room><res>event</res><id>"+id+"</id><type>"+area+"</type><data>"+data+"</data></room>";
-        if ( this.clientbuffer[ this.clientbuffer.length -1 ].length != 0)
-        	this.clientbuffer[ this.clientbuffer.length -1 ] += ",";
-        
-        
-        this.clientbuffer[ this.clientbuffer.length -1 ] += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area+"\",\"data\":\""+data+"\"}";
-        
+		var str = "";
+		
+        str += "{\"res\":\"event\",\"id\":\""+id+"\",\"type\":\""+area+"\",\"data\":\""+data+"\"}";
         if (data2 != undefined)
-        	this.clientbuffer[ this.clientbuffer.length -1 ] += "\",\"data2\":\""+data2;
+        	str += "\",\"data2\":\""+data2;
         if (data3 != undefined)
-        	this.clientbuffer[ this.clientbuffer.length -1 ] += "\",\"data3\":\""+data3;
+        	str += "\",\"data3\":\""+data3;
         if (data4 != undefined)
-        	this.clientbuffer[ this.clientbuffer.length -1 ] += "\",\"data4\":\""+data4;	        
+        	str += "\",\"data4\":\""+data4;
         
-		this.clientSendData(userID);
-        
-	}
+        this.clientbuffer[ this.clientbuffer.length -1 ].push(str)
+        this.clientSendData(userID);
+	}	
 
-	
 	this.clientSendData =  	function (userID)
 	{
-		if (this.clientbuffer.length == 0)
+		if (this.clientbuffer.length > 0)
 		{
-			console.log("ERROR: client data length 0");
-			return;
+			arr = this.clientbuffer.pop();
+			data = "" 
+			while (arr.length > 0)
+			{
+				data += arr.shift();
+	            if (arr.length > 0)
+	            {
+	                data += ",";
+	            }				
+			}
+			if (data.length > 0)
+			{
+			this.sendbuffer.push( "{\"gs\":{\"room\":[" + data  + "]}}\r\n"  );
 		}
-		
-        data = this.clientbuffer.shift();
-        this.sendbuffer.push( "{\"gs\":{\"room\":[" + data  + "]}}\r\n"  );
+		}
+
 	}
+	
+	this.reserveSpace = function ()
+	{
+		if (this.databuffer.length == 0)
+		{
+			this.databuffer.push(new Array());
+		}		
+		arr = this.databuffer[ this.databuffer.length -1 ];
+		arr.push("")
+	}
+	
 	
 	this.startTag =  function (id) 
 	{
+		if (this.databuffer.length > 0)
+		{
+			this.lastLen = this.databuffer[ this.databuffer.length -1 ].length;
+		}
+		
+		var str;
         if (id != undefined)
         {
-            this.databuffer[ this.databuffer.length -1 ] += "{\""+id+"\": ";
+        	str = "{\""+id+"\": ";
         }
         else
         {
-        	this.databuffer[ this.databuffer.length -1 ] += "{";            
+        	str = "{";
         }
+        arr = this.databuffer[ this.databuffer.length -1 ]; 
+        arr[ arr.length -1 ]+= str;
 	}
-	
+
 	this.startTags =  	function ( id, data)
 	{
-		this.databuffer[ this.databuffer.length -1 ] += "\""+id+"\": [";
+		arr = this.databuffer[ this.databuffer.length -1 ];
+		arr[arr.length-1] += "\""+id+"\": ["; 
 	}
 	
 	this.appendTag = 	function ( id, data)
 	{
-		this.databuffer[ this.databuffer.length -1 ] += "\""+id+"\": " + "\""+data+"\"";
+		arr = this.databuffer[ this.databuffer.length -1 ];
+		arr[arr.length-1] += "\""+id+"\": " + "\""+data+"\"";
 	}
 	
 	this.endTag = 	function (id)
 	{
-		this.databuffer[ this.databuffer.length -1 ] += "}";
+		arr = this.databuffer[ this.databuffer.length -1 ];
+		arr[arr.length-1] += "}";
 	}
 	
 	this.endTags = 	function (id)
 	{
-		this.databuffer[ this.databuffer.length -1 ] += "]";
+		arr = this.databuffer[ this.databuffer.length -1 ];
+		arr[arr.length-1] += "]";
 	}        
+
 	this.addSeparator = function ()
 	{
-		this.databuffer[ this.databuffer.length -1 ] += ",";
+		arr = this.databuffer[ this.databuffer.length -1 ];
+		arr[arr.length-1] += ",";
 	}
 	
 	this.loadModule = function (id)
@@ -217,7 +249,7 @@ function Serverko()
 	}
     this.sendEvent = function (id, delay, data) 
     {
-        this.appendEvent( 100 , delay , "Q.handlers.script_onEvent(" + id + ","  + "'" + data + "'" + ");"  );
+        this.appendEvent( 100 , delay , "Q_handlers_script_onEvent(" + id + ","  + "'" + data + "'" + ");"  );
     }
     this.clientSpectate = function (userID , yesno)
 	{
@@ -234,6 +266,47 @@ function Serverko()
 		}
 
 	}
+	
+	// modifierers
+	this.toUser = function(userid)
+	{
+		arr = this.databuffer[ this.databuffer.length -1 ];
+		str = arr.pop();
+		if (str.length > 0)
+		{		
+		this.clientbuffer[ this.clientbuffer.length -1 ].push(str)
+		}
+		return this;
+	}
+	
+	this.toUserNow = function()
+	{
+		arr = this.databuffer[ this.databuffer.length -1 ];
+		str = arr.pop();
+		if (str.length > 0)
+		{
+		this.sendbuffer.push( "{\"gs\":{\"room\":[" + str + "]}}\r\n"  );
+		}
+		return this;
+	}	
+
+	this.now = function()
+	{
+		arr = this.databuffer[ this.databuffer.length -1 ];
+		str = arr.pop();
+		if (str.length > 0)
+		{
+		//console.log ( "now " +  this.lastData  + this.databuffer.length)
+		this.sendbuffer.push( "{\"gs\":{\"room\":[" + str + "]}}\r\n"  );
+		}
+		//console.log ( "afternow " +  this.databuffer)
+		return this;
+	}
+	
+    // TODO - after delay function
+
+		
+	
 }
 
 	

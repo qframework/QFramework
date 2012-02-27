@@ -148,7 +148,7 @@ LayoutItem.prototype.setParentLoc = function(area)
 	{
 		this.mModelRef.setAreaPosition(area.mLocation);
 		this.mModelRef.setAreaRotate(area.mRotation);
-		//this.mModelRef.setAreaScale(area.mBounds);
+		this.mModelRef.mulScale(area.mBounds);
 		this.mModelRef.set();
 	}
 	

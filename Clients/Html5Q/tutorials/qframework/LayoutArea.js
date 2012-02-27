@@ -489,22 +489,32 @@ LayoutArea.prototype.setScale  = function(strData) {
 
 LayoutArea.prototype.setItemScale  = function(strData) 
 {
-	var tok = strData.split(",");
-	var  i = parseInt(tok[0]);
-	if ( i < 0 || i >= this.mItemFields.length || this.mItemFields[i] == undefined)
+	var scale = [0.0 , 0.0 , 0.0 , 0.0];
+	var len = ServerkoParse.parseFloatArray(scale, strData);
+	if (len != 4)
 	{
 		return;
 	}
 	
-	var scale = [1,1,1];
-	ServerkoParse.parseFloatArray(scale, strData);
+	var i = scale[0];
+	if ( i < 0 || i >= this.mItemFields.length || mItemFields[i] == undefined)
+	{
+		return;
+	}
+	
+	var scale2 = [0.0 , 0.0 , 0.0 , 0.0];
+	scale2[0] = scale[1];
+	scale2[1] = scale[2];
+	scale2[2] = scale[3];
+	
 	var f = this.mItemFields[i];
 	if (f.mItem != undefined)
 	{
-		f.mItem.mModelRef.setAddScale(scale);
+		f.mItem.mModelRef.setAddScale(scale2);
 		f.mItem.mModelRef.set();
 	}
-	
+
+		
 }
 
 LayoutArea.prototype.setSize  = function(strData) 
@@ -513,7 +523,6 @@ LayoutArea.prototype.setSize  = function(strData)
 	if (tok.length > 0)
 	{
 		this.mSize = parseInt(tok[0]);
-		this.mSizeW = this.mSize;
 	}
 	if (tok.length > 1)
 		this.mSizeW = parseInt(tok[1]);
@@ -544,7 +553,7 @@ LayoutArea.prototype.getData  = function(val) {
 
 LayoutArea.prototype.getType  = function(val) {
 	if (val[0] != '[') {
-		return LayoutArea_FieldItemType.ITEM;
+		return LayoutArea_FieldItemType.TEXT;
 	}
 	if (val[1] == 'i') {
 		return LayoutArea_FieldItemType.ITEM;
@@ -556,7 +565,7 @@ LayoutArea.prototype.getType  = function(val) {
 		return LayoutArea_FieldItemType.TEXTH;
 	}
 
-	return LayoutArea_FieldItemType.ITEM;
+	return LayoutArea_FieldItemType.TEXT;
 }
 
 LayoutArea.prototype.pushFrontItem  = function(strData) {
@@ -564,16 +573,11 @@ LayoutArea.prototype.pushFrontItem  = function(strData) {
 	for (var a=this.mItemFields.length-1; a > 0 ; a--)
 	{
 		var f2 = this.mItemFields[a];
-		if (a >= this.mSize)
+		f2.clear();
+		var f1 = this.mItemFields[a-1];
+		if (f1.mText != undefined && f1.mText.mText != undefined )
 		{
-			f2.clear();
-		}else
-		{
-			var f1 = this.mItemFields[a-1];
-			if (f1.mText != undefined && f1.mText.mText != undefined )
-			{
-				f2.setText(f1.mText.mText, this.mSizeW);
-			}
+			f2.setText(f1.mText.mText, this.mSizeText);
 		}
 		
 	}
@@ -608,6 +612,7 @@ LayoutArea.prototype.createItem  = function(fieldind, val, showback) {
 		return;
 	}
 	this.setField(fieldind);
+	this.mActiveItems ++;
 	field = this.mItemFields[fieldind];
 	if (type == LayoutArea_FieldItemType.ITEM) {
 			// just draw item
@@ -618,10 +623,10 @@ LayoutArea.prototype.createItem  = function(fieldind, val, showback) {
 			field.mText = undefined;
 			
 		} else if (type == LayoutArea_FieldItemType.TEXT) {
-			field.setText(data, this.mSizeW);
+			field.setText(data, this.mSizeText);
 			field.mItem = undefined;
 		}else if (type == LayoutArea_FieldItemType.TEXTH) {
-			field.setText(data, this.mSizeW);
+			field.setText(data, this.mSizeText);
 			field.mItem = undefined;
 		}
 }
@@ -637,7 +642,7 @@ LayoutArea.prototype.createItems  = function(strData, doeffect) {
 	var type = LayoutArea_FieldItemType.TEXT;
 	var field = undefined;
 	var count = 0;
-
+	this.mActiveItems ++;
 	// update vector of items on fields
 	for (var c = 0 ; c < tok.length ; c++)
 	{
@@ -654,7 +659,7 @@ LayoutArea.prototype.createItems  = function(strData, doeffect) {
 			field.mItemID = data;
 			field.mText = undefined;
 		} else if (type == LayoutArea_FieldItemType.TEXT) {
-			field.setText(data, this.mSizeW);
+			field.setText(data, this.mSizeText);
 			//field.mColorFore = this.mColorForeground;
 			field.mItem = undefined;
 		} else {
@@ -690,6 +695,15 @@ LayoutArea.prototype.getFinfo  = function(info, token) {
 }
 
 LayoutArea.prototype.createFields  = function(strData) {
+	this.createFields_impl(strData);
+}
+
+LayoutArea.prototype.createFields_S  = function(strData) {
+	this.createFields_impl(strData);
+}
+
+
+LayoutArea.prototype.createFields_impl  = function(strData) {
 	if (strData == undefined) {
 		return;
 	}
@@ -885,6 +899,7 @@ LayoutArea.prototype.createWorldModelItems  = function()
 		return;
 	}
 	var count  = 0;
+	this.mActiveItems = 0;
 	for (a=0; a < this.mItemFields.length; a++)
 	{
 		var field = this.mItemFields[a];
@@ -894,8 +909,13 @@ LayoutArea.prototype.createWorldModelItems  = function()
 		{
 			count ++;
 		}
+		if (field.mText != undefined || field.mItem != undefined)
+		{
+			this.mActiveItems++;
+		}		
 	}
 	if (count == this.mItemFields.length){
+		this.createCustomModel();
 		return;
 	}
 	this.mModel = new GameonModel("area"+ this.mID , this.mApp );
@@ -932,7 +952,6 @@ LayoutArea.prototype.createWorldModelItems  = function()
 				{
 					model.createPlane4( x, y, z+up ,  x +w , y + h, z+up ,   fcolor, fcolor);
 				}
-				field.mZ = this.mZ;
 			break;
 			case LayoutField_FieldType.PLAY_FIELD:
 				if (this.mColorForeground != undefined)
@@ -942,21 +961,17 @@ LayoutArea.prototype.createWorldModelItems  = function()
 				{
 					model.createOctogon( x+dw, y+dh, z+up ,  x +w-dw-dw , y + h-dh-dh, z+up ,   fcolor);
 				}
-				field.mZ = this.mZ;
 			break;
 			case LayoutField_FieldType.PLAYER_START:
 				//model.createPlane2( x, y, this.mZ+0.001 ,  x +w , y + h, this.mZ+0.001  ,   fcolor);
 				model.createPlane( x+dw, y+dh, z+up ,  x +w-dw-dw , y + h-dh-dh, z+up ,   fcolor);
-				field.mZ = this.mZ;
 
 				break;				
 			case LayoutField_FieldType.PLAYER_END:
-			//case EMPTY2:
+			//case LayoutField_FieldType.EMPTY2:
 				model.createPlane3( x, y, z+up ,  x +w , y + h, z+up  ,   fcolor);
-				field.mZ = this.mZ;
 				break;
-			case EMPTY:
-				field.mZ = this.mZ;
+			case LayoutField_FieldType.EMPTY:
 			break;
 		}
 		
@@ -990,14 +1005,14 @@ LayoutArea.prototype.fieldClicked  = function(eye, ray) {
 		
 	var mindist = 1e06;
 	var index = 0;
-	
+	var loc = [0,0,0];
 	for (var a=0; a < this.mItemFields.length; a++)
 	{
 		var f = this.mItemFields[a];
 		if (f.mText != undefined || f.mItem != undefined)
 		{		
 			var ref = f.mRef;
-			var dist = ref.intersectsRay(eye, ray);
+			var dist = ref.intersectsRay(eye, ray,loc);
 			if (dist <= mindist)
 			{
 				mindist = dist;
@@ -1014,6 +1029,9 @@ LayoutArea.prototype.fieldClicked  = function(eye, ray) {
 		pair.mOnFocusLost = this.mOnFocusLost;
 		pair.mOnFocusGain = this.mOnFocusGain;
 		pair.mIndex = index;
+		pair.mLoc[0] = loc[0];
+		pair.mLoc[1] = loc[1];
+		pair.mLoc[2] = loc[2];		
 		return pair;							
 	}
 	
@@ -1021,7 +1039,7 @@ LayoutArea.prototype.fieldClicked  = function(eye, ray) {
 	{
 		var f = this.mItemFields[a];
 		var ref = f.mRef;
-		var dist = ref.intersectsRay(eye, ray);
+		var dist = ref.intersectsRay(eye, ray , loc);
 		if (dist < mindist)
 		{
 			mindist = dist;
@@ -1038,27 +1056,30 @@ LayoutArea.prototype.fieldClicked  = function(eye, ray) {
 		pair.mOnFocusLost = this.mOnFocusLost;
 		pair.mOnFocusGain = this.mOnFocusGain;
 		pair.mIndex = index;
+		pair.mLoc[0] = loc[0];
+		pair.mLoc[1] = loc[1];
+		pair.mLoc[2] = loc[2];		
 		return pair;							
 	}
 	
 	if (this.mModelBack != undefined)
 	{
 		var ref = this.mModelBack.ref(0);
-		var dist = ref.intersectsRay(eye,ray);
+		var dist = ref.intersectsRay(eye,ray , loc);
 		if (dist <= mindist)
 		{
 			mindist = dist;
-			index = 0;
+			index = -1;
 		}			
 	}
 	if (this.mModel != undefined)
 	{
 		var ref = this.mModel.ref(0);
-		var dist = ref.intersectsRay(eye,ray);
+		var dist = ref.intersectsRay(eye,ray,loc);
 		if (dist <= mindist)
 		{
 			mindist = dist;
-			index = 0;
+			index = -1;
 		}
 	}			
 	if (mindist != 1e6)
@@ -1069,6 +1090,9 @@ LayoutArea.prototype.fieldClicked  = function(eye, ray) {
 		pair.mOnFocusLost = this.mOnFocusLost;
 		pair.mOnFocusGain = this.mOnFocusGain;
 		pair.mIndex = index;
+		pair.mLoc[0] = loc[0];
+		pair.mLoc[1] = loc[1];
+		pair.mLoc[2] = loc[2];		
 		return pair;							
 	}
 			
@@ -1222,6 +1246,9 @@ LayoutArea.prototype.updateModels = function()
 
 LayoutArea.prototype.hasTouchEvent = function() 
 {
+	if (this.mHasScrollH || this.mHasScrollV)
+		return true;
+
 	if ( (this.mOnclick != undefined && this.mOnclick.length > 0) || 
 		(this.mOnFocusLost != undefined && this.mOnFocusLost.length > 0) ||
 		(this.mOnFocusGain != undefined && this.mOnFocusGain.length > 0) )
@@ -1295,5 +1322,79 @@ LayoutArea.prototype.updateModelsTransformation = function()
 		ref.mulScale(this.mBounds);
 		ref.setAddScale(this.mScale);
 		ref.set();
+	}
+}
+
+LayoutArea.prototype.updateScrollers = function()
+{
+	
+}
+
+LayoutArea.prototype.createCustomModel = function()
+{
+	
+}
+
+LayoutArea.prototype.setScrollers = function(data)
+{
+	var num = ServerkoParse.parseFloatArray(this.mScrollers, data);
+	if (num > 0)
+	{
+		// update scrollers
+		this.updateScrollers();
+	}
+}
+
+
+LayoutArea.prototype.setScrollerVal = function(val)
+{
+	this.mScrollers[0] = val;
+	this.updateScrollers();
+}
+
+LayoutArea.prototype.onDragg = function(dx, dy, dz)
+{
+	if (this.mHasScrollH || this.mHasScrollV)
+	{
+		if (this.mScollerAnim == undefined)
+		{
+			this.mScollerAnim = this.mApp.anims().getScollerAnim(this);
+			this.mScollerAnim.setActive(true);
+			this.mScollerAnim.mAreaOwner = this;
+			this.mApp.anims().incCount();
+
+		}
+		if (this.mScollerAnim != undefined)
+		{
+			var p;
+			if (this.mHasScrollV)
+			{
+				p = dy / this.mBounds[1];
+			}else
+			{
+				p = -dx / this.mBounds[0];
+			}
+			
+			this.mScollerAnim.addScrollerData(p, 200, this.mScrollers[1] , this.mScrollers[2] );
+		}
+					
+	}
+}
+
+LayoutArea.prototype.anim = function(type, delay, data)
+{
+	//
+	if (this.mModel != undefined)
+	{
+		this.mModel.createAnim(type , 0,  delay , data);
+	}
+	if (this.mModelBack != undefined)
+	{
+		this.mModelBack.createAnim(type , 0, delay  , data);
+	}    
+	for (var a=0; a< this.mItemFields.length; a++)
+	{
+		var field = this.mItemFields[a];
+		field.createAnim(type, delay , data );
 	}
 }

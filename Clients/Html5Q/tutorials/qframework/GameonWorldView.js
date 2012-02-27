@@ -46,6 +46,8 @@ GameonWorldView.prototype.onDrawFrame = function (gl , time)
 	//this.mWorld.prepare(gl);
 	gl.clearDepth(1.0);
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	
+	this.perspective(gl, this.mFov , this.mWidth/this.mHeight , this.mNear , this.mFar , true);
 	this.mApp.cs().applyCamera(gl);
 
 		// render 3d world
@@ -57,7 +59,7 @@ GameonWorldView.prototype.onDrawFrame = function (gl , time)
 	
     gl.clear(gl.DEPTH_BUFFER_BIT);
 	
-	
+	this.perspectiveHud(gl, this.mFovHud , this.mWidth/this.mHeight , this.mNearHud , this.mFarHud, true);
 	this.mApp.cs().applyCameraHud(gl);
 	
 	this.mWorld.drawHud(gl);
@@ -74,10 +76,8 @@ GameonWorldView.prototype.onSurfaceChanged = function (gl , width, height)
 	gl.viewport(0, 0, width, height);
 	this.mApp.cs().saveViewport(width, height);
 	gl.perspectiveMatrix = new J3DIMatrix4();
-	//gl.perspectiveMatrix.perspective(30, width/height, 1, 10000);
-
-	//this.perspective(gl, 45.0 , this.mWidth/this.mHeight , 0.0001 , 8.7);
-	
+	this.perspective(gl, this.mFov , this.mWidth/this.mHeight , this.mNear , this.mFar , false);
+	this.perspectiveHud(gl, this.mFovHud , this.mWidth/this.mHeight , this.mNearHud , this.mFarHud , false);
 	
 }
 
@@ -99,32 +99,50 @@ GameonWorldView.prototype.onSurfaceCreated = function (gl , width, height)
 	{
 		this.mApp.textures().init(gl);
 	}
-	this.perspective(gl, 45.0 , this.mWidth/this.mHeight , 0.1 , 8.7);
+
 }
 
 
-GameonWorldView.prototype.perspective = function(gl,fovy, aspect, zmin , zmax)
+GameonWorldView.prototype.perspective = function(gl,fovy, aspect, zmin , zmax, frustrumUpdate)
 {
 	var xmin, xmax, ymin, ymax;
 	ymax = zmin * Math.tan(fovy * Math.PI / 360.0);
 	ymin = -ymax;
 	xmin = ymin * aspect;
 	xmax = ymax * aspect;
-	this.mApp.cs().saveProjection(xmin , xmax , ymin , ymax , zmin , zmax);
-	this.mApp.cs().saveProj(fovy, aspect, zmin, zmax);
-	this.mApp.cs().saveProjHud(fovy, aspect, zmin, zmax);
-	gl.perspectiveMatrix.perspective(fovy , aspect , zmin , zmax);
-	//gl.perspectiveMatrix.lookat(0, 0, 7, 0, 0, 0, 0, 1, 0);	
-	
+	if (frustrumUpdate)
+	{
+		gl.perspectiveMatrix.perspective(fovy , aspect , zmin , zmax);
+	}else
+	{
+		this.mApp.cs().saveProjection(xmin , xmax , ymin , ymax , zmin , zmax);
+		this.mApp.cs().saveProj(fovy, aspect, zmin, zmax);
+	}
 }
+
+GameonWorldView.prototype.perspectiveHud = function(gl,fovy, aspect, zmin , zmax, frustrumUpdate)
+{
+	var xmin, xmax, ymin, ymax;
+	ymax = zmin * Math.tan(fovy * Math.PI / 360.0);
+	ymin = -ymax;
+	xmin = ymin * aspect;
+	xmax = ymax * aspect;
+	if (frustrumUpdate)
+	{
+		gl.perspectiveMatrix.makeIdentity();
+		gl.perspectiveMatrix.perspective(fovy , aspect , zmin , zmax);
+	}else
+	{
+		this.mApp.cs().saveProjectionHud(xmin , xmax , ymin , ymax , zmin , zmax);
+		this.mApp.cs().saveProjHud(fovy, aspect, zmin, zmax);
+	}
+}
+
 
 GameonWorldView.prototype.drawSplash = function(gl) {
 	
-	gl.perspectiveMatrix.makeIdentity();
-	gl.perspectiveMatrix.perspective(this.mApp.cs().mProjData[0] , 
-			this.mApp.cs().mProjData[1] , 
-			this.mApp.cs().mProjData[2] , 
-			this.mApp.cs().mProjData[3]);	
+	
+	this.perspectiveHud(gl, this.mFovHud , this.mWidth/this.mHeight , this.mNearHud , this.mFarHud , true);
 	
 	var lookat = new J3DIMatrix4();
 	var lookmat = new Array(16);
@@ -133,6 +151,7 @@ GameonWorldView.prototype.drawSplash = function(gl) {
 	gl.perspectiveMatrix.multiply(lookat);
 	gl.perspectiveMatrix.setUniform(gl , gl.u_modelProjMatrixLoc, false);
 
+	
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 	this.mWorld.drawSplash(gl);
 	return true;
@@ -148,6 +167,8 @@ GameonWorldView.prototype.setFov = function(fovf, nearf, farf) {
 	this.mFar = farf;
 	this.mNear = nearf;
 	this.mFov = fovf;
+	this.perspective(gl, this.mFov , this.mWidth/this.mHeight , this.mNear , this.mFar , false);
+	
 }
 
 GameonWorldView.prototype.setFovHud = function(fovf, nearf, farf) 
@@ -155,5 +176,7 @@ GameonWorldView.prototype.setFovHud = function(fovf, nearf, farf)
 	this.mFarHud = farf;
 	this.mNearHud = nearf;
 	this.mFovHud = fovf;
+	this.perspectiveHud(gl, this.mFovHud , this.mWidth/this.mHeight , this.mNearHud , this.mFarHud , false);
+	
 }
 

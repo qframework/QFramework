@@ -122,9 +122,9 @@ function setuplayout()
 	areaExit.onclick = 'js:test_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("dyntexts", areas);
+	Q.layout.add("dyntexts", areas).now();
 	// show page
-	Q.layout.show_("dyntexts");	
+	Q.layout.show("dyntexts").now();	
 	
 	
 }
@@ -167,9 +167,9 @@ function text_change()
 		return;
 	}
 	
-	Q.layout.areaSetText_("counter","Count:"+counter);
+	Q.layout.areaSetText("counter","Count:"+counter).now();
 	counter++;
-	Q.exec_(1000,"text_change();");
+	Q.evals(1000,"text_change();").now();
 }
 
 var helppage = 0;
@@ -180,7 +180,7 @@ function next_help()
 	{
 		helppage = 0;
 	}
-	Q.layout.areaSetText_("helps",Q.util.tob64(help[helppage]));
+	Q.layout.areaSetText("helps",Q.util.tob64(help[helppage])).now();
 }
 
 
@@ -202,6 +202,6 @@ function move_area(area, index)
 // put layout into queue to allow camera change to take effect
 setuplayout();
 // kick text change timer
-Q.exec_(1000,"text_change();");
+Q.evals(1000,"text_change();").now();
 
 

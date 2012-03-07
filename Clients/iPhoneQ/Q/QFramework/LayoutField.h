@@ -60,6 +60,9 @@
 
 	GameonModelRef* mRef;
     GameonApp*  mApp;
+	
+    LayoutAreaState mState;
+    bool 			mActive;	
 }
 
 
@@ -87,6 +90,8 @@
 @property (nonatomic, assign) float mItemRotX;
 @property (nonatomic, assign) float mItemRotY;
 @property (nonatomic, assign) float mItemRotZ;    
+@property (nonatomic, assign) bool 	mActive;
+
 
 - (id)initWithParent:(LayoutArea*)parent;
 -(void) setItem:(NSString*)itemID doeffect:(bool)doeffect showback:(bool)showback;
@@ -102,5 +107,6 @@
 -(void) updateLocation;
 -(void) createAnimTrans:(NSString*)movetype delay:(int)delay away:(bool)away;
 -(void) setScale;
+-(void) createAnim:(NSString*)type delay:(NSString*)delay data:(NSString*)data ;
 
 @end

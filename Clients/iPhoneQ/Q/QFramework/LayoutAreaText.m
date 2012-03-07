@@ -245,6 +245,7 @@
 -(void) initLayout
 {
     [super initLayout];
+	mSizeText = mSize;
     if (mSubType == LATxST_LABEL)
     {
         [self initLabel];
@@ -263,6 +264,8 @@
 
 -(void)setText:(NSString*) strData
 {
+	if (strData == nil)
+		return;
     [super setText:strData];
     //strData length] > 0 && 
     if ([strData length] == 0 && [mItemFields count] > 0)

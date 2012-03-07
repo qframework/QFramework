@@ -21,22 +21,41 @@
 #import "LayoutArea.h"
 
 
+@class LayoutField;
+
 typedef enum
 {
     LATST_NONE,
     LATST_SGRID,
     LATST_CARDTABLE,
-    LATST_LIST
+    LATST_LIST,
+	LATST_HLIST
 } LayoutAreaTableSubType;
 
 @interface LayoutAreaTable : LayoutArea {
     
     
     LayoutAreaTableSubType mSubType;
+	float mModifier;
     int	mTableWidth;
     int	mTableHeight;
     int mTitleHeight;
+	float mListScaleMaxW;
+	float mListScaleMinW;
+	float mListScaleMaxH;
+	float mListScaleMinH;
+	
+	float* mModifiersZ;
+	float* mModifiersW;
+	float* mModifiersH;
+	float* mFieldsData;	
   
 }
+
+-(void)createDefaultFields;
+-(void) updateScrollers;
+-(void)initHList;
+-(bool)getScrollCoords:(int)col ind:(int)ind field:(LayoutField*)f;
+
 
 @end

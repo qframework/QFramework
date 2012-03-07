@@ -28,6 +28,7 @@
     GameonModelRef*             mRef;
     NSMutableArray*             mTexts;
 	NSMutableArray*             mVisibleTexts;
+	NSMutableArray*             mToDelete;
     
 }
 

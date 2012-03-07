@@ -250,10 +250,10 @@
         location = [touch locationInView:self];
         if ([self respondsToSelector:@selector(setContentScaleFactor:)])
         {
-            [mGameonApp mouseDragged:location.x*self.contentScaleFactor y:location.y*self.contentScaleFactor];
+            [mGameonApp mouseDragged:location.x*self.contentScaleFactor y:location.y*self.contentScaleFactor forClick:false];
             
         }else {
-            [mGameonApp mouseDragged:location.x y:location.y];
+            [mGameonApp mouseDragged:location.x y:location.y forClick:false];
         }
     }
     

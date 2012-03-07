@@ -128,5 +128,6 @@ typedef enum AnimData_Type
 {
 	ADT_NONE,
 	ADT_REF,
-	ADT_COLOR
+	ADT_COLOR,
+	ADT_SCROLLER
 } AnimData_Type;

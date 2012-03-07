@@ -69,7 +69,9 @@ void vecSub(float* u,float* v , float* res);
 float vecDot(float ux,float uy,float uz ,float vx,float vy,float vz);
 void vecSub2(float* u, int ui, float*v , int vi, float* res);
 bool vecNull(float* v);
-
+void frustrumMat(float left, float right,
+			float bottom, float top,
+			float znear, float zfar , float* projection);
 
 @interface GMath : NSObject {
 

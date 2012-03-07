@@ -42,6 +42,9 @@
     float* mHudBBox;    
     bool mHudInit;
     bool mSpaceInit;
+	
+	float* mUpZ;    
+	float* mUpZHud;    
 }
 
 @property (nonatomic, readonly, getter=eye) float* mCameraEye;

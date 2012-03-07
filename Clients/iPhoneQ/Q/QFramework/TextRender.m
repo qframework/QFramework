@@ -31,6 +31,7 @@
 	if (self = [super init])
 	{
         mTexts = [[NSMutableArray alloc] init] ;
+		mToDelete = [[NSMutableArray alloc] init] ;
 		mVisibleTexts = [[NSMutableArray alloc] init] ;
         mRef = [[GameonModelRef alloc] init] ;
     }
@@ -39,6 +40,7 @@
 
 - (void) dealloc 
 {
+	[mToDelete release];
     [mTexts release];
 	[mVisibleTexts release];
     [mRef release];
@@ -63,6 +65,7 @@
 		[self addVisible:item];
 	}
 }
+
 -(void) render {
     //return;
     int len = [mVisibleTexts count];

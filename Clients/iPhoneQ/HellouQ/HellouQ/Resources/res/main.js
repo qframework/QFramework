@@ -20,7 +20,7 @@ Q.anim.rotate("cube1","360,360,0","5000,100","");
 // send data.... 
 Q.sendUpdate();
 
-Q.camera.set_(0,0,0 , 0,-2.5,2.0);
+Q.camera.set(0,0,0 , 0,-2.5,2.0).now();
 var areas = new Array();
 var backArea = new LayoutArea();
 backArea.type = "layout.back";
@@ -28,6 +28,6 @@ backArea.location = "0,1.4,0";
 backArea.bounds = "6,6";
 backArea.background = "FFFFFFFF,qback";
 areas.push(backArea);
-Q.layout.add_("hellouq", areas);
-Q.layout.show_("hellouq");
+Q.layout.add("hellouq", areas).now();
+Q.layout.show("hellouq").now();
 // create 

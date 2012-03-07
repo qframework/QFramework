@@ -38,7 +38,8 @@
     if (self) {
 		mTextureDefault = 1;
 		mUpdated = false;
-		mTextures = [[NSMutableDictionary alloc] init];    
+		mTextures = [[NSMutableDictionary alloc] init];   
+        mToDelete = [[NSMutableArray alloc] init];
 		[self newTexture:@"white" file:@"whitesys.png"];
 		[self newTexture:@"font" file:@"fontsys.png"];
 		mU1 = 0.01;
@@ -50,6 +51,13 @@
     }
 	
     return  self;
+}
+
+- (void) dealloc 
+{
+    [mToDelete release];
+    [mTextures release];
+    [super dealloc];  
 }
 
 -(int) loadTexture:(NSString*)textname
@@ -120,6 +128,38 @@
         case TFT_FONT: return [self getTexture:@"font"];
     }
     return mTextureDefault;
+}
+
+
+
+-(void)deleteTexture:(NSString*)textname
+{
+	[mToDelete addObject:textname];
+}
+
+
+-(void)clearTexture:(NSString*)textname
+{
+	if ([mTextures objectForKey:textname])
+	{
+		NSNumber* num= [mTextures objectForKey:textname];
+        GLuint ids[1];
+		ids[0] = [num intValue];
+		glDeleteTextures(1 , ids);
+		[mTextures removeObjectForKey:textname];
+		
+	}
+	
+}
+
+-(void)flushTextures
+{
+	for (int a=0; a< [mToDelete count]; a++)
+	{
+		[self clearTexture:[mToDelete objectAtIndex:a]];
+	}
+	
+	[mToDelete removeAllObjects];
 }
 
 

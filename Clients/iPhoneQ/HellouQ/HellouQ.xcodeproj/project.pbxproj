@@ -80,6 +80,7 @@
 		CB02094314D038B500ECA3EA /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CB02093B14D038B500ECA3EA /* ES2Renderer.m */; };
 		CB02094414D038B500ECA3EA /* TextInput.m in Sources */ = {isa = PBXBuildFile; fileRef = CB02093E14D038B500ECA3EA /* TextInput.m */; };
 		CB02094614D04A2B00ECA3EA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB02094514D04A2900ECA3EA /* QuartzCore.framework */; };
+		CB306CD5150827C700BBE93B /* social.js in Resources */ = {isa = PBXBuildFile; fileRef = CB306CD4150827C700BBE93B /* social.js */; };
 		CB40561C14D2FEBE005587CB /* main.js in Resources */ = {isa = PBXBuildFile; fileRef = CB40560114D2FEBE005587CB /* main.js */; };
 		CB40563614D304CA005587CB /* ViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = CB40563414D304CA005587CB /* ViewController_iPhone.xib */; };
 		CB77D25114D9E690000C190D /* qback.png in Resources */ = {isa = PBXBuildFile; fileRef = CB77D24F14D9E690000C190D /* qback.png */; };
@@ -222,6 +223,7 @@
 		CB02093D14D038B500ECA3EA /* TextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInput.h; sourceTree = "<group>"; };
 		CB02093E14D038B500ECA3EA /* TextInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextInput.m; sourceTree = "<group>"; };
 		CB02094514D04A2900ECA3EA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		CB306CD4150827C700BBE93B /* social.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = social.js; path = ../../../../../../Clients/iPhoneQ/Q/QScripts/social.js; sourceTree = "<group>"; };
 		CB40560114D2FEBE005587CB /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		CB40563514D304CA005587CB /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController_iPhone.xib; sourceTree = "<group>"; };
 		CB77D24F14D9E690000C190D /* qback.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = qback.png; sourceTree = "<group>"; };
@@ -404,6 +406,7 @@
 		CB0208CD14CC0D3A00ECA3EA /* QScripts */ = {
 			isa = PBXGroup;
 			children = (
+				CB306CD4150827C700BBE93B /* social.js */,
 				CB01A99514DEB8550015C5A0 /* fontsys.png */,
 				CB01A99614DEB8550015C5A0 /* whitesys.png */,
 				CB0208CE14CC0D3A00ECA3EA /* colors.js */,
@@ -548,6 +551,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB306CD5150827C700BBE93B /* social.js in Resources */,
 				CB40561C14D2FEBE005587CB /* main.js in Resources */,
 				CB02090914CC0D3A00ECA3EA /* colors.js in Resources */,
 				CB02090A14CC0D3A00ECA3EA /* layout.js in Resources */,

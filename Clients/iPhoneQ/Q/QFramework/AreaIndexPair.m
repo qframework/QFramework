@@ -29,5 +29,26 @@
 @synthesize     mIndex;
 @synthesize     mDist;
 @synthesize     mIntData;
+@synthesize     mLoc;
+
+- (id)init
+{
+    self = [super init];
+    
+    if (self) {
+		mLoc = (float*)malloc( 3 * sizeof(float));
+		mLoc[0] = 0;
+		mLoc[1] = 0;
+		mLoc[2] = 0;
+		
+	}
+    return self;
+}
+
+-(void) dealloc 
+{
+	free(mLoc);
+    [super dealloc];
+}
 
 @end

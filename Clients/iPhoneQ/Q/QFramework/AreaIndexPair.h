@@ -29,6 +29,7 @@
 	NSString*     mOnFocusGain;
 	float               mDist;
 	int                 mIntData;    
+	float*               mLoc;
 }
 
 
@@ -39,7 +40,7 @@
 @property (nonatomic, assign) int                  mIndex;
 @property (nonatomic, assign) float                mDist;
 @property (nonatomic, assign) int                  mIntData;
-
+@property (nonatomic, assign) float*               mLoc;
 
 
 @end

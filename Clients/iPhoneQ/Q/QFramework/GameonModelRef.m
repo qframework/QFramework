@@ -229,6 +229,14 @@ static float mStaticBounds[] =
     mRotation[2] = az;  
 }
 
+- (void) setRotate:(float*)rotate
+{
+    mRotation[0] = rotate[0];
+    mRotation[1] = rotate[1];
+    mRotation[2] = rotate[2];  
+}
+
+
 - (void) addRotation:(float)ax y:(float)ay z:(float)az {
     mRotation[0] += ax;
     mRotation[1] += ay;
@@ -435,10 +443,9 @@ static float mStaticBounds[] =
 	
 }
 
--(float) intersectsRay:(float*)eye ray:(float*)ray
+-(float) intersectsRay:(float*)eye ray:(float*)ray loc:(float*)loc
 {
 	// transform bounds!
-	float loc[3] ;
 	float dist = rayIntersectsBounds(eye, ray, mBounds , loc);
 	if (dist >= 0)
 	{

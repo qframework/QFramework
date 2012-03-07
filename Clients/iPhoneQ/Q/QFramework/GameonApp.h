@@ -21,6 +21,7 @@
 #import <Foundation/Foundation.h>
 #import "ServerkoParse.h"
 #import <GameKit/GameKit.h>
+#import "SocialDelegate.h"
 
 @class LayoutGrid;
 
@@ -37,7 +38,6 @@
 @class Settings;
 @class ObjectsFactory;
 @class GameonCS;
-
 
 @interface GameonApp : NSObject{
 
@@ -86,9 +86,15 @@
 
 	bool				mDataChange;
 	bool				mRendering;
+
+    NSObject<SocialDelegate>*     mSocialDelegate;
 	///
-    //GameCenterManager*  mGameCenterManager;
 	
+    float* mLastDrag;
+    float mLastDist;
+    double mLastDragTime;
+    double mLastClickTime;
+    bool mSupportOld;	
 
 	
     
@@ -114,7 +120,7 @@
 
 
 -(void) performClick:(float)x y:(float)y;
--(void)mouseDragged:(float)x y:(float) y;
+-(void)mouseDragged:(float)x y:(float) y forClick:(bool)notimecheck;
 
 -(void) endScript;
 
@@ -146,9 +152,9 @@
 - (bool)hasData;
 
 ///
--(void) scoresLogin:(NSString*)data callback:(NSString*)callback;
+-(void) socialLogin:(NSString*)data callback:(NSString*)callback;
 -(void) scoresSubmit:(NSString*)data callback:(NSString*)callback;
--(void) scoresShow:(NSString*)data callback:(NSString*)callback;
+-(void) socialShow:(NSString*)data callback:(NSString*)callback;
 -(void) reloadScores:(NSString*)data callback:(NSString*)callback;
 -(double)frameDelta;
 -(void)execScript:(NSString*)script;
@@ -156,5 +162,5 @@
 - (void) start:(NSString*)script preexec:(NSString*)preexec;
 -(void) onEvent2:(NSMutableDictionary*)response;
 -(void) setInputTextSelector:(NSObject*)sel;
-
+-(void) setSocial:(NSObject<SocialDelegate>*)delegate;
 @end

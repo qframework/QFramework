@@ -103,6 +103,14 @@
         mCameraLookAtHud[1] = 0;
         mCameraLookAtHud[2] = 0;        
         
+		mUpZ = malloc( 3 * sizeof(float));    
+		mUpZ[0] = 0;
+		mUpZ[1] = 1;
+		mUpZ[2] = 0;
+		mUpZHud = malloc( 3 * sizeof(float));    
+		mUpZHud[0] = 0;
+		mUpZHud[1] = 1;
+		mUpZHud[2] = 0;		
         mHudInit = false;
         mSpaceInit = false;        
     }
@@ -119,9 +127,7 @@
 -(void)saveProjection:(float)left r:(float)right t:(float)top b:(float)bottom n:(float)near f:(float) far 
 {
     memset(mProjection , 0 , 16 * sizeof(float));
-    
-    glGetFloatv( GL_PROJECTION_MATRIX, mProjection );
-	glGetFloatv( GL_PROJECTION_MATRIX, mProjectionHud );
+	frustrumMat(left,right,top,bottom,near,far, mProjection);
 
     mProjectionSaved[0] = left;
     mProjectionSaved[1] = right;
@@ -134,8 +140,7 @@
 -(void)saveProjectionHud:(float)left r:(float)right t:(float)top b:(float)bottom n:(float)near f:(float) far 
 {
     memset(mProjectionHud , 0 , 16 * sizeof(float));
-
-    glGetFloatv( GL_PROJECTION_MATRIX, mProjectionHud );
+	frustrumMat(left,right,top,bottom,near,far, mProjectionHud);
     mProjectionHudSaved[0] = left;
     mProjectionHudSaved[1] = right;
     mProjectionHudSaved[2] = top;
@@ -172,7 +177,7 @@
 	float c[3];
 	y = mViewport[3] - y;
 	gluUnProject(x,y, 1.0f,mLookAtHud, 
-			mProjection, 
+			mProjectionHud, 
 			mViewport, 
 			&c[0],&c[1],&c[2]);
 	vec[0] = c[0] - mCameraEyeHud[0];
@@ -331,8 +336,7 @@
 			mCameraEye[0] = 0;
 			mCameraEye[1] = 0;
             mCameraEye[2] = ez;
-            float up[3] = {0,1,0};
-            [self saveLookAt:mCameraEye  c:mCameraLookAt u:up];            
+            [self saveLookAt:mCameraEye  c:mCameraLookAt u:mUpZ];            
             //NSLog(@" done x = %f z = %f",x, ez);
             return ez;
         }
@@ -361,15 +365,14 @@
         lookAtf(lookAt,eye2,center,up);
         if (gluProject(cordx, cordy, 0, 
                        lookAt, 
-                       mProjection,
+                       mProjectionHud,
                        mViewport,
                        &x,&y,&z) == GL_TRUE &&  x> 0 && x < mViewport[2] )
         {
 			mCameraEye[0] = 0;
 			mCameraEye[1] = 0;		
             mCameraEyeHud[2] = ez;
-            float up[3] = {0,1,0};
-            [self saveLookAtHud:mCameraEyeHud  c:mCameraLookAtHud u:up];
+            [self saveLookAtHud:mCameraEyeHud  c:mCameraLookAtHud u:mUpZHud];
             
             return ez;
         }
@@ -389,8 +392,7 @@
     mCameraLookAt[1] = lookat[1];
     mCameraLookAt[2] = lookat[2];    
     
-    float up[3] = {0,1,0};
-    [self saveLookAt:mCameraEye  c:mCameraLookAt u:up];
+    [self saveLookAt:mCameraEye  c:mCameraLookAt u:mUpZ];
     
 }
 
@@ -407,8 +409,7 @@
     if (!mSpaceInit)
     {
         mSpaceInit = true;
-        float up[3] = {0,1,0};
-        [self saveLookAt:mCameraEye  c:mCameraLookAt u:up];
+        [self saveLookAt:mCameraEye  c:mCameraLookAt u:mUpZ];
         
     }
     
@@ -424,8 +425,7 @@
     mCameraLookAtHud[1] = lookat[1];
     mCameraLookAtHud[2] = lookat[2];    
 
-    float up[3] = {0,1,0};
-    [self saveLookAtHud:mCameraEyeHud  c:mCameraLookAtHud u:up];
+    [self saveLookAtHud:mCameraEyeHud  c:mCameraLookAtHud u:mUpZHud];
     
     
     
@@ -443,8 +443,7 @@
     if (!mHudInit)
     {
         mHudInit = true;
-        float up[3] = {0,1,0};
-        [self saveLookAtHud:mCameraEyeHud  c:mCameraLookAtHud u:up];
+        [self saveLookAtHud:mCameraEyeHud  c:mCameraLookAtHud u:mUpZ];
         
     }
     

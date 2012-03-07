@@ -24,6 +24,7 @@
 #import "GLColor.h"
 #import "GameonApp.h"
 #import "GMath.h"
+#import "LayoutArea.h"
 
 @implementation AnimData_AnimFrame
 @synthesize mScale;
@@ -36,7 +37,6 @@
 @synthesize mRotate2Anim;
 @synthesize mTranslate2;
 @synthesize mTranslate2Anim;
-
 
 - (id)init
 {
@@ -76,6 +76,8 @@
 static int		mMaxFrames = 16;
 
 @synthesize mActive;
+@synthesize mAreaOwner;
+
 
 -(void) dealloc 
 {
@@ -116,6 +118,19 @@ static int		mMaxFrames = 16;
     }
     mSavedRef = nil;    
     [mApp.anims decCount];
+	
+    mAnimDelay = 0;
+	mPerctVal = -1;
+	mPerctMin = 0;
+	mPerctMax = 0;
+	mPerctDiff = 0;
+	if (mAreaOwner != nil)
+	{
+		mAreaOwner.mScollerAnim = nil;
+		mAreaOwner = nil; 
+	}	
+	
+    NSLog(@" end anim " );
     //Log.d("model", "afinish " + mId);
     
 }
@@ -793,7 +808,7 @@ static int		mMaxFrames = 16;
 		ref.mEnabled = false;
 	}
 	
-	mAnimDelay = -1;
+	mAnimDelay = 0;
 	mRepeatDir = 0;
 	mAnimRepeat = 1;		
 	mCallback = @"";
@@ -875,7 +890,8 @@ static int		mMaxFrames = 16;
 		mBackupSaved = false;
 		mOnEndHide = false;
 		mCallback = nil;
-	
+
+		
     }
 
     return self;
@@ -884,7 +900,7 @@ static int		mMaxFrames = 16;
 
 -(void) setDelay:(int)delay repeat:(int)repeat
 {
-	mAnimDelay = delay;
+	mAnimDelay += delay;
 	if (repeat < 0)
 	{
 		mAnimRepeat = repeat  * -1 ;
@@ -973,6 +989,10 @@ static int		mMaxFrames = 16;
 	if (mType == ADT_COLOR)
 	{
 		[self calcLinearColor:mCurrSourceCol dest:mCurrDestCol p:perct];
+	}else 
+	if (mType == ADT_SCROLLER)
+	{
+		[self calcLinearScroller:perct];
 	}
     //NSLog(@" sav %d = %f %f %f %d",mSavedRef,mSavedRef.mPosition[0],mSavedRef.mPosition[1],mSavedRef.mPosition[2], mSavedRef.mAdded);
     return true;
@@ -1009,7 +1029,7 @@ static int		mMaxFrames = 16;
 	long delay = [[tok objectAtIndex:0] intValue];
 	
 	mDifftime = 0;
-	mAnimDelay = delay;
+	mAnimDelay += delay;
 }
 
 -(void)addFrame:(AnimFactory_AnimFrame*)animFrame ref:(GameonModelRef*) ref
@@ -1063,6 +1083,8 @@ static int		mMaxFrames = 16;
 
 	[self maskFrames2:mStart inFrame:[atype.frames objectAtIndex:0]];
 	[self maskFrames2:mEnd inFrame:[atype.frames lastObject]];
+	[self clearArrays:mStart inFrame:[atype.frames objectAtIndex:0]];
+	[self clearArrays:mEnd inFrame:[atype.frames lastObject]];
 	[self fillFrameStart:mStart atype:atype ref:ref];
 	[self fillFrameEnd:mEnd atype:atype values:values count:count ref:ref];
 }
@@ -1166,9 +1188,52 @@ static int		mMaxFrames = 16;
 }
 
 
+-(void)calcLinearScroller:(float) perct
+{
+	if (mAreaOwner != nil)
+	{
+		float currval = mAreaOwner.mScrollers[0];
+		float newval = currval + (mPerctVal - currval)*perct;
+		if (newval < mPerctMin)
+		{
+			newval = mPerctMin;
+		}else 
+		if (newval > mPerctMax)
+		{
+			newval = mPerctMax;
+		}
+		[mAreaOwner setScrollerVal:newval];
+	}
+}
+
 -(void)cancelAnimation:(GameonModelRef*)ref
 {
 	[self endAnimation:ref];
 }
 
+-(void)addScrollerData:(float)add delay:(int)delay min:(float)min max:(float) max
+{
+	mType = ADT_SCROLLER;
+	mPerctDiff = -add;
+	if (mPerctVal == -1)
+	{
+		mPerctVal = mAreaOwner.mScrollers[0];
+	}else
+	{
+		mPerctVal -= add;
+	}
+	mDifftime = 0;
+	mAnimDelay = (double)delay;
+	mPerctMin = min;
+	mPerctMax = max;
+	mSteps = 1 ;
+	mActive = true;
+	mTimeStep = mAnimDelay; 
+}
+
+-(void)cancel
+{
+	[self reset];
+	
+}
 @end

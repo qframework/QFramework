@@ -51,7 +51,7 @@ function test_loadlayout()
 	menu3.location= "0.0,0.6,2.4,0.25,0.0";
 	menu3.background = "FF553333";
 	menu3.display = "hud";
-	menu3.text = "test3: Q.exec_";
+	menu3.text = "test3: Q.evals";
 	menu3.onclick = "js: tq1_exec();";
 	menu3.onfocusgain = "js:menuFocusGain";
 	menu3.onfocuslost = "js:menuFocusLost";    		

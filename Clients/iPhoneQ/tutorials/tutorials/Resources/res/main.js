@@ -1,4 +1,4 @@
-Q.env.set_('textparam','0.005,0.01,0.005,0.001,0.0');
+Q.env.set('textparam','0.005,0.01,0.005,0.001,0.0').now();
 
 var MenuArea = function(){};
 MenuArea.prototype = new LayoutArea;
@@ -10,6 +10,38 @@ MenuArea.prototype.layout = "hor";
 MenuArea.prototype.size = 22;
 MenuArea.prototype.onfocuslost = "js:menuFocusLost";
 MenuArea.prototype.constructor = MenuArea;
+
+var testnames = [ "Coordinate system",
+                  "World and Hud display",
+                  "Coords snaping",
+                  "Menu example",
+                  "Cards example",
+                  "Texts example",
+                  "Simple objects",
+                  "Camera operations",
+                  "Area Pages",
+                  "Grid areas",
+                  "Matrix example",
+                  "Screen color",
+                  "Lists",
+                  "Anims",
+                  "Textures"];
+
+var testlinks = ["examples/coordinates.js",
+                 "examples/worldhudsystem.js",
+                 "examples/cameracoords.js",
+                 "examples/menu.js",
+                 "examples/cards.js",
+                 "examples/dyntexts.js",
+                 "examples/objects.js",
+                 "examples/camera.js",
+                 "examples/pages.js",
+                 "examples/sgrid.js",
+                 "examples/matrixeff.js",
+                 "examples/animscreen.js",
+                 "examples/lists.js",
+                 "examples/anims.js",
+                 "examples/textures.js"];
 
 function main_loadresources()
 {
@@ -29,7 +61,7 @@ function main_loadresources()
 	textures.push(text);
 	textures.push(text2);
 	textures.push(text3);
-	Q.textures.add_(textures);
+	Q.textures.add(textures).now();
 	
 
 	var model = new Model();
@@ -47,7 +79,7 @@ function main_loadresources()
 	var models = new Array();
 	models.push(model);
 	models.push(model1);
-	Q.models.add_(models);
+	Q.models.add(models).now();
 	
 	/*
 	Q.startUpdate();
@@ -67,112 +99,52 @@ function main_loadresources()
 
 function main_load()
 {
-    var x1 = Q.layout.hudxmin;
-    var x2 = Q.layout.hudxmax;    
-    var y1 = Q.layout.hudymin;
-    var y2 = Q.layout.hudymax;
-
+    var x1 = Q.layout.worldxmin;
+    var x2 = Q.layout.worldxmax;    
+    var y1 = Q.layout.worldymin;
+    var y2 = Q.layout.worldymax;
+    var w = x2-x1;
+    var h = y2-y1;
     
 	// add areas
 	var areas = new Array();
 
 	var areaBack = new LayoutArea();
 	areaBack.type = 'layout.back';
-	areaBack.location= '0,0,6.4,6.4,-0.1';
+	areaBack.location= '0,0,'+w+','+h+',-0.0';
 	areaBack.background = 'FFFFFFFF,back';
 	areas.push(areaBack);
 
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '-0.8,1.2,0.0'
-	menu.text = 'Coordinate system';
-	menu.onclick = "js:menu_loadtutorial('examples/coordinates.js');";
-	areas.push(menu);
-
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '0.8,1.2,0.0'
-	menu.text = 'World and Hud display';
-	menu.onclick = "js:menu_loadtutorial('examples/worldhudsystem.js');";
-	areas.push(menu);
+	var title = new LayoutArea();
+	title.type = 'text.label';
+	title.location = '0,1.1';
+	title.bounds = '2.0,0.2';
+	title.display = "hud";
+	title.text = 'Select test and click to run';
+	title.background = "FFAA3333";
+	areas.push(title);
 	
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '-0.8,0.9,0.0'
-	menu.text = 'Coords snaping';
-	menu.onclick = "js:menu_loadtutorial('examples/cameracoords.js');";
-	areas.push(menu);
-
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '0.8,0.9,0.0'
-	menu.text = 'Menu example';
-	menu.onclick = "js:menu_loadtutorial('examples/menu.js');";
-	areas.push(menu);
+	var menu = new LayoutArea();
+	menu.type = 'table.list';
+	menu.location= '-0.0,0.0,0.0'
+	menu.bounds = "2.0,2.0";
+	menu.display = "hud";
+	menu.background = "88553333";
+	menu.size = testlinks.length + "," + "11,1";
+	menu.items = "";
+	for (var a=0; a< testnames.length; a++)
+	{
+		menu.items += "[t]"+PadDigits2(testnames[a],20," ")+",";
+	}
 	
-
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '-0.8,0.6,0.0'
-	menu.text = 'Cards example';
-	menu.onclick = "js:menu_loadtutorial('examples/cards.js');";
-	areas.push(menu);
-
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '0.8,0.6,0.0'
-	menu.text = 'Texts example';
-	menu.onclick = "js:menu_loadtutorial('examples/dyntexts.js');";
-	areas.push(menu);
-	
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '-0.8,0.3,0.0'
-	menu.text = 'Simple objects';
-	menu.onclick = "js:menu_loadtutorial('examples/objects.js');";
-	areas.push(menu);
-	
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '0.8,0.3,0.0'
-	menu.text = 'Camera operations';
-	menu.onclick = "js:menu_loadtutorial('examples/camera.js');";
-	//areas.push(menu);	
-
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '-0.8,0.0,0.0'
-	menu.text = 'Area Pages';
-	menu.onclick = "js:menu_loadtutorial('examples/pages.js');";
-	areas.push(menu);	
-	
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '0.8,0.0,0.0'
-	menu.text = 'Grid areas';
-	menu.onclick = "js:menu_loadtutorial('examples/sgrid.js');";
+	menu.onclick = "js:menu_loadtutorial";
 	areas.push(menu);
 
 	
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '-0.8,-0.3,0.0'
-	menu.text = 'Matrix example';
-	menu.onclick = "js:menu_loadtutorial('examples/matrixeff.js');";
-	areas.push(menu);	
-
-	var menu = new MenuArea();
-	menu.type = 'text.label';
-	menu.location= '0.8,-0.3,0.0'
-	menu.text = 'Screen color';
-	menu.onclick = "js:menu_loadtutorial('examples/animscreen.js');";
-	areas.push(menu);	
-	
-	
-	Q.layout.add_('mainmenu', areas);
+	Q.layout.add('mainmenu', areas).now();
 
 	// show page
-	Q.layout.show_('mainmenu');
+	Q.layout.show('mainmenu').now();
 }
 
 function menuFocusGain(area,index)
@@ -190,11 +162,16 @@ function menuFocusLost(area,index)
 	Q.sendUpdate();
 }
 
-function menu_loadtutorial(id)
+function menu_loadtutorial(area, id, delay , loc, dist)
 {
 	// clear
-	Q.layout.hide_('mainmenu');
-	Q.load_(id);
+	console.log( dist );
+	//Q.layout.hide_('mainmenu');
+	if (id >= 0 && delay <500 && dist < 0.01 )
+	{
+		Q.layout.hide('mainmenu').now();
+		Q.load(testlinks[id]).now();
+	}
 }
 
 function navigate_exit()
@@ -204,26 +181,20 @@ function navigate_exit()
 }
 
 
-
-
-console.log('sadasd');
-
 main_loadresources();
 main_load();
 
+/*
 
 
+Q.evals(1000, "stdouttest();").now();
+function stdouttest()
+{
+	for (var a =0; a< 20; a++)
+	{
+		Q.layout.println(" test line " + a);
+	}
+	
+}
 
-// tutorials
-
-// cards - placing card - moving cards
-
-// creating items from models - placing models 
-// display text, dynamic text change
-// seting up pages
-// moving camera , hud + 3d objects
-//
-// simple objects
-// languages!
-
-
+*/

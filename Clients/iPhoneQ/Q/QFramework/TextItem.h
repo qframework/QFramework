@@ -27,6 +27,7 @@
 @class GameonModel;
 @class GameonApp;
 @class TextRender;
+@class LayoutArea;
 
 @interface TextItem : NSObject {
 
@@ -71,5 +72,6 @@
 -(int) getVal:(int) val;
 -(void) setParent:(TextRender*) parent;
 -(void) setRef;
+-(void) setParentLoc:(LayoutArea*)area ;
 
 @end

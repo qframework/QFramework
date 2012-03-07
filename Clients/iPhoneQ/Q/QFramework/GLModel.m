@@ -67,7 +67,7 @@
         mTextureOffset = 0;
         mTextureW = 1;
         mTextureH = 1;
-        mTextureID = 0;
+        mTextureID = 1;
         mTransform = false;
         mForceHalfTexturing = false;
         mForcedOwner = 0;
@@ -176,9 +176,17 @@
     
     if (mTextureID != lasttextId || [mApp.textures isUpdated])
     {
-        glBindTexture(GL_TEXTURE_2D, mTextureID);
-        lasttextId = mTextureID;
-        [mApp.textures resetUpdate];
+		if (glIsTexture(mTextureID) == GL_TRUE)
+		{
+			glBindTexture(GL_TEXTURE_2D, mTextureID);
+			lasttextId = mTextureID;
+		}else
+		{
+            NSLog(@" bad texture %d "  , mTextureID); 
+			glBindTexture(GL_TEXTURE_2D, 1);
+			lasttextId = 1;
+		}
+		[mApp.textures resetUpdate];
     }
     //gl.glTexCoordPointer(2, GL10.GL_FIXED, 0, mTextureBuffer);		
 }

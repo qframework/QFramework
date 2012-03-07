@@ -125,10 +125,10 @@
 {
 
     double delay = (float)time * 0.001;
-    if (delay < 0.000001)
+    
+    if (delay < 1)
     {
-        [mJSServerko performSelector:@selector(execScript:) withObject:respdata];
-        return;
+        delay = 1;
     }
     
     [mJSServerko performSelector:@selector(execScript:) withObject:respdata afterDelay:delay];

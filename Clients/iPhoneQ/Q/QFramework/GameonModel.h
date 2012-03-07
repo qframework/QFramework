@@ -38,6 +38,7 @@
     bool    mHasAlpha;
     bool    mIsModel;
     NSString*               mName;
+	bool 					mActive;
 }
 
 @property (nonatomic, assign) GameonWorld_Location    mLoc;
@@ -109,5 +110,8 @@
 -(GameonModelRef*) ref:(int)no;
 -(int) findRef:(GameonModelRef*)ref;
 -(void) unsetWorld;
+-(void)setActive:(bool) active;
+-(void) createAnim:(NSString*)type forId:(int)refid delay:(NSString*)delay data:(NSString*) data;
+
 @end
 

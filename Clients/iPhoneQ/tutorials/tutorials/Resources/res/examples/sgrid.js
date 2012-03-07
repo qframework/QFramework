@@ -84,9 +84,9 @@ function setuplayout()
 	areaExit.onclick = 'js:test_exit';
     areas.push(areaExit);
     
-	Q.layout.add_("sgrid", areas);
+	Q.layout.add("sgrid", areas).now();
 	// show page
-	Q.layout.show_("sgrid");	
+	Q.layout.show("sgrid").now();	
 	
 	
 }
@@ -113,7 +113,7 @@ function onclickprint(area, index)
 
 
 // change camera to see difference
-Q.camera.set_(0,0,0, 0,-2,2);
+Q.camera.set(0,0,0, 0,-2,2).now();
 // put layout into queue to allow camera change to take effect
-Q.exec_(0,"setuplayout();");
+Q.evals(0,"setuplayout();").now();
 

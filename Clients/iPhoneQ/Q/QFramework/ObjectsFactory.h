@@ -45,5 +45,6 @@
 - (void)remove:(NSString*)name data:(NSString*) data;
 - (void)initObjects:(NSDictionary*)response;
 - (void)processObject:(NSDictionary*)objData;
+-(void)rotate:(NSString*)name data:(NSString*)data ;
 
 @end

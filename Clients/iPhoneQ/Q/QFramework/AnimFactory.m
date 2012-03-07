@@ -411,4 +411,53 @@
     mCount++;
 }
 
+-(AnimData*) getScollerAnim:(LayoutArea*) owner
+{
+	AnimData* adata = nil;
+	for (int a=0; a< ANIM_POOL_LEN; a++) 
+	{
+		AnimData* data = [mAnimPool objectAtIndex:a]; 
+		if (![data isActive]) 
+		{
+			if (data.mAreaOwner != nil && data.mAreaOwner == owner)
+			{
+				adata = data;
+				break;
+			}
+			if (adata == nil)
+			{
+				adata = data;
+			}
+		}
+	}
+	return adata;
+}
+
+-(void) animModelRef:(NSString*)animid ref:(GameonModelRef*)ref delay:(NSString*)delaydata data:(NSString*)data
+{
+	// find AnimType
+	AnimFactory_AnimType* atype = [mAnimations objectForKey:animid];
+	if (atype == nil)
+	{
+		return;
+	}	
+	
+	int intdata[16];
+	int count = [ServerkoParse parseIntArray:intdata max:16 forData:delaydata];
+	
+	// find ref
+
+	// generate AnimData from AnimType
+	// configure AnimData with ref!
+	int repeat = atype.repeat;
+	int delay = atype.delay;
+	if (count >= 1)
+		delay = intdata[0];    	
+	if (count == 2)
+		repeat = intdata[1];
+		
+	[self buildObjectAdata:ref atype:atype delay:delay repeat:repeat data:data callback:nil];
+}	
+
 @end
+

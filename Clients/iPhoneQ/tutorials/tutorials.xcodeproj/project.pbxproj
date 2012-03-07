@@ -78,6 +78,12 @@
 		CB02094314D038B500ECA3EA /* ES2Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = CB02093B14D038B500ECA3EA /* ES2Renderer.m */; };
 		CB02094414D038B500ECA3EA /* TextInput.m in Sources */ = {isa = PBXBuildFile; fileRef = CB02093E14D038B500ECA3EA /* TextInput.m */; };
 		CB02094614D04A2B00ECA3EA /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB02094514D04A2900ECA3EA /* QuartzCore.framework */; };
+		CB306CC31504DC2600BBE93B /* anims.js in Resources */ = {isa = PBXBuildFile; fileRef = CB306CC01504DC2600BBE93B /* anims.js */; };
+		CB306CC41504DC2600BBE93B /* lists.js in Resources */ = {isa = PBXBuildFile; fileRef = CB306CC11504DC2600BBE93B /* lists.js */; };
+		CB306CC51504DC2600BBE93B /* textures.js in Resources */ = {isa = PBXBuildFile; fileRef = CB306CC21504DC2600BBE93B /* textures.js */; };
+		CB306CC91504DC3C00BBE93B /* text1.png in Resources */ = {isa = PBXBuildFile; fileRef = CB306CC71504DC3C00BBE93B /* text1.png */; };
+		CB306CCA1504DC3C00BBE93B /* text2.png in Resources */ = {isa = PBXBuildFile; fileRef = CB306CC81504DC3C00BBE93B /* text2.png */; };
+		CB306CCC15054B4E00BBE93B /* social.js in Resources */ = {isa = PBXBuildFile; fileRef = CB306CCB15054B4C00BBE93B /* social.js */; };
 		CB40561014D2FEBE005587CB /* camera.js in Resources */ = {isa = PBXBuildFile; fileRef = CB4055F514D2FEBE005587CB /* camera.js */; };
 		CB40561114D2FEBE005587CB /* cameracoords.js in Resources */ = {isa = PBXBuildFile; fileRef = CB4055F614D2FEBE005587CB /* cameracoords.js */; };
 		CB40561214D2FEBE005587CB /* cards.js in Resources */ = {isa = PBXBuildFile; fileRef = CB4055F714D2FEBE005587CB /* cards.js */; };
@@ -242,6 +248,12 @@
 		CB02093D14D038B500ECA3EA /* TextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextInput.h; sourceTree = "<group>"; };
 		CB02093E14D038B500ECA3EA /* TextInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextInput.m; sourceTree = "<group>"; };
 		CB02094514D04A2900ECA3EA /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		CB306CC01504DC2600BBE93B /* anims.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = anims.js; sourceTree = "<group>"; };
+		CB306CC11504DC2600BBE93B /* lists.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = lists.js; sourceTree = "<group>"; };
+		CB306CC21504DC2600BBE93B /* textures.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = textures.js; sourceTree = "<group>"; };
+		CB306CC71504DC3C00BBE93B /* text1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = text1.png; sourceTree = "<group>"; };
+		CB306CC81504DC3C00BBE93B /* text2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = text2.png; sourceTree = "<group>"; };
+		CB306CCB15054B4C00BBE93B /* social.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = social.js; sourceTree = "<group>"; };
 		CB4055F514D2FEBE005587CB /* camera.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = camera.js; sourceTree = "<group>"; };
 		CB4055F614D2FEBE005587CB /* cameracoords.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = cameracoords.js; sourceTree = "<group>"; };
 		CB4055F714D2FEBE005587CB /* cards.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = cards.js; sourceTree = "<group>"; };
@@ -448,6 +460,7 @@
 		CB0208CD14CC0D3A00ECA3EA /* QScripts */ = {
 			isa = PBXGroup;
 			children = (
+				CB306CCB15054B4C00BBE93B /* social.js */,
 				CBA3A2E914DEB730009F5893 /* fontsys.png */,
 				CBA3A2EA14DEB730009F5893 /* whitesys.png */,
 				CB0208CE14CC0D3A00ECA3EA /* colors.js */,
@@ -548,6 +561,9 @@
 		CB4055F414D2FEBE005587CB /* examples */ = {
 			isa = PBXGroup;
 			children = (
+				CB306CC01504DC2600BBE93B /* anims.js */,
+				CB306CC11504DC2600BBE93B /* lists.js */,
+				CB306CC21504DC2600BBE93B /* textures.js */,
 				CB77D13614D60F6F000C190D /* animscreen.js */,
 				CB4055F514D2FEBE005587CB /* camera.js */,
 				CB4055F614D2FEBE005587CB /* cameracoords.js */,
@@ -589,6 +605,8 @@
 		CB40560C14D2FEBE005587CB /* textures */ = {
 			isa = PBXGroup;
 			children = (
+				CB306CC71504DC3C00BBE93B /* text1.png */,
+				CB306CC81504DC3C00BBE93B /* text2.png */,
 				CB40560D14D2FEBE005587CB /* back.png */,
 				CB40560E14D2FEBE005587CB /* images.png */,
 				CB40560F14D2FEBE005587CB /* qtext.png */,
@@ -646,7 +664,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB306CCC15054B4E00BBE93B /* social.js in Resources */,
 				CB40561014D2FEBE005587CB /* camera.js in Resources */,
+				CB306CC31504DC2600BBE93B /* anims.js in Resources */,
+				CB306CC41504DC2600BBE93B /* lists.js in Resources */,
+				CB306CC51504DC2600BBE93B /* textures.js in Resources */,
 				CB40561114D2FEBE005587CB /* cameracoords.js in Resources */,
 				CB40561214D2FEBE005587CB /* cards.js in Resources */,
 				CB40561314D2FEBE005587CB /* coordinates.js in Resources */,
@@ -681,6 +703,8 @@
 				CB40563614D304CA005587CB /* ViewController_iPhone.xib in Resources */,
 				CBA3A2EB14DEB730009F5893 /* fontsys.png in Resources */,
 				CBA3A2EC14DEB730009F5893 /* whitesys.png in Resources */,
+				CB306CC91504DC3C00BBE93B /* text1.png in Resources */,
+				CB306CCA1504DC3C00BBE93B /* text2.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -57,6 +57,7 @@
     [self loadScript:@"serverkobridge.js"];
     [self loadScript:@"room.js"];
     [self loadScript:@"layout.js"];
+    [self loadScript:@"social.js"];    
     [self loadScript:@"colors.js"];    
     [self loadScript:@"qframework.js"];    
 }

@@ -149,6 +149,33 @@
 	[r set];
 }
 
+-(void)rotate:(NSString*)name data:(NSString*)data 
+{
+	LayoutItem* item = [mItems objectForKey:name];
+	if (item == nil)
+	{
+		return;
+	}
+	GameonModel* model = item.mModel;
+
+	
+	// TODO submodels
+	if ([model ref:0] == nil)
+	{
+		GameonModelRef* ref = [[GameonModelRef alloc] initWithParent:model];
+		[model addref:ref];
+	}
+	float rotate[3] = {0,0,0};
+	[ServerkoParse parseFloatArray:rotate max:3 forData:data]; 
+	
+	GameonModelRef* r = [model ref:0];
+	[r setRotate:rotate];
+	[r set];
+}
+
+
+
+
 -(void)texture:(NSString*)name data:(NSString*)data 
 {
 	LayoutItem* item = [mItems objectForKey:name];

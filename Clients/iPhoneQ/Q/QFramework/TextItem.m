@@ -27,6 +27,7 @@
 #import "ColorFactory.h"
 #import "GameonWorld.h"
 #import "GameonApp.h"
+#import "LayoutArea.h"
 
 @implementation TextItem
 
@@ -431,7 +432,7 @@
 	mW = w;
 	mH = h;
 //	System.out.println(" set pos " + mText + " " + mX + " " + mY+  " " + mZ + " " + mW + " " + mH);
-	[self set:true];
+	[self setRef];
 }
 
 -(void) setRef
@@ -470,6 +471,18 @@
 	}
 }
 
+-(void) setParentLoc:(LayoutArea*)area 
+{
+	if (mRef != nil)
+	{
+		[mRef setAreaPosition:area.mLocation];
+		[mRef setAreaRotate:area.mRotation];
+		[mRef mulScale:area.mBounds];
+		[mRef setAddScale:area.mScale];			
+		[mRef set];
+	}
+	
+}
 @end
 
 

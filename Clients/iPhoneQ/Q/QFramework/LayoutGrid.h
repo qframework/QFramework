@@ -75,5 +75,6 @@
 -(void) clearPage:(NSString*) pageid;
 -(void) onCameraFit:(NSString*)type data:(NSString*) strData;
 -(void) onCameraFitHud:(NSString*)type data:(NSString*) strData;
+-(LayoutArea*) getArea:(NSString*)areaID;
 
 @end

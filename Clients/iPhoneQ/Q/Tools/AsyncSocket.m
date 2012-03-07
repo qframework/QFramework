@@ -42,8 +42,8 @@
 // If you constantly need to access your socket from multiple threads
 // then you may consider using GCDAsyncSocket instead, which is thread-safe.
 
-NSString *const AsyncSocketException = @"AsyncSocketException";
-NSString *const AsyncSocketErrorDomain = @"AsyncSocketErrorDomain";
+#define AsyncSocketException @"AsyncSocketException"
+#define AsyncSocketErrorDomain @"AsyncSocketErrorDomain"
 
 
 enum AsyncSocketFlags

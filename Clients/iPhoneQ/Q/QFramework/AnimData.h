@@ -25,6 +25,7 @@
 @class GameonModelRef;
 @class GLColor;
 @class GameonApp;
+@class LayoutArea;
 
 @interface AnimData_AnimFrame : NSObject
 {
@@ -86,15 +87,22 @@
     AnimData_AnimFrame* mStart;    
     AnimData_AnimFrame* mEnd;
     NSMutableArray* mFrames;
+	
+	float mPerctVal;
+	float mPerctMin;
+	float mPerctMax;
+	float mPerctDiff;
+	LayoutArea*	mAreaOwner;	
 }
 
 @property (nonatomic, assign, getter=isActive) bool mActive;
+@property (nonatomic, assign) LayoutArea*	mAreaOwner;
 
 -(void) setColorEnd;
 -(void) setColorStart;
 
 
-- (id)initWithId:(int) id app:(GameonApp*)parent;
+-(id)   initWithId:(int) id app:(GameonApp*)parent;
 -(void) setDelay:(int)delay repeat:(int)repeat;
 -(void) saveBackup:(GameonModelRef*)backup tohide:(bool) hide;
 -(void) setActive:(bool)active;
@@ -108,6 +116,9 @@
 -(void) setup2:(AnimFactory_AnimType*)atype start:(GameonModelRef*)start end:(GameonModelRef*)end;
 -(void) activate;
 -(bool) process2:(GameonModelRef*)ref delta:(long) diff;
--(void)cancelAnimation:(GameonModelRef*)ref;
+-(void) cancelAnimation:(GameonModelRef*)ref;
+-(void)addScrollerData:(float)add delay:(int)delay min:(float)min max:(float) max;
+-(void)cancel;
+-(void)calcLinearScroller:(float) perct;
 
 @end

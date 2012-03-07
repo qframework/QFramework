@@ -82,6 +82,7 @@
 - (void) setPosition:(float)ax y:(float)ay z:(float)az;
 - (void) setScale:(float)ax y:(float)ay z:(float)az;   
 - (void) setRotate:(float)ax y:(float)ay z:(float)az;
+- (void) setRotate:(float*)rotate;
 - (void) mulScale:(float)x y:(float)y z:(float) z ;
 -(void) setAddScale:(float*)addScale;
 - (void) setAreaRotate:(float*)rotate;
@@ -105,7 +106,7 @@
 -(float*) matrix;
 -(AnimData*) getAnimData:(GameonApp*)app;
 -(void) activateAnim;
--(float) intersectsRay:(float*)eye ray:(float*)ray;
+-(float) intersectsRay:(float*)eye ray:(float*)ray loc:(float*)loc;
 -(void) animate:(long) deltaTime;
 
 @end

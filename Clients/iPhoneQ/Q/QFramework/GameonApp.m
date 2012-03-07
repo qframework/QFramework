@@ -108,12 +108,20 @@ static double currentTime()
 		mRendering = false;
         mFrameDeltaTime = 0;
         mFrameLastTime = -1;
+		
+		mLastDrag = (float*)malloc(3 * sizeof(float));
+		mLastDrag[0] = 1e07f;
+		mLastDist = 0;
+		mLastDragTime = 0;
+		mLastClickTime = 0;
+		mSupportOld = false;
     }
     return self;
 }
 
 -(void) dealloc 
 {
+	free( mLastDrag );
     [mView release];
     [mDataGrid release];
     [mWorld release];
@@ -138,12 +146,12 @@ static double currentTime()
 
 -(void) onClick:(float*)vec vecHud:(float*)vecHud
 {
-    if (mTextEditing)
-        return;
-    if (!mTouchEnabled)
+    if (mTextEditing || !mTouchEnabled)
     {
         return;
-    }    
+	}
+
+	double delay = currentTime() - mLastClickTime;	
 
     //NSLog(@" onClick %f %f %f %f", x,y,xhud,yhud);    
     AreaIndexPair* field = [mDataGrid onClickNearest:vec vecHud:vecHud];
@@ -158,7 +166,7 @@ static double currentTime()
 			}else
 			{
 				NSMutableString* cmd  = [[NSMutableString alloc] initWithString:[datastr substringFromIndex:3]];
-				[cmd appendFormat:@"('%@',%d);",field.mArea,field.mIndex];
+				[cmd appendFormat:@"('%@',%d , %d, [%f,%f,%f] , %f);",field.mArea,field.mIndex , (int)delay,field.mLoc[0],field.mLoc[1],field.mLoc[2]  , mLastDist];
 				[mScript execScript:cmd];
                 [cmd release];
 			}
@@ -177,6 +185,7 @@ static double currentTime()
         mFocused = nil;
     }    	
     
+	mLastDist = 0;
     [field release];
 
 }
@@ -404,7 +413,7 @@ static double currentTime()
                         mHudb[5], mHudb[3]                        
                         ];
 	
-//    NSLog(@" setScreenBounds %@ ", script);
+    NSLog(@" setScreenBounds %@ ", script);
     [mScript execScript:script];    
 }
 
@@ -454,7 +463,7 @@ static double currentTime()
 }
 
 
--(void)mouseDragged:(float)x y:(float) y
+-(void)mouseDragged:(float)x y:(float) y forClick:(bool)notimecheck
  {
 	// 
 	float rayVec[3];
@@ -464,6 +473,18 @@ static double currentTime()
     {
      return;
     }
+	
+	if (mFrameDeltaTime == 0)
+		mLastDragTime += 100;
+	else
+		mLastDragTime += mFrameDeltaTime;
+	if (!notimecheck && mLastDragTime < 50)
+	{
+        NSLog(@" out of dragg %f " , mLastDragTime);
+		return;
+	}
+	mLastDragTime = 0;
+		
     [mCS screen2spaceVec:x y:y vec:rayVec];
     [mCS screen2spaceVecHud:x y:y vec:rayVecHud];
 
@@ -471,6 +492,35 @@ static double currentTime()
 	
 	if (field != nil && mFocused != nil)
 	{
+		if ([field.mArea isEqual:mFocused.mArea] )
+		{
+			if (mLastDrag[0] == 1e07f)
+			{
+				mLastDrag[0] = field.mLoc[0];
+				mLastDrag[1] = field.mLoc[1];
+				mLastDrag[2] = field.mLoc[2];
+				return;
+			}else
+			{
+				float delta0 = field.mLoc[0]-mLastDrag[0];
+				float delta1 = field.mLoc[1]-mLastDrag[1];
+				float delta2 = field.mLoc[2]-mLastDrag[2];
+				mLastDist = (float)sqrt( (delta0*delta0)+(delta1*delta1)+(delta2*delta2) );
+				NSLog(@" delta of dragg %f %f %f " , delta0, delta1, delta2);
+				LayoutArea* area = [mDataGrid getArea:field.mArea];
+				if (area != nil)
+				{
+					[area onDragg:(field.mLoc[0] -mLastDrag[0])
+									y:(field.mLoc[1] -mLastDrag[1])
+									z:(field.mLoc[2] -mLastDrag[2])];
+				}
+			}
+			
+			mLastDrag[0] = field.mLoc[0];
+			mLastDrag[1] = field.mLoc[1];
+			mLastDrag[2] = field.mLoc[2];
+		}
+			
 		if ([field.mArea isEqual:mFocused.mArea] && 
 			field.mIndex == mFocused.mIndex)
 		{
@@ -480,6 +530,7 @@ static double currentTime()
 			[self onFocusLost:mFocused];
             [mFocused release];            
 			mFocused = nil;
+			mLastDrag[0] = 1e07f;
 		}
 	}else if (mFocused != nil)
 	{
@@ -492,6 +543,8 @@ static double currentTime()
 	{
 		[self onFocusGain:field];
 	}
+	
+	mLastDrag[0] = 1e07f;		
 
 	
 }
@@ -556,7 +609,8 @@ static double currentTime()
 
 -(void)onFocusProbe:(float)x y:(float) y
 {
-	[self mouseDragged:x y:y];
+	mLastClickTime = currentTime();
+	[self mouseDragged:x y:y forClick:true];
 }
 
 - (void) onSurfaceChanged:(int)width h:(int) height
@@ -618,7 +672,7 @@ static double currentTime()
 
 
 
--(void) scoresLogin:(NSString*)data callback:(NSString*)callback
+-(void) socialLogin:(NSString*)data callback:(NSString*)callback
 {
 
 }
@@ -639,9 +693,9 @@ static double currentTime()
 }
 
 
--(void) scoresShow:(NSString*)data callback:(NSString*)callback
+-(void) socialShow:(NSString*)data callback:(NSString*)callback
 {
-    
+    [mSocialDelegate show];
 }
 
 
@@ -653,6 +707,7 @@ static double currentTime()
     [mAnims process:mFrameDeltaTime];
 	[self execResponses];
     [mWorld addModels];    
+	[mTextures flushTextures];
 }
 
 -(bool)hasData
@@ -710,13 +765,13 @@ static double currentTime()
             [self setEnv:resptype value:respdata];
             break;
 		case 500:
-            [self scoresLogin:resptype callback:respdata];
+            [self socialLogin:resptype callback:respdata];
             break;            
 		case 510:
             [self scoresSubmit:resptype callback:respdata];
             break;            
 		case 520:
-            [self scoresShow:resptype callback:respdata];
+            [self socialShow:resptype callback:respdata];
             break;
 		case 521:
             [self reloadScores:resptype callback:respdata];
@@ -752,6 +807,9 @@ static double currentTime()
         case 4000:
             [mTextures newTexture:resptype file:respdata];
             break;
+		case 4001:
+            [mTextures deleteTexture:resptype];
+            break;			
         case 4100:
             [mObjectsFact create:resptype data:respdata];
             break;
@@ -770,6 +828,9 @@ static double currentTime()
         case 4150:
             [mObjectsFact remove:resptype data:respdata];
             break;			
+		case 4160:
+			[mObjectsFact rotate:resptype data:respdata];
+			break;							
         case 4200:
             [mAnims move:resptype loc:respdata data:respdata2 callback:respdata3];
             break;			
@@ -848,6 +909,11 @@ static double currentTime()
 {
     mInputTextSelector = sel;
     
+}
+
+-(void) setSocial:(NSObject<SocialDelegate>*)delegate
+{
+    mSocialDelegate = delegate;
 }
 
 @end

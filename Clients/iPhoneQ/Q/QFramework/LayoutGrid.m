@@ -521,31 +521,31 @@
     [mApp setScreenBounds];
 }
 
--(void) onCameraProjHud:(NSString*)fov data:(NSString*) farnear
+-(void) onCameraProjHud:(NSString*)fov data:(NSString*)far data2:(NSString*)near
 {
 	float fovf = [fov floatValue];
-	NSArray* tokens = [farnear componentsSeparatedByString:@","]; 
 	float farf = 0;
 	float nearf = 0;
-    if ( [tokens count] > 0) nearf  = [[tokens objectAtIndex:0] floatValue];
-	if ( [tokens count] > 1) farf = [[tokens objectAtIndex:1] floatValue];
+    nearf  = [far floatValue];
+	farf = [near floatValue];
 
     GameonWorldView* v = mApp.view;
     [v setFovHud:fovf near:nearf far:farf];
-    [v setFovHud:fovf near:nearf far:farf];
+	[mApp setScreenBounds];	
 }
 
 
--(void) onCameraProj:(NSString*)fov data:(NSString*) farnear
+-(void) onCameraProj:(NSString*)fov data:(NSString*) far data2:(NSString*)near
 {
 	float fovf = [fov floatValue];
-	NSArray* tokens = [farnear componentsSeparatedByString:@","]; 
 	float farf = 0;
 	float nearf = 0;
-    if ( [tokens count] > 0) nearf  = [[tokens objectAtIndex:0] floatValue];
-	if ( [tokens count] > 1) farf = [[tokens objectAtIndex:1] floatValue];
+    nearf  = [far floatValue];
+	farf = [near floatValue];
 
-    [mApp.view setFov:fovf near:nearf far:farf];
+    GameonWorldView* v = mApp.view;
+    [v setFov:fovf near:nearf far:farf];
+	[mApp setScreenBounds];
 }
 
 
@@ -556,11 +556,34 @@
     [[UIApplication sharedApplication] openURL:url];    
 }
 
+-(void) areaAnim:(NSString*)areaid type:(NSString*)type delay:(NSString*)delay data:(NSString*) data
+{
+	
+	LayoutArea* area = [self getArea:areaid];
+	if (area != nil) {
+		[area anim:type delay:delay data:data];
+	}
+	
+}
+
+-(void)areaSetScrollers:(NSString*)areaid data:(NSString*)strData 
+{
+	LayoutArea* area = [self getArea:areaid];
+	if (area != nil) {
+		//area.clear();
+		[area setScrollers:strData];
+	}
+}
+
+
 
 -(void) onEvent2:(NSMutableDictionary*)response
 {
     NSString* respid = [response valueForKey:@"id"];
     NSString* respdata = [response valueForKey:@"data"];
+	NSString* respdata2 = [response valueForKey:@"data2"];
+	NSString* respdata3 = [response valueForKey:@"data3"];
+	//NSString* respdata4 = [response valueForKey:@"data4"];
     NSString* resptype = [response valueForKey:@"type"];
 
     int eventid = [respid intValue];
@@ -605,7 +628,7 @@
             [self onCameraSet:resptype data:respdata];
             break;            
         case 2502:
-            [self onCameraProj:resptype data:respdata];
+            [self onCameraProj:resptype data:respdata data2:respdata2];
             break;			
         case 2510:
             [self onCameraFitHud:resptype data:respdata];
@@ -614,7 +637,7 @@
             [self onCameraSetHud:resptype data:respdata];
             break;            
         case 2512:
-            [self onCameraProjHud:resptype data:respdata];
+            [self onCameraProjHud:resptype data:respdata data2:respdata2];
             break;            
         case 3001:
             [self onAreaDelete:resptype data:respdata];
@@ -712,11 +735,14 @@
 		case 3120:
 			[self areaUpdateTextColor:resptype data:respdata];
 			break;				
-        
+		case 3400:
+			[self areaSetScrollers:resptype data:respdata];
+			break;
+		case 3210:
+			[self areaAnim:resptype type:respdata  delay:respdata2 data:respdata3];
+			break;				        
     }		  
-    
 }
-
 
 
 -(void) setWorld:(GameonWorld*)world app:(GameonApp*)app
@@ -798,7 +824,6 @@
     }
     return nil;
 }
-
 
 
 -(LayoutArea*) processAreaData2:(NSMutableDictionary*)areaData
@@ -910,6 +935,12 @@
     if (fields != nil) {
         [area createFields:fields];
     }
+	
+    NSString* scrolls = [areaData valueForKey:@"scrollers"];    
+    if (scrolls != nil) {
+        [area setScrollers:scrolls];
+    }
+	
     
     [area initLayout];
     
@@ -1072,15 +1103,22 @@
     for (int a=[mVisibleAreas count]-1; a >=0 ; a--)
     {
         LayoutArea* ahud = [mVisibleAreas objectAtIndex:a];
+		if (ahud.mActiveItems == 0)
+		{
+			continue;
+		}		
 		if (click)
 		{
 			if ( ahud.mOnclick == nil || [ahud.mOnclick length] == 0 )
 				continue;
 		}else
 		{
-			if ( (ahud.mOnFocusGain== nil || [ahud.mOnFocusGain length] == 0) &&  
-				(ahud.mOnFocusLost== nil || [ahud.mOnFocusLost length] == 0))
-				continue;
+			if (!ahud.mHasScrollV && !ahud.mHasScrollH)
+			{		
+				if ( (ahud.mOnFocusGain== nil || [ahud.mOnFocusGain length] == 0) &&  
+					(ahud.mOnFocusLost== nil || [ahud.mOnFocusLost length] == 0))
+					continue;
+			}
 		}
 		
         if (ahud.mState != LAS_VISIBLE || ahud.mDisplay != GWLOC_HUD)            
@@ -1107,15 +1145,23 @@
     for (int a=[mVisibleAreas count]-1; a >=0 ; a--)
     {
         LayoutArea* area = [mVisibleAreas objectAtIndex:a];
+		if (area.mActiveItems == 0)
+		{
+			continue;
+		}
+		
 		if (click)
 		{
 			if ( area.mOnclick == nil || [area.mOnclick length] == 0 )
 				continue;
 		}else
 		{
-			if ( (area.mOnFocusGain== nil || [area.mOnFocusGain length] == 0) &&  
-				(area.mOnFocusLost== nil || [area.mOnFocusLost length] == 0))
-				continue;
+			if (!area.mHasScrollV && !area.mHasScrollH)
+			{
+				if ( (area.mOnFocusGain== nil || [area.mOnFocusGain length] == 0) &&  
+					(area.mOnFocusLost== nil || [area.mOnFocusLost length] == 0))
+					continue;
+			}
 		}
 		
         if (area.mState != LAS_VISIBLE || area.mDisplay == GWLOC_HUD)
@@ -1190,6 +1236,11 @@
     {
         areas = [[Areas alloc] init];
         [mPageIds setObject:areas forKey:pageid];        
+		if ([pageid isEqual:@"*"])
+		{
+			areas.mVisible = true;
+		}
+		
     }
     area.mPageID  = [[NSString alloc] initWithString:pageid];
     if ([areas.areas indexOfObject:area] == NSNotFound)

@@ -55,6 +55,7 @@
 		mTextureID = [mApp.textures get:TFT_DEFAULT];
 		mWorld = app.world;
 		mApp = app;
+		mActive = true;
     }
     
     return self;
@@ -658,8 +659,10 @@
 
 -(void) setState:(int) state
 {
-    //TODO - plane? factory? refs??
-    // za background - brze...
+	if (!mActive && state == LAS_VISIBLE)
+		return;
+
+			
     for (int a=0; a< [mRefs count]; a++)
     {
         GameonModelRef* ref = [mRefs objectAtIndex:a];
@@ -944,6 +947,23 @@
 	mWorld = nil;
 }    
 
+-(void) createAnim:(NSString*)type forId:(int)refid delay:(NSString*)delay data:(NSString*) data
+{
+	if (refid < 0 && refid >= [mRefs count])
+	{
+		return;
+	}
+	
+	GameonModelRef* ref = [mRefs objectAtIndex:refid];
+	[[mApp anims] animModelRef:type ref:ref delay:delay data:data];
+	
+}
 
+
+
+-(void)setActive:(bool) active
+{
+	mActive = active;
+}
 
 @end

@@ -72,7 +72,7 @@
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	[self perspective:mFov aspect:(float)mWidth/(float)mHeight zmin:mNear zmax:mFar];
+	[self perspective:mFov aspect:(float)mWidth/(float)mHeight zmin:mNear zmax:mFar  updateFrustrum:true];
     
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -89,7 +89,7 @@
 	//glPopMatrix();
  
 	glLoadIdentity();
-	[self perspective:mFovHud aspect:(float)mWidth/(float)mHeight zmin:mNearHud zmax:mFarHud];
+	[self perspectiveHud:mFovHud aspect:(float)mWidth/(float)mHeight zmin:mNearHud zmax:mFarHud updateFrustrum:true];
 	
  	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -104,26 +104,36 @@
     
 }
 
--(void) perspective:(float)fovy aspect:(float)aspect zmin:(float)zmin zmax:(float) zmax
+-(void) perspective:(float)fovy aspect:(float)aspect zmin:(float)zmin zmax:(float) zmax  updateFrustrum:(bool)update
 {
     GLfloat xmin, xmax, ymin, ymax;
     ymax = zmin * tan(fovy * M_PI / 360.0);
     ymin = -ymax;
     xmin = ymin * aspect;
     xmax = ymax * aspect;
-    glFrustumf(xmin, xmax, ymin, ymax, zmin, zmax);
-    [mApp.cs saveProjection:-xmin r:xmax t:ymin b:ymax n:zmin f:zmax];
+	if (update)
+	{
+		glFrustumf(xmin, xmax, ymin, ymax, zmin, zmax);
+	}else
+	{
+		[mApp.cs saveProjection:xmin r:xmax t:ymin b:ymax n:zmin f:zmax];
+	}
 }
 
--(void) perspectivehud:(float)fovy aspect:(float)aspect zmin:(float)zmin zmax:(float) zmax
+-(void) perspectiveHud:(float)fovy aspect:(float)aspect zmin:(float)zmin zmax:(float) zmax updateFrustrum:(bool)update
 {
     GLfloat xmin, xmax, ymin, ymax;
     ymax = zmin * tan(fovy * M_PI / 360.0);
     ymin = -ymax;
     xmin = ymin * aspect;
     xmax = ymax * aspect;
-    glFrustumf(xmin, xmax, ymin, ymax, zmin, zmax);
-    [mApp.cs saveProjectionHud:-xmin r:xmax t:ymin b:ymax n:zmin f:zmax];
+	if (update)
+	{
+		glFrustumf(xmin, xmax, ymin, ymax, zmin, zmax);
+	}else
+	{
+		[mApp.cs saveProjectionHud:xmin r:xmax t:ymin b:ymax n:zmin f:zmax];
+	}
 }
 
 - (void) onSurfaceChanged:(int)width h:(int) height 
@@ -134,6 +144,9 @@
     glViewport(0, 0, width, height);
     [mApp.cs saveViewport:width h:height];
   
+	[self perspective:mFov aspect:(float)mWidth/(float)mHeight zmin:mNear zmax:mFar  updateFrustrum:false];
+	[self perspectiveHud:mFovHud aspect:(float)mWidth/(float)mHeight zmin:mNearHud zmax:mFarHud updateFrustrum:false];
+	[mApp setScreenBounds];
 }
 
 -(void)onSurfaceCreated {
@@ -165,7 +178,7 @@
      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  
      glMatrixMode(GL_PROJECTION);
      glLoadIdentity();
-     [self perspective:45.0f aspect:(GLfloat)mWidth/mHeight zmin:0.14f zmax:8.7f];
+     [self perspective:45.0f aspect:(GLfloat)mWidth/mHeight zmin:0.14f zmax:8.7f updateFrustrum:true];
      
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();		
@@ -193,6 +206,8 @@
 	mFar = farf;
 	mNear = nearf;
 	mFov = fovf;
+	[self perspective:mFov aspect:(float)mWidth/(float)mHeight zmin:mNear zmax:mFar  updateFrustrum:false];
+	
 }
 
 - (void) setFovHud:(float)fovf near:(float)nearf far:(float)farf 
@@ -200,6 +215,8 @@
 	mFarHud = farf;
 	mNearHud = nearf;
 	mFovHud = fovf;
+	[self perspectiveHud:mFovHud aspect:(float)mWidth/(float)mHeight zmin:mNearHud zmax:mFarHud updateFrustrum:false];
+	
 }
 
 @end

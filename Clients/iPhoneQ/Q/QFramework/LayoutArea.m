@@ -33,6 +33,7 @@
 #import "TextItem.h"
 #import "NSData+Base64.h"
 #import "AnimFactory.h"
+#import "AnimData.h"
 
 @implementation LayoutArea
 
@@ -54,6 +55,11 @@
 @synthesize mOnclick;
 @synthesize mOnFocusGain;
 @synthesize mOnFocusLost;
+@synthesize mScrollers;
+@synthesize mScollerAnim;
+@synthesize mHasScrollH;
+@synthesize mHasScrollV;
+@synthesize mActiveItems;	
 
 -(id) initWithSubtype:(NSString*)subtype app:(GameonApp*)app
 {
@@ -99,10 +105,11 @@
 		mOnFocusGain = nil ;
         mSize = 0;
         mSizeW = 0;//1;
-        mSizeH = 0;//1;
+        mSizeH = 1;
+		mSizeText = -1;
         mColorForeground = nil;
-        mColorForeground2 = 0; 
-        mColorBackground2 = 0;
+        mColorForeground2 = 1; 
+        mColorBackground2 = 1;
 		mStrColorBackground = nil;
         mPageID = nil;
 
@@ -114,6 +121,15 @@
 		mColors[3] = mApp.colors.white;
         mDisabledInput = false;
         mPageVisible = false;
+		
+		mHasScrollH = false;
+		mHasScrollV = false;
+		mActiveItems = 1;
+        
+        mScrollers = malloc(sizeof(float)*3);
+		mScrollers[0] = 0.0f;
+		mScrollers[1] = -0.5f;
+		mScrollers[2] = 0.5f;		
 
     }
     return self;
@@ -134,6 +150,7 @@
     [mModel release];
     [mPageID release];
     [mText release];
+    free(mScrollers);    
     free(mScale);
     free(mRotation);
     free(mLocation);
@@ -166,6 +183,8 @@
 -(void) setText:(NSString*)strData
 {
 	[mText release];
+	if (strData == nil)
+		return;
 	if ([strData hasPrefix:@"#64#"])
 	{
 		NSData *data = [NSData dataFromBase64String:[strData substringFromIndex:4]];
@@ -270,6 +289,10 @@
             [mParent setVisibleArea:self visible:true];
         }
     } else if ([strState isEqualToString:@"hidden"]) {
+		if (mScollerAnim != nil)
+		{
+			[mScollerAnim cancel];
+		}	
         mState = LAS_HIDDEN;
         [mParent setVisibleArea:self visible:false];        
     }
@@ -358,7 +381,6 @@
 -(void) setSize:(NSString*)areaType {
     NSArray* tokens = [areaType componentsSeparatedByString:@","];
     if ([tokens count] > 0) mSize = [[tokens objectAtIndex:0] intValue];
-    mSizeW = mSize;
     if ([tokens count] > 1) mSizeW = [[tokens objectAtIndex:1] intValue];
     if ([tokens count] > 2) mSizeH = [[tokens objectAtIndex:2] intValue];
     
@@ -392,7 +414,7 @@
 -(LayoutAreaFieldItemType) getType:(NSString*)val  
 {
     if ([val characterAtIndex:0] != '[') {
-        return LAFIT_ITEM;
+        return LAFIT_TEXT;
     }else
     if ([val characterAtIndex:1] == 'i') {
         return LAFIT_ITEM;
@@ -404,7 +426,7 @@
         return LAFIT_TEXTH;
     }
     
-    return LAFIT_ITEM;
+    return LAFIT_TEXT;
 }
 
 -(void) createItem:(int)fieldind item:(NSString*)val showback:(bool)showback 
@@ -417,16 +439,16 @@
     data = [self getData:val];
     [self setField:fieldind];
     field = [mItemFields objectAtIndex:fieldind];
-    
+	mActiveItems ++;
     if (type == LAFIT_ITEM) {
         // just draw item
         if (field.mW > 0) {
             [field setItem:data doeffect:false showback:showback];
         }                
     } else if (type == LAFIT_TEXT) {
-        [field setText:data len:mSizeW];
+        [field setText:data len:mSizeText];
     }else if (type == LAFIT_TEXTH) {
-        [field setText:data len:mSizeW];
+        [field setText:data len:mSizeText];
     }
 }
 
@@ -471,7 +493,8 @@
     NSString* data;
     LayoutAreaFieldItemType type = LAFIT_TEXT;
     LayoutField* field = nil;
-    
+    mActiveItems ++;
+	
     // update vector of items on fields
     for (int a=0; a< [tokens count]; a++) {
         val = [tokens objectAtIndex:a];
@@ -492,9 +515,9 @@
             }
             //field.mText = nil;
         } else if (type == LAFIT_TEXT) {
-            [field setText:data len:mSizeW];
+            [field setText:data len:mSizeText];
         } else if (type == LAFIT_TEXTH) {
-            [field setText:data len:mSizeW];
+            [field setText:data len:mSizeText];
         } else {
         }
         
@@ -743,6 +766,7 @@
         return;
     }
     int count = 0;
+	mActiveItems = 0;
     for (int a=0; a< [mItemFields count]; a++ ) {
         //   for (int a=0; a< 1; a++ ) {
         LayoutField* field = [mItemFields objectAtIndex:a];
@@ -752,10 +776,15 @@
         {
             count ++;
         }
+		if (field.mText != nil || field.mItem != nil)
+		{
+			mActiveItems++;
+		}		
     }        
 
     if ( count == [mItemFields count] )
     {
+		[self createCustomModel];
         return;
     }
 
@@ -851,7 +880,7 @@
 		return nil;
 	}		
 
-    //NSLog(@" %@ ==  %@ " , mParent.mPagePopup , mPageID);
+    NSLog(@" Checking input %@ ==  %@ " , mID , mPageID);
     
     if ( [mParent.mPagePopup length] > 0 && ![mPageID isEqualToString:mParent.mPagePopup])
     {
@@ -861,15 +890,16 @@
 
 	float mindist = 1e06f;
 	int index = 0;
-
+	float loc[3];
+	
 	for (int a=0; a < [mItemFields count]; a++)
 	{
 	
 		LayoutField* f = [mItemFields objectAtIndex:a];
-		if (f.mText != nil || f.mItem != nil)
+		if (f.mActive && (f.mText != nil || f.mItem != nil))
 		{
 			GameonModelRef* ref = f.mRef;
-			float dist = [ref intersectsRay:eye ray:ray];
+			float dist = [ref intersectsRay:eye ray:ray loc:loc];
 			if (dist < mindist)
 			{
 				mindist = dist;
@@ -886,52 +916,31 @@
 		pair.mOnFocusLost = mOnFocusLost;
 		pair.mOnFocusGain = mOnFocusGain;
 		pair.mIndex = index;
+		pair.mLoc[0] = loc[0];
+		pair.mLoc[1] = loc[1];
+		pair.mLoc[2] = loc[2];		
 		return pair;							
 	}
 
-	
-	for (int a=0; a < [mItemFields count]; a++)
-	{
-		LayoutField* f = [mItemFields objectAtIndex:a];
-		GameonModelRef* ref = f.mRef;
-		float dist = [ref intersectsRay:eye ray:ray];
-		if (dist < mindist)
-		{
-			mindist = dist;
-			index = a;
-		}
-
-	}		
-	
-	if (mindist != 1e6f)
-	{
-		AreaIndexPair* pair = [[AreaIndexPair alloc] init];
-		pair.mArea = mID;
-		pair.mOnclick = mOnclick;
-		pair.mOnFocusLost = mOnFocusLost;
-		pair.mOnFocusGain = mOnFocusGain;
-		pair.mIndex = index;
-		return pair;							
-	}
 	
 	if (mModelBack != nil)
 	{
 		GameonModelRef* ref = [mModelBack ref:0];
-		float dist = [ref intersectsRay:eye ray:ray];
+		float dist = [ref intersectsRay:eye ray:ray loc:loc];
 		if (dist <= mindist)
 		{
 			mindist = dist;
-			index = 0;
+			index = -1;
 		}			
 	}
 	if (mModel != nil)
 	{
 		GameonModelRef* ref = [mModel ref:0];
-		float dist = [ref intersectsRay:eye ray:ray];
+		float dist = [ref intersectsRay:eye ray:ray loc:loc];
 		if (dist <= mindist)
 		{
 			mindist = dist;
-			index = 0;
+			index = -1;
 		}
 	}			
 	if (mindist != 1e6f)
@@ -941,7 +950,10 @@
 		pair.mOnclick = mOnclick;
 		pair.mOnFocusLost = mOnFocusLost;
 		pair.mOnFocusGain = mOnFocusGain;
-		pair.mIndex = index;
+		pair.mIndex = -1;
+		pair.mLoc[0] = loc[0];
+		pair.mLoc[1] = loc[1];
+		pair.mLoc[2] = loc[2];
 		return pair;							
 	}
 	
@@ -1138,6 +1150,11 @@
 		[mModel release];
 		mModel = nil;		
     }
+	
+	if (mScollerAnim != nil)
+	{
+		[mScollerAnim cancel];
+	}	
 }
 
 -(void) updateLayout:(NSString*) areaLayout {
@@ -1209,7 +1226,7 @@
                 TextItem* item = f1.mText;
                 if (item.mText != nil)
                 {
-                    [f2 setText:item.mText len:mSizeW];
+                    [f2 setText:item.mText len:mSizeText];
                 }
             }
         }
@@ -1249,6 +1266,9 @@
 
 -(bool) hasTouchEvent
 {
+
+	if (mHasScrollH || mHasScrollV)
+		return true;
 	if ( (mOnclick != nil && [mOnclick length] > 0) || 
 		(mOnFocusLost != nil && [mOnFocusLost length] > 0) ||
 		(mOnFocusGain != nil && [mOnFocusGain length] > 0) )
@@ -1333,5 +1353,87 @@
 }
 
 
+-(void) updateScrollers
+{
+	
+}
+
+-(void) createCustomModel
+{
+	
+}
+
+-(void) setScrollers:(NSString*)data
+{
+	int num = [ServerkoParse parseFloatArray:mScrollers max:3 forData:data];
+	
+	if (num > 0)
+	{
+		// update scrollers
+		if (mScrollers[0] < mScrollers[1])
+		{
+			mScrollers[0] = mScrollers[1];
+		}else if (mScrollers[0] > mScrollers[2])
+		{
+			mScrollers[0] = mScrollers[2];
+		}
+		[self updateScrollers];
+	}
+}
+
+
+-(void) setScrollerVal:(float) val
+{
+	mScrollers[0] = val;
+	//System.out.println( "set scroll " + val);
+	[self updateScrollers];
+}
+
+-(void) onDragg:(float)dx y:(float)dy z:(float)dz
+{
+	NSLog(@"dragg %f %f %f ",dx,dy, dz);
+	if (mHasScrollH || mHasScrollV)
+	{
+		if (mScollerAnim == nil)
+		{
+			mScollerAnim = [mApp.anims getScollerAnim:self];
+			[mScollerAnim setActive:true];
+			mScollerAnim.mAreaOwner = self;
+			[mApp.anims incCount];
+
+		}
+		if (mScollerAnim != nil)
+		{
+			float p;
+			if (mHasScrollV)
+			{
+				p = dy / mBounds[1];
+			}else
+			{
+				p = -dx / mBounds[0];
+			}
+			[mScollerAnim addScrollerData:p delay:200 min:mScrollers[1] max:mScrollers[2]];
+		}
+					
+	}
+}
+
+-(void) anim:(NSString*)type delay:(NSString*)delay data:(NSString*)data
+{
+	//
+	if (mModel != nil)
+	{
+		[mModel createAnim:type forId:0 delay:delay data:data];
+	}
+	if (mModelBack != nil)
+	{
+		[mModelBack createAnim:type  forId:0 delay:delay  data:data];
+	}    
+	for (int a=0; a< [mItemFields count]; a++)
+	{
+		LayoutField* field = [mItemFields objectAtIndex:a];
+		[field createAnim:type delay:delay data:data];
+	}
+}
 @end
 

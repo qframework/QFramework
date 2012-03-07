@@ -56,6 +56,7 @@
 @synthesize mItemRotY;
 @synthesize mItemRotZ;    
 @synthesize mRef;
+@synthesize mActive;
 
 - (id)initWithParent:(LayoutArea*)parent
 {
@@ -76,6 +77,10 @@
         mOwner = 0;
 		mRef = [[GameonModelRef alloc] init];
         mApp = parent.mApp;
+		
+		mState = LAS_VISIBLE;
+		mActive = true;
+		
     }
     return  self;
 }
@@ -162,8 +167,8 @@
 
     mItem = item;
     if (mItem != nil){
-        float w = mW * mParent.mBounds[0];
-        float h = mH * mParent.mBounds[1];
+        float w = mW;
+        float h = mH;
         
         
         if (w == 0 || h == 0)
@@ -177,7 +182,7 @@
 			[mItem setParentLoc:mParent];
             [mItem  addRotation:mItemRotX y:mItemRotY z:mItemRotZ];
             [mItem.mModelRef set];
-            [self setState:mParent.mState];
+            [self setState:mState];
         }
     }
     
@@ -214,19 +219,19 @@
         if (mParent.mDisplay == GWLOC_HUD)
         {        
             if (num > 0) {
-                mText = [[TextItem alloc] initWithApp:mApp x:x y:y w:w-mMarginX h:h-mMarginY z:(mZ+0.002f) t:data n:num o:mOwner
+                mText = [[TextItem alloc] initWithApp:mApp x:x y:y w:w h:h z:(mZ+0.002f) t:data n:num o:mOwner
 							loc:mParent.mDisplay layout:mParent.mLayout colors:[mParent getColors]];
             }else{
-                mText = [[TextItem alloc] initWithApp:mApp x:x y:y w:w-mMarginX h:h-mMarginY z:(mZ+0.002f) t:data o:mOwner
+                mText = [[TextItem alloc] initWithApp:mApp x:x y:y w:w h:h z:(mZ+0.002f) t:data o:mOwner
 							loc:mParent.mDisplay layout:mParent.mLayout colors:[mParent getColors]];
             }
         }else {
             if (num > 0) {
-                mText = [[TextItem alloc] initWithApp:mApp x:x y:y w:w-mMarginX h:h-mMarginY z:(mZ+0.002f) 
+                mText = [[TextItem alloc] initWithApp:mApp x:x y:y w:w h:h z:(mZ+0.002f) 
                                                      t:data n:num o:mOwner                         
 							loc:mParent.mDisplay layout:mParent.mLayout colors:[mParent getColors]];
             }else{
-                mText = [[TextItem alloc] initWithApp:mApp x:x y:y w:w-mMarginX h:h-mMarginY z:(mZ+0.002f) t:data o:mOwner
+                mText = [[TextItem alloc] initWithApp:mApp x:x y:y w:w h:h z:(mZ+0.002f) t:data o:mOwner
 							loc:mParent.mDisplay layout:mParent.mLayout colors:[mParent getColors]];
             }            
         }
@@ -254,9 +259,12 @@
 }
 
 -(void) setState:(int)state {
+	if (!mActive)
+		return;
     if (!mParent.mPageVisible)
         state = LAS_HIDDEN;
-    
+
+	mState = state;
     if (state == LAS_VISIBLE)
     {
         if (mText != nil) {
@@ -323,8 +331,9 @@
 	
 	if (mText != nil)
 	{
-		[mText setPosition:mX y:mY z:mZ+0.001f w:w-mMarginX h:h-mMarginY];            
-        
+		[mText setPosition:mX y:mY z:mZ+0.002f w:w-mMarginX h:h-mMarginY];            
+		[mText setParentLoc:mParent];
+		[mText.ref set];        
 	}
 	
 	
@@ -361,7 +370,19 @@
    }
 }
                            
-                           
+-(void) createAnim:(NSString*)type delay:(NSString*)delay data:(NSString*)data 
+{
+	if (mText != nil && mText.mModel != nil)
+	{
+		[mText.mModel createAnim:type forId:0 delay:delay data:data];
+	}
+	if (mItem != nil)
+	{
+		int index = [mItem.mModel findRef: mItem.mModelRef];
+		[mItem.mModel createAnim:type forId:index delay:delay data:data];
+	}		
+}
+	
 @end
 
 

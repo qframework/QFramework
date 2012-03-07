@@ -30,6 +30,7 @@
 @class LayoutItem;
 @class AreaIndexPair;
 @class GameonApp;
+@class AnimData;
 
 @interface LayoutArea : NSObject {
 
@@ -41,6 +42,7 @@
 	float*							mLocation;
 	float*							mScale;
 	float*							mRotation;
+	float*							mScrollers;
 
     LayoutAreaType                  mType;
     LayoutAreaState                 mState;
@@ -52,6 +54,7 @@
     int                             mSize;
     int                             mSizeW;
     int                             mSizeH;
+	int                             mSizeText;
 
     GLColor*                        mColorForeground;
     int                             mColorForeground2;
@@ -67,6 +70,10 @@
     LayoutAreaBorderType            mBorder;
     bool                            mDisabledInput;
     bool                            mPageVisible;
+	bool 							mHasScrollH;
+	bool 							mHasScrollV;
+	AnimData*						mScollerAnim;
+	int 							mActiveItems;	
 	GameonApp*						mApp;
 }
 
@@ -87,6 +94,11 @@
 @property (nonatomic, readonly) NSString* mOnclick;
 @property (nonatomic, readonly) NSString* mOnFocusLost;
 @property (nonatomic, readonly) NSString* mOnFocusGain;
+@property (nonatomic, assign) float*	mScrollers;
+@property (nonatomic, assign) AnimData* mScollerAnim;
+@property (nonatomic, readonly) bool mHasScrollH;
+@property (nonatomic, readonly) bool mHasScrollV;
+@property (nonatomic, readonly) int mActiveItems;	
 
 -(id) initWithSubtype:(NSString*)subtype app:(GameonApp*)app;
 -(void) initLayout;
@@ -138,6 +150,10 @@
 -(void) setTextColor:(NSString*) strData ;
 -(void)updateModelsTransformation;
 -(void) updateLayout:(NSString*) areaLayout;
-
+-(void) setScrollerVal:(float) val;
+-(void) onDragg:(float)dx y:(float)dy z:(float)dz;
+-(void) createCustomModel;
+-(void) setScrollers:(NSString*)data;
+-(void) anim:(NSString*)type delay:(NSString*)delay data:(NSString*)data;
 
 @end

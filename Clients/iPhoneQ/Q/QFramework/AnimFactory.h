@@ -23,6 +23,7 @@
 @class AnimData;
 @class GLColor;
 @class GameonApp;
+@class LayoutArea;
 
 @interface AnimFactory_AnimFrame : NSObject
 {
@@ -79,7 +80,7 @@
 
 @end
 
-#define ANIM_POOL_LEN 128
+#define ANIM_POOL_LEN 16
 
 @interface AnimFactory : NSObject {
 
@@ -110,5 +111,7 @@
 -(void) decCount;
 -(void) incCount;
 -(int) getCount;
+-(void) animModelRef:(NSString*)animid ref:(GameonModelRef*)ref delay:(NSString*)delaydata data:(NSString*)data;
+-(AnimData*) getScollerAnim:(LayoutArea*) owner;
 
 @end

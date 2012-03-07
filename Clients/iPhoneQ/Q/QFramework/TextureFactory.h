@@ -33,7 +33,7 @@ typedef enum  {
 	int mTextureDefault;
 	bool mUpdated;
 	NSMutableDictionary* mTextures;
-
+    NSMutableArray* mToDelete;
 	float mU1;
 	float mV1;
 	float mU2;
@@ -57,5 +57,7 @@ typedef enum  {
 -(void)resetUpdate;
 -(void)setParam:(float)u1 v1:(float)v1 u2:(float)u2 v2:(float)v2 p:(float)cp;
 -(void)initTextures:(NSMutableDictionary*)response;
+-(void)flushTextures;
+-(void)deleteTexture:(NSString*)textname;
 
 @end
